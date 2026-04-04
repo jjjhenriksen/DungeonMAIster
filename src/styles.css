@@ -152,6 +152,19 @@ body {
   text-transform: uppercase;
 }
 
+.app-header__slot {
+  margin-top: 8px;
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(68, 110, 151, 0.8);
+  background: rgba(11, 18, 28, 0.72);
+  color: var(--accent-gold);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
 .app-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
@@ -650,6 +663,14 @@ body {
   padding: 18px;
 }
 
+.continue-card {
+  margin-top: 22px;
+  background: linear-gradient(180deg, rgba(17, 36, 58, 0.92) 0%, rgba(10, 18, 28, 0.96) 100%);
+  border: 1px solid rgba(87, 133, 183, 0.6);
+  border-radius: 14px;
+  padding: 18px;
+}
+
 .slot-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -687,6 +708,37 @@ body {
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 16px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 6, 10, 0.72);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 20;
+}
+
+.modal-panel {
+  width: min(480px, 100%);
+  background: linear-gradient(180deg, #101924 0%, #0a1017 100%);
+  border: 1px solid rgba(92, 131, 171, 0.45);
+  border-radius: 16px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.46);
+  padding: 22px;
+}
+
+.modal-panel__title {
+  font-size: 22px;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.modal-panel__copy {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-muted);
 }
 
 .creator-grid {

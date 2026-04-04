@@ -1,4 +1,4 @@
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -15,46 +15,53 @@ async function safeRead(filePath) {
   }
 }
 
-async function readMarkdownDirectory(directoryPath) {
-  try {
-    const entries = await readdir(directoryPath, { withFileTypes: true });
-    const files = entries
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    const contents = await Promise.all(
-      files.map(async (file) => {
-        const fullPath = path.join(directoryPath, file.name);
-        const content = await safeRead(fullPath);
-        return `FILE: ${file.name}\n${content}`.trim();
-      })
-    );
-
-    return contents.filter(Boolean).join("\n\n");
-  } catch {
-    return "";
-  }
+function slugify(value = "") {
+  return value
+    .toLowerCase()
+    .replace(/\b(rim|station|seat|bench|cabin)\b/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
-export async function loadVaultContext() {
-  const staticRoot = path.join(vaultRoot, "static");
-  const dynamicRoot = path.join(vaultRoot, "dynamic");
+function trimToSection(label, content) {
+  if (!content) return "";
+  return `FILE: ${label}\n${content}`.trim();
+}
 
-  const [locations, crew, lore, sessionState, log, npcOverride, locationDelta] =
-    await Promise.all([
-      readMarkdownDirectory(path.join(staticRoot, "locations")),
-      readMarkdownDirectory(path.join(staticRoot, "crew")),
-      readMarkdownDirectory(path.join(staticRoot, "lore")),
-      safeRead(path.join(dynamicRoot, "session-state.md")),
-      safeRead(path.join(dynamicRoot, "log.md")),
-      safeRead(path.join(dynamicRoot, "overrides", "npc-override.md")),
-      safeRead(path.join(dynamicRoot, "overrides", "location-delta.md")),
-    ]);
+async function readStaticContext(worldState, activeCrew) {
+  const staticRoot = path.join(vaultRoot, "static");
+  const locationSlug = slugify(worldState?.environment?.location);
+  const crewId = activeCrew?.id;
+
+  const [locationFile, crewFile, missionBrief, anomaly] = await Promise.all([
+    locationSlug
+      ? safeRead(path.join(staticRoot, "locations", `${locationSlug}.md`))
+      : "",
+    crewId ? safeRead(path.join(staticRoot, "crew", `${crewId}.md`)) : "",
+    safeRead(path.join(staticRoot, "lore", "mission-brief.md")),
+    safeRead(path.join(staticRoot, "lore", "anomaly.md")),
+  ]);
 
   return {
-    locations,
-    crew,
-    lore,
+    location: trimToSection(`${locationSlug || "current-location"}.md`, locationFile),
+    crew: trimToSection(`${crewId || "active-crew"}.md`, crewFile),
+    missionBrief: trimToSection("mission-brief.md", missionBrief),
+    anomaly: trimToSection("anomaly.md", anomaly),
+  };
+}
+
+export async function loadVaultContext({ worldState, activeCrew }) {
+  const dynamicRoot = path.join(vaultRoot, "dynamic");
+  const [staticContext, sessionState, log, npcOverride, locationDelta] = await Promise.all([
+    readStaticContext(worldState, activeCrew),
+    safeRead(path.join(dynamicRoot, "session-state.md")),
+    safeRead(path.join(dynamicRoot, "log.md")),
+    safeRead(path.join(dynamicRoot, "overrides", "npc-override.md")),
+    safeRead(path.join(dynamicRoot, "overrides", "location-delta.md")),
+  ]);
+
+  return {
+    ...staticContext,
     sessionState,
     log,
     npcOverride,
@@ -66,14 +73,17 @@ export function formatVaultContext(vaultContext) {
   return [
     "Vault mission context:",
     "",
-    "## Locations",
-    vaultContext.locations || "No location files found.",
+    "## Current Location",
+    vaultContext.location || "No location file found for the current scene.",
     "",
-    "## Crew",
-    vaultContext.crew || "No crew files found.",
+    "## Active Crew",
+    vaultContext.crew || "No crew file found for the active role.",
     "",
-    "## Lore",
-    vaultContext.lore || "No lore files found.",
+    "## Mission Brief",
+    vaultContext.missionBrief || "No mission brief found.",
+    "",
+    "## Anomaly Lore",
+    vaultContext.anomaly || "No anomaly lore found.",
     "",
     "## Session State",
     vaultContext.sessionState || "No session state yet.",

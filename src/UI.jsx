@@ -171,6 +171,9 @@ export default function ArtemisLost({
           <div className="app-header__subtitle">
             Lunar anomaly command interface
           </div>
+          <div className="app-header__slot">
+            Active save slot: {initialSession?.slotLabel || slotId}
+          </div>
         </div>
 
         <div className="app-header__controls">
@@ -212,7 +215,7 @@ export default function ArtemisLost({
 
         <div className="sidebar-panel">
           <div>
-          <div className="section-title section-title--with-divider">CREW STATUS</div>
+            <div className="section-title section-title--with-divider">CREW STATUS</div>
           </div>
           <div className="crew-grid">
             {ws.crew.map((member, index) => (

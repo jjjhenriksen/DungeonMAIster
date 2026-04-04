@@ -32,7 +32,12 @@ export async function requestDmTurn({
   conversationHistory = [],
   currentTurn = 0,
 }) {
-  const vaultContext = formatVaultContext(await loadVaultContext());
+  const vaultContext = formatVaultContext(
+    await loadVaultContext({
+      worldState,
+      activeCrew,
+    })
+  );
 
   const res = await fetch(OPENAI_API_URL, {
     method: "POST",

@@ -65,6 +65,11 @@ export default function App() {
     launchSession(slotId, session);
   }
 
+  async function handleContinue() {
+    if (!activeSlotId) return;
+    await handleLoadSlot(activeSlotId);
+  }
+
   async function handleDeleteSlot(slotId) {
     await deleteSession(slotId);
     if (activeSlotId === slotId) {
@@ -114,7 +119,9 @@ export default function App() {
   return (
     <MainMenu
       activeSession={activeSession}
+      activeSlotId={activeSlotId}
       slots={slots}
+      onContinue={handleContinue}
       onDeleteSlot={handleDeleteSlot}
       onLoadSlot={handleLoadSlot}
       onNewMission={(slotId) => {
