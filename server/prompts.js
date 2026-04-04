@@ -1,3 +1,4 @@
+import { getMissionPromptBrief } from "../src/missionMechanics.js";
 import { getRolePromptBrief } from "../src/roleMechanics.js";
 
 const STATE_DELTA_SHAPE = `STATE_DELTA:
@@ -80,6 +81,7 @@ export function createDmUserPrompt({
     ? JSON.stringify(conversationHistory.slice(-8), null, 2)
     : "[]";
   const rolePromptBrief = getRolePromptBrief(worldState, activeCrew, action);
+  const missionPromptBrief = getMissionPromptBrief(worldState, activeCrew, action);
 
   // Vault context is optional, so we only inject it when static lore is available.
   const vaultBlock = vaultContext ? `${vaultContext}\n\n` : "";
@@ -96,6 +98,9 @@ ${JSON.stringify(worldState, null, 2)}
 
 Role pressure brief:
 ${JSON.stringify(rolePromptBrief, null, 2)}
+
+Mission pressure brief:
+${JSON.stringify(missionPromptBrief, null, 2)}
 
 ${vaultBlock}Player action:
 ${action}
@@ -114,6 +119,7 @@ export function createAutonomousCrewUserPrompt({
     ? JSON.stringify(conversationHistory.slice(-8), null, 2)
     : "[]";
   const rolePromptBrief = getRolePromptBrief(worldState, activeCrew, "");
+  const missionPromptBrief = getMissionPromptBrief(worldState, activeCrew, "");
 
   const vaultBlock = vaultContext ? `${vaultContext}\n\n` : "";
 
@@ -129,6 +135,9 @@ ${JSON.stringify(worldState, null, 2)}
 
 Role pressure brief:
 ${JSON.stringify(rolePromptBrief, null, 2)}
+
+Mission pressure brief:
+${JSON.stringify(missionPromptBrief, null, 2)}
 
 ${vaultBlock}Return only the action this crew member should take next.`;
 }

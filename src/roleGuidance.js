@@ -1,3 +1,5 @@
+import { getMissionSuggestion } from "./missionMechanics";
+
 function getCrewByRole(worldState, role) {
   return worldState?.crew?.find((member) => member.role === role);
 }
@@ -90,6 +92,8 @@ function createSpecialistGuidance(worldState, activeCrew) {
 }
 
 export function getRoleGuidance(worldState, activeCrew) {
+  const missionSuggestion = getMissionSuggestion(worldState, activeCrew);
+
   if (!activeCrew) {
     return {
       focus: "Stabilize the mission state and create one safe, decisive next move.",
@@ -97,15 +101,20 @@ export function getRoleGuidance(worldState, activeCrew) {
     };
   }
 
+  const withMissionSuggestion = (guidance) => ({
+    ...guidance,
+    suggestions: [missionSuggestion, ...guidance.suggestions].filter(Boolean).slice(0, 3),
+  });
+
   switch (activeCrew.role) {
     case "Commander":
-      return createCommanderGuidance(worldState);
+      return withMissionSuggestion(createCommanderGuidance(worldState));
     case "Flight Engineer":
-      return createEngineerGuidance(worldState, activeCrew);
+      return withMissionSuggestion(createEngineerGuidance(worldState, activeCrew));
     case "Science Officer":
-      return createScienceGuidance(worldState, activeCrew);
+      return withMissionSuggestion(createScienceGuidance(worldState, activeCrew));
     case "Mission Specialist":
-      return createSpecialistGuidance(worldState, activeCrew);
+      return withMissionSuggestion(createSpecialistGuidance(worldState, activeCrew));
     default:
       return {
         focus: "Assess the immediate danger and create a safe next move for the crew.",

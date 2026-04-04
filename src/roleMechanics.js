@@ -385,7 +385,7 @@ function createFollowThroughWindow(worldState, activeCrew, actionText, effectStr
   const targetCrew =
     directedCrew ||
     getCrewByRole(worldState, getNextRoleTarget(activeCrew?.role, actionText));
-  if (!targetCrew) return null;
+  if (!targetCrew || targetCrew.id === activeCrew?.id) return null;
   const relationshipProfile = getPairRelationshipProfile(activeCrew, targetCrew, worldState);
 
   return {

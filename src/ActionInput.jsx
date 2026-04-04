@@ -1,4 +1,5 @@
 import TurnIndicator from "./TurnIndicator";
+import { getMissionMechanicSummary, getMissionOpportunityPreview } from "./missionMechanics";
 import { getRoleGuidance } from "./roleGuidance";
 import {
   getRoleAlignmentPreview,
@@ -31,6 +32,8 @@ export default function ActionInput({
   const roleMechanicSummary = getRoleMechanicSummary(activeCrew);
   const roleAlignmentPreview = getRoleAlignmentPreview(activeCrew, input);
   const roleSupportPreview = getRoleSupportPreview(worldState, activeCrew, input);
+  const missionMechanicSummary = getMissionMechanicSummary(worldState, activeCrew);
+  const missionOpportunityPreview = getMissionOpportunityPreview(worldState, activeCrew, input);
 
   return (
     <div className="action-input">
@@ -52,11 +55,20 @@ export default function ActionInput({
             <div className="action-input__hint">
               Role leverage: {roleMechanicSummary}
             </div>
+            <div className="action-input__hint">
+              Mission leverage: {missionMechanicSummary}
+            </div>
             <div
               className={`action-input__alignment action-input__alignment--${roleAlignmentPreview.level}`}
             >
               <div className="action-input__alignment-chip">{roleAlignmentPreview.label}</div>
               <div className="action-input__alignment-copy">{roleAlignmentPreview.detail}</div>
+            </div>
+            <div
+              className={`action-input__alignment action-input__alignment--${missionOpportunityPreview.level}`}
+            >
+              <div className="action-input__alignment-chip">{missionOpportunityPreview.label}</div>
+              <div className="action-input__alignment-copy">{missionOpportunityPreview.detail}</div>
             </div>
             {roleSupportPreview.incoming || roleSupportPreview.outgoing ? (
               <div className="action-input__support">
