@@ -18,6 +18,7 @@ This project is currently a small full-stack prototype with one frontend app and
 - [src/useTypewriter.js](/Users/jacquelinehenriksen/DungeonMAIster/src/useTypewriter.js): narration typing effect hook
 - [src/dmApi.js](/Users/jacquelinehenriksen/DungeonMAIster/src/dmApi.js): browser-side helper for posting turn requests to the local API
 - [src/applyStateDelta.js](/Users/jacquelinehenriksen/DungeonMAIster/src/applyStateDelta.js): merges model-generated state changes into the current world state
+- [src/deltaParser.js](/Users/jacquelinehenriksen/DungeonMAIster/src/deltaParser.js): canonical state-delta parsing, normalization, and merge rules
 - [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs): Express server that validates input, calls Anthropic, and returns structured narration plus state updates
 
 ## Runtime Responsibilities
@@ -71,8 +72,19 @@ The backend asks the model to return JSON in this shape:
 
 Merge behavior today:
 - `mission`, `environment`, and `systems` are shallow-merged
-- `crew` entries are matched and patched by `id`
-- `eventLog` entries are prepended and capped to 12 items
+- `crew` entries are matched and patched by `id`, with nested `extra` merged safely
+- `eventLog` entries are prepended, deduplicated, normalized, and capped to 12 items
+
+## Vault Contract
+
+Artemis prompt content is organized under `vault/static/` and `vault/dynamic/`.
+
+- `vault/static/locations/`: durable location descriptions
+- `vault/static/crew/`: durable crew reference profiles
+- `vault/static/lore/`: durable mission and anomaly lore
+- `vault/dynamic/session-state.md`: markdown mirror of the active world state
+- `vault/dynamic/log.md`: concise turn history
+- `vault/dynamic/overrides/`: narrow session-only overrides such as NPC or location deltas
 
 ## Known Structural Gaps
 

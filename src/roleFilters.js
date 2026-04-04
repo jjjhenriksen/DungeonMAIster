@@ -1,87 +1,75 @@
-export function getViewForRole(ws, crewIndex) {
-  const crewMember = ws.crew[crewIndex];
-  const systems = ws.systems;
-  const missionSpecialist = ws.crew[3];
+function summarizeCrewReadiness(crew = []) {
+  const readyCount = crew.filter((member) => member.health >= 60).length;
+  return `${readyCount}/${crew.length}`;
+}
 
-  const views = [
-    [
-      { key: "OBJECTIVE", val: ws.mission.objectives[0] },
-      { key: "PHASE", val: ws.mission.phase },
-      {
-        key: "CREW READY",
-        val: `${ws.crew.filter((member) => member.health > 50).length}/${ws.crew.length}`,
-      },
-      {
-        key: "EVA STATUS",
-        val: missionSpecialist.extra.value < 50 ? "Park suit integrity low" : "Nominal",
-        warn: missionSpecialist.extra.value < 50,
-      },
-      {
-        key: "UPLINK",
-        val: systems.comms < 50 ? "Earth comms degraded" : "Nominal",
-        warn: systems.comms < 50,
-      },
-    ],
-    [
-      {
-        key: "O2 LEVEL",
-        val: `${systems.o2}% — ${systems.o2 < 80 ? "monitor closely" : "nominal"}`,
-        warn: systems.o2 < 80,
-      },
-      {
-        key: "PWR GRID",
-        val: systems.power > 90 ? "Nominal" : `${systems.power}% — reduced`,
-      },
-      {
-        key: "SCRUBBER",
-        val: systems.scrubber === "patched" ? "Patched — holding" : "Nominal",
-      },
-      {
-        key: "PROPULSION",
-        val: systems.propulsion > 90 ? "Nominal" : "Degraded",
-        warn: systems.propulsion < 90,
-      },
-      {
-        key: "LIFE SUPP",
-        val: systems.o2 > 60 && systems.power > 80 ? "Green" : "At risk",
-        warn: systems.o2 < 60 || systems.power < 80,
-      },
-    ],
-    [
-      { key: "ANOMALY SIG", val: `${ws.environment.anomaly.slice(0, 28)}…` },
-      { key: "GEOMETRY", val: "Non-natural — deliberate" },
-      {
-        key: "SCAN RANGE",
-        val: `${crewMember.extra.value}% — interference`,
-        warn: crewMember.extra.value < 70,
-      },
-      { key: "SAMPLES", val: "0 collected" },
-      { key: "HYPOTHESIS", val: "Artificial origin likely" },
-    ],
-    [
-      {
-        key: "EVA SUIT",
-        val: `Integrity ${crewMember.extra.value}% — ${crewMember.extra.value < 40 ? "critical" : "ok"}`,
-        warn: crewMember.extra.value < 40,
-      },
-      {
-        key: "COMMS RELAY",
-        val: systems.comms < 50 ? "Degraded" : "Nominal",
-        warn: systems.comms < 50,
-      },
-      { key: "EQUIPMENT", val: "Drill, beacon, patch kit" },
-      {
-        key: "EARTH LINK",
-        val: systems.comms < 30 ? "Unavailable" : "Active",
-        warn: systems.comms < 30,
-      },
-      {
-        key: "NEXT EVA",
-        val: crewMember.extra.value < 40 ? "High risk" : "Cleared",
-        warn: crewMember.extra.value < 40,
-      },
-    ],
+function createItem(key, val, warn = false) {
+  return { key, val, warn };
+}
+
+function getCrewById(ws, id) {
+  return ws.crew.find((member) => member.id === id);
+}
+
+function commanderView(ws) {
+  const park = getCrewById(ws, "park");
+
+  return [
+    createItem("OBJECTIVE", ws.mission.objectives[0]),
+    createItem("PHASE", ws.mission.phase, /critical|breach|drift/i.test(ws.mission.phase)),
+    createItem("CREW READY", summarizeCrewReadiness(ws.crew), ws.crew.some((member) => member.health < 60)),
+    createItem("COMMS", ws.systems.comms < 50 ? "Earth link degraded" : "Command relay nominal", ws.systems.comms < 50),
+    createItem(
+      "EVA RISK",
+      park && park.extra.value < 40 ? "Park suit integrity below safe margin" : "Park cleared for short EVA",
+      Boolean(park && park.extra.value < 40)
+    ),
   ];
+}
 
-  return views[crewIndex] ?? [];
+function engineerView(ws, crewMember) {
+  return [
+    createItem("O2 LEVEL", `${ws.systems.o2}% reserve`, ws.systems.o2 < 75),
+    createItem("SCRUBBER", ws.systems.scrubber, ws.systems.scrubber !== "nominal"),
+    createItem("POWER", `${ws.systems.power}% available`, ws.systems.power < 70),
+    createItem("PROP", `${ws.systems.propulsion}% thrust authority`, ws.systems.propulsion < 70),
+    createItem("PATCH", crewMember.status, /leak|risk|unstable/i.test(crewMember.status)),
+  ];
+}
+
+function scienceView(ws, crewMember) {
+  return [
+    createItem("ANOMALY", ws.environment.anomaly),
+    createItem("HAZARDS", ws.environment.hazards.slice(0, 2).join(", ")),
+    createItem("SCAN RNG", `${crewMember.extra.value}% confidence`, crewMember.extra.value < 70),
+    createItem("VISUAL", ws.environment.visibility),
+    createItem("THESIS", "Signal source appears artificial and buried below the rim"),
+  ];
+}
+
+function specialistView(ws, crewMember) {
+  return [
+    createItem("EVA SUIT", `${crewMember.extra.value}% integrity`, crewMember.extra.value < 40),
+    createItem("LOADOUT", crewMember.inventory.slice(0, 3).join(", ")),
+    createItem("COMMS", ws.systems.comms < 30 ? "Relay blackout risk" : "Short-range relay holding", ws.systems.comms < 30),
+    createItem("SURFACE", ws.environment.hazards[1] || "Terrain uncertain"),
+    createItem("ORDERS", ws.mission.objectives[1], /alive|restore/i.test(ws.mission.objectives[1])),
+  ];
+}
+
+const VIEW_BY_ROLE = {
+  Commander: commanderView,
+  "Flight Engineer": engineerView,
+  "Science Officer": scienceView,
+  "Mission Specialist": specialistView,
+};
+
+export function getViewForRole(ws, roleIndex) {
+  const crewMember = ws?.crew?.[roleIndex];
+  if (!crewMember) return [];
+
+  const builder = VIEW_BY_ROLE[crewMember.role];
+  if (!builder) return [];
+
+  return builder(ws, crewMember);
 }
