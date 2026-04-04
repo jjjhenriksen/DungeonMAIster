@@ -154,14 +154,17 @@ body {
 
 .app-grid {
   display: grid;
-  grid-template: minmax(0, 1fr) auto / minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.9fr);
+  align-items: start;
   gap: 16px;
   position: relative;
   z-index: 1;
 }
 
 .app-grid__main {
-  grid-row: 1 / 3;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
 }
 
 .app-grid__main,
@@ -176,6 +179,7 @@ body {
 
 .sidebar-panel {
   padding: 14px;
+  min-width: 0;
 }
 
 .section-title {
@@ -476,7 +480,7 @@ body {
   padding: 18px;
   display: flex;
   flex-direction: column;
-  min-height: 520px;
+  min-height: min(62vh, 720px);
   position: relative;
   overflow: hidden;
 }
@@ -547,7 +551,7 @@ body {
     linear-gradient(180deg, rgba(12, 18, 26, 0.96) 0%, rgba(10, 14, 20, 0.98) 100%);
   border: 1px solid rgba(49, 79, 112, 0.72);
   border-radius: 18px;
-  padding: 14px;
+  padding: 16px;
   box-shadow: var(--shadow-panel);
   backdrop-filter: blur(18px);
 }
@@ -832,7 +836,7 @@ body {
     linear-gradient(180deg, rgba(11, 16, 22, 0.98) 0%, rgba(8, 13, 18, 0.98) 100%);
   border: 1px solid var(--border-info);
   border-radius: 12px;
-  padding: 12px;
+  padding: 14px;
 }
 
 .action-input__panel--waiting {
@@ -862,12 +866,15 @@ body {
   min-width: 0;
   background: rgba(7, 11, 16, 0.92);
   border: 1px solid var(--border-main);
-  border-radius: 6px;
+  border-radius: 10px;
   color: var(--text-body);
   font-family: inherit;
-  font-size: 12px;
-  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.65;
+  padding: 14px 16px;
   box-shadow: inset 0 1px 0 rgba(124, 171, 213, 0.04);
+  resize: vertical;
+  min-height: 144px;
 }
 
 .al-input::placeholder {
@@ -892,14 +899,15 @@ body {
   font-family: inherit;
   font-size: 11px;
   letter-spacing: 1px;
-  padding: 0 16px;
-  border-radius: 6px;
+  padding: 0 20px;
+  border-radius: 10px;
   cursor: pointer;
   transition:
     background 0.15s ease,
     transform 0.15s ease,
     box-shadow 0.15s ease;
   box-shadow: inset 0 1px 0 rgba(143, 210, 255, 0.12);
+  min-width: 150px;
 }
 
 .al-btn:hover {
@@ -942,11 +950,7 @@ body {
   }
 
   .app-grid {
-    grid-template: auto auto auto / 1fr;
-  }
-
-  .app-grid__main {
-    grid-row: auto;
+    grid-template-columns: 1fr;
   }
 
   .app-header {
@@ -957,6 +961,15 @@ body {
   .app-header__controls {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .action-input__row {
+    flex-direction: column;
+  }
+
+  .al-btn {
+    min-height: 48px;
+    width: 100%;
   }
 
   .creator-grid {

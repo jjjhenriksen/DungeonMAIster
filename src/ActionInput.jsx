@@ -25,7 +25,7 @@ export default function ActionInput({
         </div>
 
         <div className="action-input__row">
-          <input
+          <textarea
             ref={inputRef}
             className="al-input"
             placeholder={
@@ -37,6 +37,7 @@ export default function ActionInput({
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={onKeyDown}
             disabled={waiting}
+            rows={5}
           />
           <button
             className="al-btn"

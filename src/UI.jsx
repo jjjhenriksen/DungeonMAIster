@@ -198,6 +198,16 @@ export default function ArtemisLost({
       <div className="app-grid">
         <div className="app-grid__main">
           <NarrationPanel text={narration} eventLog={ws.eventLog} />
+
+          <ActionInput
+            activeCrew={activeCrew}
+            input={input}
+            inputRef={inputRef}
+            onChange={setInput}
+            onKeyDown={handleKeyDown}
+            onSubmit={handleSubmit}
+            waiting={waiting}
+          />
         </div>
 
         <div className="sidebar-panel">
@@ -213,16 +223,6 @@ export default function ArtemisLost({
           <RoleView activeCrew={activeCrew} roleView={roleView} />
           <RosterSummary crew={ws.crew} />
         </div>
-
-        <ActionInput
-          activeCrew={activeCrew}
-          input={input}
-          inputRef={inputRef}
-          onChange={setInput}
-          onKeyDown={handleKeyDown}
-          onSubmit={handleSubmit}
-          waiting={waiting}
-        />
       </div>
     </div>
   );
