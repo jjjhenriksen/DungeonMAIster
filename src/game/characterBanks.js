@@ -319,7 +319,56 @@ export const CHARACTER_BANKS = {
 };
 
 export const SPECIAL_CREW_OVERRIDES = {
+  "Kendall Harris": {
+    preferredRole: "Commander",
+    callSigns: ["Coldplate", "Heatshield"],
+  },
+  "LouAnne Boyd": {
+    preferredRole: "Flight Engineer",
+    callSigns: ["Disco Ball"],
+  },
+  "Erik Linstead": {
+    preferredRole: "Science Officer",
+    callSigns: ["Remote Sense", "Pattern Core"],
+  },
+  "Thomas Piechota": {
+    preferredRole: "Commander",
+    callSigns: ["Watershed", "Dryline"],
+  },
+  "Michael Fahy": {
+    preferredRole: "Flight Engineer",
+    callSigns: ["Backbone", "Codeword"],
+  },
+  "Maryam Etezad": {
+    preferredRole: "Science Officer",
+    callSigns: ["Radar Bloom", "Optic Array"],
+  },
+  "Jon Humphreys": {
+    preferredRole: "Mission Specialist",
+    callSigns: ["Corgiline", "Loaf Drive"],
+  },
+  "Elizabeth Stevens": {
+    preferredRole: "Science Officer",
+    callSigns: ["Cluster Map", "Treatment Arc"],
+  },
+  "Elia Eiroa Lledo": {
+    preferredRole: "Science Officer",
+    callSigns: ["Bug Trace", "Bias Vector"],
+  },
+  "Trudi Qi": {
+    preferredRole: "Science Officer",
+    callSigns: ["Meshwalk", "Simspace"],
+  },
+  "Nicole Wagner": {
+    preferredRole: "Flight Engineer",
+    callSigns: ["Tool Life", "Arc Spray"],
+  },
+  "Jonathan Weinberger": {
+    preferredRole: "Science Officer",
+    callSigns: ["Proof Stack", "Type Space"],
+  },
   "Jacqueline Henriksen": {
+    preferredRole: "Mission Specialist",
     callSigns: ["Ritz", "Orange Bird"],
   },
 };

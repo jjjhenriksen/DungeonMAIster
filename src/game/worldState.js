@@ -164,6 +164,31 @@ function pickPreferredName(candidateNames = [], featuredNames = []) {
   return pickRandom(candidateNames);
 }
 
+export function getSpecialCrewOverride(name = "") {
+  return SPECIAL_CREW_OVERRIDES[name] || null;
+}
+
+export function nameMatchesPreferredRole(name = "", role = "") {
+  const override = getSpecialCrewOverride(name);
+  if (!override?.preferredRole && !override?.preferredRoles?.length) return true;
+
+  if (override.preferredRole) {
+    return override.preferredRole === role;
+  }
+
+  return override.preferredRoles.includes(role);
+}
+
+function filterCandidateNamesForRole(candidateNames = [], role = "") {
+  const roleMatched = candidateNames.filter((name) => nameMatchesPreferredRole(name, role));
+  return roleMatched.length > 0 ? roleMatched : candidateNames;
+}
+
+function getFeaturedNamesForRole(role = "") {
+  const featuredNames = CHARACTER_BANKS.global.featuredFacultyNames || [];
+  return featuredNames.filter((name) => nameMatchesPreferredRole(name, role));
+}
+
 function normalizeMissionSeed(seed) {
   const resolved = typeof seed === "string" ? getMissionSeedById(seed) : seed || DEFAULT_MISSION_SEED;
   return resolved || DEFAULT_MISSION_SEED;
@@ -302,7 +327,8 @@ export function rerollCharacterProfiles(
   CREW_BLUEPRINTS.forEach((blueprint) => {
     if (selectedProfiles.has(blueprint.id)) return;
     const roleBank = CHARACTER_BANKS[blueprint.bankKey] || {};
-    const candidateNames = roleBank.names || CHARACTER_BANKS.global.facultyNames || [blueprint.defaultName];
+    const rawCandidateNames = roleBank.names || CHARACTER_BANKS.global.facultyNames || [blueprint.defaultName];
+    const candidateNames = filterCandidateNamesForRole(rawCandidateNames, blueprint.role);
     const currentProfile = existingProfilesById.get(blueprint.id);
     const availableNames = candidateNames.filter(
       (name) => !usedNames.has(name)
@@ -317,7 +343,7 @@ export function rerollCharacterProfiles(
     const selected = {
       name: pickPreferredName(
         availableNames.length > 0 ? availableNames : candidateNames,
-        CHARACTER_BANKS.global.featuredFacultyNames || []
+        getFeaturedNamesForRole(blueprint.role)
       ),
       callSign: pickRandom(
         availableCallSigns.length > 0 ? availableCallSigns : roleBank.callSigns || [blueprint.defaultCallSign]
@@ -328,7 +354,7 @@ export function rerollCharacterProfiles(
       personalStake: pickRandom(roleBank.stakes || [blueprint.defaultStake]),
       controller: currentProfile?.controller === "bot" ? "bot" : "human",
     };
-    const specialOverride = SPECIAL_CREW_OVERRIDES[selected.name];
+    const specialOverride = getSpecialCrewOverride(selected.name);
     if (specialOverride?.callSigns?.length) {
       const specialCallSigns = specialOverride.callSigns.filter(
         (callSign) => !usedCallSigns.has(callSign)
