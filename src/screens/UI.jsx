@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import ActionInput from "./ActionInput";
-import { createBotAction } from "./botTurns";
-import CrewCard from "./CrewCard";
-import CrewStatusBar from "./CrewStatusBar";
-import NarrationPanel from "./NarrationPanel";
-import RosterSummary from "./RosterSummary";
-import RoleView from "./RoleView";
-import ThemePicker from "./ThemePicker";
-import { requestAutonomousAction, requestDmTurn } from "./dmApi";
-import { appendConversationEntry } from "./gameLoop";
-import { getViewForRole } from "./roleFilters";
-import { saveSession as persistSession } from "./sessionApi";
-import { resolveTurnWorldState } from "./turnRuntime.js";
-import { getUiState } from "./uiState";
-import { INITIAL_WORLD_STATE, OPENING_NARRATION } from "./worldState";
+import ActionInput from "../components/ActionInput.jsx";
+import { createBotAction } from "../game/botTurns.js";
+import CrewCard from "../components/CrewCard.jsx";
+import CrewStatusBar from "../components/CrewStatusBar.jsx";
+import NarrationPanel from "../components/NarrationPanel.jsx";
+import RosterSummary from "../components/RosterSummary.jsx";
+import RoleView from "../components/RoleView.jsx";
+import ThemePicker from "../components/ThemePicker.jsx";
+import { requestAutonomousAction, requestDmTurn } from "../services/dmApi.js";
+import { appendConversationEntry } from "../game/gameLoop.js";
+import { getViewForRole } from "../game/roleFilters.js";
+import { saveSession as persistSession } from "../services/sessionApi.js";
+import { resolveTurnWorldState } from "../game/turnRuntime.js";
+import { getUiState } from "../game/uiState.js";
+import { INITIAL_WORLD_STATE, OPENING_NARRATION } from "../game/worldState.js";
 
 function createFallbackSession() {
   return {

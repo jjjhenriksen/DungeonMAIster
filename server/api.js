@@ -1,4 +1,4 @@
-import { extractTurnResult } from "../src/deltaParser.js";
+import { extractTurnResult } from "../src/game/deltaParser.js";
 import {
   createAutonomousCrewSystemPrompt,
   createAutonomousCrewUserPrompt,

@@ -1,5 +1,5 @@
-import { getMissionPromptBrief } from "../src/missionMechanics.js";
-import { getRolePromptBrief } from "../src/roleMechanics.js";
+import { getMissionPromptBrief } from "../src/game/missionMechanics.js";
+import { getRolePromptBrief } from "../src/game/roleMechanics.js";
 
 const STATE_DELTA_SHAPE = `STATE_DELTA:
 {

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { getCrewCoordinationSnapshot } from "./roleMechanics";
+import { getCrewCoordinationSnapshot } from "../game/roleMechanics.js";
 
 function formatLedger(ledger) {
   if (ledger > 0) return `+${ledger}`;

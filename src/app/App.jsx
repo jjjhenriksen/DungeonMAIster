@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import CharacterCreation from "./CharacterCreation";
-import LaunchSequence from "./LaunchSequence";
-import MainMenu from "./MainMenu";
-import { deleteSession, listSessions, loadSession, saveSession } from "./sessionApi";
+import CharacterCreation from "../screens/CharacterCreation.jsx";
+import LaunchSequence from "../screens/LaunchSequence.jsx";
+import MainMenu from "../screens/MainMenu.jsx";
+import { deleteSession, listSessions, loadSession, saveSession } from "../services/sessionApi.js";
 import {
   getStoredTheme,
   getThemeFamilyId,
   getThemeMode,
   THEMES,
   THEME_STORAGE_KEY,
-} from "./themes";
-import ArtemisLost from "./UI.jsx";
-import { createMissionSession } from "./worldState";
+} from "../game/themes.js";
+import ArtemisLost from "../screens/UI.jsx";
+import { createMissionSession } from "../game/worldState.js";
 
 export default function App() {
   const [screen, setScreen] = useState("loading");

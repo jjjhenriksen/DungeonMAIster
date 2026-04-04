@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { getConsoleBrief } from "./roleFilters";
+import { getConsoleBrief } from "../game/roleFilters.js";
 
 const ROLE_FLAVOR = {
   Commander: "You hold the tempo. Weigh the signal, the crew, and the cost of every order.",

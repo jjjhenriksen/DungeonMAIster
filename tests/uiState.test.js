@@ -1,4 +1,4 @@
-import { getUiState } from "../src/uiState.js";
+import { getUiState } from "../src/game/uiState.js";
 import { createCrewMember, createWorldState } from "./fixtures.js";
 
 describe("uiState", () => {

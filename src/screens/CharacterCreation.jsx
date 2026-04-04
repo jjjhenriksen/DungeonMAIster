@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
-import ThemePicker from "./ThemePicker";
+import ThemePicker from "../components/ThemePicker.jsx";
 import {
   DEFAULT_CHARACTER_PROFILES,
   deriveCrewDynamics,
   rerollCharacterProfile,
   rerollCharacterProfiles,
   resolveMissionSeed,
-} from "./worldState.js";
-import { MISSION_SEEDS, pickMissionSeed, getMissionSeedById } from "./missionSeeds.js";
+} from "../game/worldState.js";
+import { MISSION_SEEDS, pickMissionSeed, getMissionSeedById } from "../game/missionSeeds.js";
 
 function cloneProfiles(profiles) {
   return profiles.map((profile) => ({ ...profile }));

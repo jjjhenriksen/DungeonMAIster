@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ThemePicker from "./ThemePicker";
+import ThemePicker from "../components/ThemePicker.jsx";
 
 function formatSaveSummary(session) {
   if (!session?.worldState) return "Empty slot.";

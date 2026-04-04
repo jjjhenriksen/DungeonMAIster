@@ -5,7 +5,7 @@ import {
   getThemeMode,
   THEME_FAMILIES,
   THEME_MODES,
-} from "./themes";
+} from "../game/themes.js";
 
 export default function ThemePicker({
   themeId,

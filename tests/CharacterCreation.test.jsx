@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import CharacterCreation from "../src/CharacterCreation.jsx";
-import { DEFAULT_THEME_ID } from "../src/themes.js";
+import CharacterCreation from "../src/screens/CharacterCreation.jsx";
+import { DEFAULT_THEME_ID } from "../src/game/themes.js";
 
 describe("CharacterCreation", () => {
   test("locked profiles cannot be rerolled individually", () => {

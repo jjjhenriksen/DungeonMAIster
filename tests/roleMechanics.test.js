@@ -1,5 +1,5 @@
-import { createFollowThroughWindow } from "../src/crewCoordination.js";
-import { getFollowThroughTurnTarget } from "../src/roleMechanics.js";
+import { createFollowThroughWindow } from "../src/game/crewCoordination.js";
+import { getFollowThroughTurnTarget } from "../src/game/roleMechanics.js";
 import { createCrewMember, createWorldState } from "./fixtures.js";
 
 describe("role coordination", () => {

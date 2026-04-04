@@ -1,4 +1,4 @@
-import TurnIndicator from "./TurnIndicator";
+import TurnIndicator from "./TurnIndicator.jsx";
 
 function formatSetupStrength(strength) {
   if (strength === "strong") return "strong";

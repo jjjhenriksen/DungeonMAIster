@@ -1,4 +1,4 @@
-import { getMissionSuggestion } from "./missionMechanics";
+import { getMissionSuggestion } from "./missionMechanics.js";
 import {
   getCrewByRole,
   getPrimaryHazard,

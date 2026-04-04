@@ -2,7 +2,7 @@ import {
   extractTurnResult,
   mergeStateDelta,
   normalizeStateDelta,
-} from "../src/deltaParser.js";
+} from "../src/game/deltaParser.js";
 import { createWorldState } from "./fixtures.js";
 
 describe("deltaParser", () => {

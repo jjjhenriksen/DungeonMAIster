@@ -2,7 +2,7 @@ import {
   countRoleKeywordMatches,
   getNextRoleTarget,
   isActionRoleAligned,
-} from "../src/roleSemantics.js";
+} from "../src/game/roleSemantics.js";
 
 describe("roleSemantics", () => {
   test("identifies aligned role language", () => {

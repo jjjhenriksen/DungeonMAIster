@@ -5,7 +5,7 @@ import {
   getThemeById,
   getThemeFamilyId,
   getThemeMode,
-} from "../src/themes.js";
+} from "../src/game/themes.js";
 
 describe("themes", () => {
   test("builds and resolves family/mode ids", () => {

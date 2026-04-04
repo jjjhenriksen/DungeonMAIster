@@ -1,12 +1,12 @@
 import { EVENT_LOG_TYPES, normalizeEventType } from "./eventLogTypes.js";
-import { getMissionMechanicSummary, getMissionOpportunityPreview } from "./missionMechanics";
-import { getRoleGuidance } from "./roleGuidance";
-import { getTopCoordinationAlert } from "./roleMechanics";
+import { getMissionMechanicSummary, getMissionOpportunityPreview } from "./missionMechanics.js";
+import { getRoleGuidance } from "./roleGuidance.js";
+import { getTopCoordinationAlert } from "./roleMechanics.js";
 import {
   getRoleAlignmentPreview,
   getRoleMechanicSummary,
   getRoleSupportPreview,
-} from "./roleMechanics";
+} from "./roleMechanics.js";
 
 function getDangerLevel(worldState) {
   const warningCount = [

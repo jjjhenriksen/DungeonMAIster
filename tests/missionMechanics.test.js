@@ -1,7 +1,7 @@
 import {
   createMissionTurnEffect,
   getMissionOpportunityPreview,
-} from "../src/missionMechanics.js";
+} from "../src/game/missionMechanics.js";
 import { createCrewMember, createWorldState } from "./fixtures.js";
 
 describe("missionMechanics", () => {

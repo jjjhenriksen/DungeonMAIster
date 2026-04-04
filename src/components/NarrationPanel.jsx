@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef } from "react";
-import EventLog from "./EventLog";
-import { useTypewriter } from "./useTypewriter";
+import EventLog from "./EventLog.jsx";
+import { useTypewriter } from "../hooks/useTypewriter.js";
 
 function NarrationPanel({ text, eventLog, uiState, onTypewriterDone }) {
   const { displayed, done } = useTypewriter(text);
