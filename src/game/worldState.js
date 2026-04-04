@@ -156,6 +156,14 @@ function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function pickPreferredName(candidateNames = [], featuredNames = []) {
+  const featuredPool = candidateNames.filter((name) => featuredNames.includes(name));
+  if (featuredPool.length > 0 && Math.random() < 0.68) {
+    return pickRandom(featuredPool);
+  }
+  return pickRandom(candidateNames);
+}
+
 function normalizeMissionSeed(seed) {
   const resolved = typeof seed === "string" ? getMissionSeedById(seed) : seed || DEFAULT_MISSION_SEED;
   return resolved || DEFAULT_MISSION_SEED;
@@ -307,7 +315,10 @@ export function rerollCharacterProfiles(
     const flawEntry = pickTaggedEntry(CHARACTER_BANKS.global.flaws, preferredTags, usedFlaws);
 
     const selected = {
-      name: pickRandom(availableNames.length > 0 ? availableNames : candidateNames),
+      name: pickPreferredName(
+        availableNames.length > 0 ? availableNames : candidateNames,
+        CHARACTER_BANKS.global.featuredFacultyNames || []
+      ),
       callSign: pickRandom(
         availableCallSigns.length > 0 ? availableCallSigns : roleBank.callSigns || [blueprint.defaultCallSign]
       ),
