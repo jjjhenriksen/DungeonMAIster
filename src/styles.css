@@ -3004,6 +3004,27 @@ body::after {
   color: var(--text-warn-strong);
 }
 
+.action-input__focus {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  background: var(--surface-elevated);
+}
+
+.action-input__focus-label {
+  font-size: 10px;
+  color: var(--text-info);
+  letter-spacing: 1.4px;
+  margin-bottom: 6px;
+}
+
+.action-input__focus-copy {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--text-good-strong);
+}
+
 .action-input__bot-preview {
   margin-bottom: 10px;
   padding: 9px 11px;
@@ -3013,6 +3034,39 @@ body::after {
   color: var(--text-good-strong);
   font-size: 11px;
   line-height: 1.6;
+}
+
+.action-input__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.action-input__suggestion {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--tag-command-border);
+  background: var(--tag-command-bg);
+  color: var(--tag-command-text);
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.action-input__suggestion:hover {
+  transform: translateY(-1px);
+  border-color: var(--text-info);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-info) 20%, transparent);
 }
 
 .action-input__row {

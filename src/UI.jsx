@@ -309,6 +309,7 @@ export default function ArtemisLost({
             botPreview={botPreview}
             botPreviewLoading={botPreviewLoading}
             narrationReady={narrationReady}
+            worldState={ws}
           />
         </div>
 

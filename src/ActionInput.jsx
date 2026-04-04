@@ -1,4 +1,5 @@
 import TurnIndicator from "./TurnIndicator";
+import { getRoleGuidance } from "./roleGuidance";
 
 export default function ActionInput({
   activeCrew,
@@ -12,7 +13,10 @@ export default function ActionInput({
   botPreview,
   botPreviewLoading,
   narrationReady,
+  worldState,
 }) {
+  const roleGuidance = getRoleGuidance(worldState, activeCrew);
+
   return (
     <div className="action-input">
       <div className="section-title section-title--mb-6">
@@ -22,6 +26,13 @@ export default function ActionInput({
       <TurnIndicator activeCrew={activeCrew} waiting={waiting} />
 
       <div className={`action-input__panel${waiting ? " action-input__panel--waiting" : ""}`}>
+        {!waiting && !isBotTurn ? (
+          <div className="action-input__focus">
+            <div className="action-input__focus-label">TACTICAL FOCUS</div>
+            <div className="action-input__focus-copy">{roleGuidance.focus}</div>
+          </div>
+        ) : null}
+
         <div className={`action-input__hint${waiting ? " action-input__hint--waiting" : ""}`}>
           {waiting
             ? "The DM is resolving the last move. Controls are temporarily locked."
@@ -37,6 +48,21 @@ export default function ActionInput({
         {isBotTurn && botPreview ? (
           <div className="action-input__bot-preview">
             {botPreviewLoading ? "Drafting autonomous action..." : "Autonomous action:"} {botPreview}
+          </div>
+        ) : null}
+
+        {!waiting && !isBotTurn && roleGuidance.suggestions.length > 0 ? (
+          <div className="action-input__suggestions">
+            {roleGuidance.suggestions.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                className="action-input__suggestion"
+                onClick={() => onChange(suggestion)}
+              >
+                {suggestion}
+              </button>
+            ))}
           </div>
         ) : null}
 
