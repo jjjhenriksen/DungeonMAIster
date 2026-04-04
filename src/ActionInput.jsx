@@ -1,6 +1,10 @@
 import TurnIndicator from "./TurnIndicator";
 import { getRoleGuidance } from "./roleGuidance";
-import { getRoleMechanicSummary } from "./roleMechanics";
+import {
+  getRoleAlignmentPreview,
+  getRoleMechanicSummary,
+  getRoleSupportPreview,
+} from "./roleMechanics";
 
 export default function ActionInput({
   activeCrew,
@@ -18,6 +22,8 @@ export default function ActionInput({
 }) {
   const roleGuidance = getRoleGuidance(worldState, activeCrew);
   const roleMechanicSummary = getRoleMechanicSummary(activeCrew);
+  const roleAlignmentPreview = getRoleAlignmentPreview(activeCrew, input);
+  const roleSupportPreview = getRoleSupportPreview(worldState, activeCrew, input);
 
   return (
     <div className="action-input">
@@ -35,6 +41,35 @@ export default function ActionInput({
             <div className="action-input__hint">
               Role leverage: {roleMechanicSummary}
             </div>
+            <div
+              className={`action-input__alignment action-input__alignment--${roleAlignmentPreview.level}`}
+            >
+              <div className="action-input__alignment-chip">{roleAlignmentPreview.label}</div>
+              <div className="action-input__alignment-copy">{roleAlignmentPreview.detail}</div>
+            </div>
+            {roleSupportPreview.incoming || roleSupportPreview.outgoing ? (
+              <div className="action-input__support">
+                {roleSupportPreview.incoming ? (
+                  <div className="action-input__support-row">
+                    <span className="action-input__support-label">Incoming setup</span>
+                    <span className="action-input__support-copy">
+                      {roleSupportPreview.incoming.sourceCrewName} has opened a{" "}
+                      {roleSupportPreview.incoming.strength} window for {activeCrew.name}.
+                    </span>
+                  </div>
+                ) : null}
+                {roleSupportPreview.outgoing ? (
+                  <div className="action-input__support-row">
+                    <span className="action-input__support-label">Follow-through</span>
+                    <span className="action-input__support-copy">
+                      {roleSupportPreview.outgoing.priorityHandoff
+                        ? `This command hands initiative to ${roleSupportPreview.outgoing.targetCrewName} next.`
+                        : `This move can tee up ${roleSupportPreview.outgoing.targetCrewName} next.`}
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         ) : null}
 

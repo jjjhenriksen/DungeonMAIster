@@ -49,6 +49,13 @@ const ROLE_KEYWORDS = {
   ],
 };
 
+const ROLE_CHAIN_TARGETS = {
+  Commander: ["Flight Engineer", "Science Officer", "Mission Specialist"],
+  "Flight Engineer": ["Mission Specialist", "Commander"],
+  "Science Officer": ["Commander", "Mission Specialist"],
+  "Mission Specialist": ["Science Officer", "Flight Engineer"],
+};
+
 function clampPercent(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return 0;
@@ -72,6 +79,133 @@ function getLowestMoraleCrew(worldState) {
 function isActionRoleAligned(role, actionText = "") {
   const normalized = actionText.toLowerCase();
   return (ROLE_KEYWORDS[role] || []).some((keyword) => normalized.includes(keyword));
+}
+
+function countRoleKeywordMatches(role, actionText = "") {
+  const normalized = actionText.toLowerCase();
+  return (ROLE_KEYWORDS[role] || []).filter((keyword) => normalized.includes(keyword)).length;
+}
+
+function getRoleChainTargets(role) {
+  return ROLE_CHAIN_TARGETS[role] || [];
+}
+
+function getCrewNameTokens(name = "") {
+  return String(name)
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function getRoleTokens(role = "") {
+  const normalized = String(role).trim().toLowerCase();
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const aliases = {
+    commander: ["command"],
+    engineer: ["engineering"],
+    science: ["scientist", "scans"],
+    specialist: ["eva"],
+  };
+
+  return [...new Set(tokens.flatMap((token) => [token, ...(aliases[token] || [])]))];
+}
+
+function getNextRoleTarget(role, actionText = "") {
+  const normalized = actionText.toLowerCase();
+  const targets = getRoleChainTargets(role);
+
+  if (targets.length === 0) return null;
+
+  if (normalized.includes("engineer") || normalized.includes("repair") || normalized.includes("stabilize")) {
+    return targets.find((target) => target === "Flight Engineer") || targets[0];
+  }
+
+  if (normalized.includes("science") || normalized.includes("scan") || normalized.includes("signal")) {
+    return targets.find((target) => target === "Science Officer") || targets[0];
+  }
+
+  if (normalized.includes("specialist") || normalized.includes("eva") || normalized.includes("surface")) {
+    return targets.find((target) => target === "Mission Specialist") || targets[0];
+  }
+
+  if (normalized.includes("command") || normalized.includes("crew") || normalized.includes("coordinate")) {
+    return targets.find((target) => target === "Commander") || targets[0];
+  }
+
+  return targets[0];
+}
+
+function getCrewByRole(worldState, role) {
+  return worldState?.crew?.find((member) => member.role === role);
+}
+
+function inferDirectedCrew(worldState, actionText = "") {
+  const normalized = actionText.toLowerCase();
+  const crew = worldState?.crew || [];
+
+  return (
+    crew.find((member) =>
+      getCrewNameTokens(member.name).some((token) => token.length > 2 && normalized.includes(token))
+    ) ||
+    crew.find((member) =>
+      getRoleTokens(member.role).some((token) => token.length > 2 && normalized.includes(token))
+    ) ||
+    null
+  );
+}
+
+function createFollowThroughWindow(worldState, activeCrew, actionText, effectStrength) {
+  const directedCrew =
+    activeCrew?.role === "Commander" ? inferDirectedCrew(worldState, actionText) : null;
+  const targetCrew =
+    directedCrew ||
+    getCrewByRole(worldState, getNextRoleTarget(activeCrew?.role, actionText));
+  if (!targetCrew) return null;
+
+  return {
+    sourceRole: activeCrew.role,
+    sourceCrewId: activeCrew.id,
+    sourceCrewName: activeCrew.name,
+    targetRole: targetCrew.role,
+    targetCrewId: targetCrew.id,
+    targetCrewName: targetCrew.name,
+    strength: effectStrength >= 4 ? "strong" : "soft",
+    priorityHandoff: Boolean(directedCrew && directedCrew.id !== activeCrew.id),
+    label: `${activeCrew.role} setup for ${targetCrew.role}`,
+  };
+}
+
+function getSupportStrengthValue(strength) {
+  return strength === "strong" ? 4 : 2;
+}
+
+function createSupportWindowDelta(worldState, supportWindow) {
+  if (!supportWindow?.targetRole) return {};
+
+  return {
+    mission: {
+      supportWindow,
+    },
+    eventLog: [
+      {
+        ts: worldState?.mission?.met || "T+00:00",
+        type: EVENT_LOG_TYPES.TRAIT,
+        msg: `${supportWindow.sourceCrewName} creates a follow-through window for ${supportWindow.targetCrewName}.`,
+      },
+    ],
+  };
+}
+
+function getActiveSupportWindow(worldState, activeCrew) {
+  const supportWindow = worldState?.mission?.supportWindow;
+  if (!supportWindow || !activeCrew?.role) return null;
+
+  if (supportWindow.targetCrewId === activeCrew.id || supportWindow.targetRole === activeCrew.role) {
+    return supportWindow;
+  }
+
+  return null;
 }
 
 function createCrewPatch(member, fields) {
@@ -189,20 +323,60 @@ export function createRoleTurnEffect(worldState, activeCrew, actionText = "") {
     return { delta: {} };
   }
 
-  const effectStrength = isActionRoleAligned(activeCrew.role, actionText) ? 4 : 2;
+  const supportWindow = getActiveSupportWindow(worldState, activeCrew);
+  const baseStrength = isActionRoleAligned(activeCrew.role, actionText) ? 4 : 2;
+  const supportStrength = supportWindow && baseStrength >= 4
+    ? getSupportStrengthValue(supportWindow?.strength)
+    : 0;
+  const effectStrength = baseStrength + supportStrength;
+  const nextSupportWindow = createFollowThroughWindow(
+    worldState,
+    activeCrew,
+    actionText,
+    baseStrength
+  );
 
-  switch (activeCrew.role) {
-    case "Commander":
-      return createCommanderEffect(worldState, activeCrew, effectStrength);
-    case "Flight Engineer":
-      return createEngineerEffect(worldState, activeCrew, effectStrength);
-    case "Science Officer":
-      return createScienceEffect(worldState, activeCrew, effectStrength);
-    case "Mission Specialist":
-      return createSpecialistEffect(worldState, activeCrew, effectStrength);
-    default:
-      return { delta: {} };
-  }
+  const roleDelta = (() => {
+    switch (activeCrew.role) {
+      case "Commander":
+        return createCommanderEffect(worldState, activeCrew, effectStrength).delta;
+      case "Flight Engineer":
+        return createEngineerEffect(worldState, activeCrew, effectStrength).delta;
+      case "Science Officer":
+        return createScienceEffect(worldState, activeCrew, effectStrength).delta;
+      case "Mission Specialist":
+        return createSpecialistEffect(worldState, activeCrew, effectStrength).delta;
+      default:
+        return {};
+    }
+  })();
+
+  const supportDelta = createSupportWindowDelta(worldState, nextSupportWindow);
+  const supportEvent =
+    supportWindow && baseStrength >= 4
+      ? [
+          {
+            ts: worldState?.mission?.met || "T+00:00",
+            type: EVENT_LOG_TYPES.COMMAND,
+            msg: `${activeCrew.name} capitalizes on ${supportWindow.sourceCrewName}'s setup and converts it into a cleaner execution window.`,
+          },
+        ]
+      : [];
+
+  return {
+    delta: {
+      ...roleDelta,
+      mission: {
+        ...(roleDelta.mission || {}),
+        supportWindow: nextSupportWindow,
+      },
+      eventLog: [
+        ...(supportEvent || []),
+        ...(supportDelta.eventLog || []),
+        ...(roleDelta.eventLog || []),
+      ],
+    },
+  };
 }
 
 export function getRoleMechanicSummary(activeCrew) {
@@ -239,13 +413,85 @@ export function getRolePromptBrief(worldState, activeCrew, actionText = "") {
   const aligned = isActionRoleAligned(activeCrew?.role, actionText);
   const roleSummary = getRoleMechanicSummary(activeCrew);
   const roleOpportunity = getRoleOpportunity(worldState, activeCrew);
+  const supportWindow = getActiveSupportWindow(worldState, activeCrew);
 
   return {
     aligned,
     summary: roleSummary,
     opportunity: roleOpportunity,
+    incomingSupport: supportWindow
+      ? `${supportWindow.sourceCrewName} has created a ${supportWindow.strength} follow-through window for ${activeCrew.name}.`
+      : "No active cross-role setup window is currently open.",
+    commandPriority:
+      supportWindow?.priorityHandoff && supportWindow?.targetCrewId === activeCrew?.id
+        ? `${supportWindow.sourceCrewName} explicitly handed initiative to ${activeCrew.name}; treat this as a high-clarity chain-of-command follow-through.`
+        : "No explicit command handoff is currently in effect.",
     framing: aligned
       ? "The action is role-aligned, so treat success as more efficient, controlled, and lower-cost unless the fiction clearly justifies complications."
       : "The action is off-role or only weakly aligned, so it may still work, but it should usually carry more friction, delay, exposure, or collateral pressure than a role-native move.",
   };
+}
+
+export function getRoleAlignmentPreview(activeCrew, actionText = "") {
+  const trimmed = actionText.trim();
+  if (!activeCrew?.role || !trimmed) {
+    return {
+      level: "neutral",
+      label: "Awaiting vector",
+      detail: "Role-aligned wording will usually resolve cleaner than a stretch play.",
+    };
+  }
+
+  const matchCount = countRoleKeywordMatches(activeCrew.role, trimmed);
+
+  if (matchCount >= 2) {
+    return {
+      level: "aligned",
+      label: "Role-aligned",
+      detail: "This reads like core role work and should usually resolve with better efficiency and lower fallout.",
+    };
+  }
+
+  if (matchCount === 1) {
+    return {
+      level: "stretch",
+      label: "Reach, but workable",
+      detail: "Part of this fits the role, but the DM is more likely to attach cost, delay, or extra pressure.",
+    };
+  }
+
+  return {
+    level: "offrole",
+    label: "Off-role pressure",
+    detail: "This is a meaningful stretch for the current station, so expect more friction if it works at all.",
+  };
+}
+
+export function getRoleSupportPreview(worldState, activeCrew, actionText = "") {
+  const incoming = getActiveSupportWindow(worldState, activeCrew);
+  const directedCrew =
+    activeCrew?.role === "Commander" ? inferDirectedCrew(worldState, actionText) : null;
+  const outgoingTargetRole = directedCrew?.role || getNextRoleTarget(activeCrew?.role, actionText);
+  const outgoingTargetCrew = directedCrew || getCrewByRole(worldState, outgoingTargetRole);
+
+  return {
+    incoming,
+    outgoing:
+      outgoingTargetRole && outgoingTargetCrew
+        ? {
+            targetRole: outgoingTargetRole,
+            targetCrewName: outgoingTargetCrew.name,
+            priorityHandoff: Boolean(directedCrew && directedCrew.id !== activeCrew?.id),
+          }
+        : null,
+  };
+}
+
+export function getPriorityHandoffTarget(worldState) {
+  const supportWindow = worldState?.mission?.supportWindow;
+  if (!supportWindow?.priorityHandoff || !supportWindow?.targetCrewId) {
+    return null;
+  }
+
+  return worldState?.crew?.find((member) => member.id === supportWindow.targetCrewId) || null;
 }

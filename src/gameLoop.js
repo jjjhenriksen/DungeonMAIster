@@ -28,6 +28,11 @@ export function getNextTurnIndex(crew, currentTurn) {
   return (currentTurn + 1) % crew.length;
 }
 
+export function getCrewTurnIndexById(crew, crewId) {
+  if (!Array.isArray(crew) || !crewId) return -1;
+  return crew.findIndex((member) => member.id === crewId);
+}
+
 export function createActionLogEntry(worldState, activeCrew, action) {
   return {
     ts: worldState?.mission?.met || "T+00:00",

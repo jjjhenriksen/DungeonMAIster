@@ -13,10 +13,11 @@ import {
   advanceMissionMet,
   appendConversationEntry,
   createActionLogEntry,
+  getCrewTurnIndexById,
   getNextTurnIndex,
   prependCappedEntries,
 } from "./gameLoop";
-import { createRoleTurnEffect } from "./roleMechanics";
+import { createRoleTurnEffect, getPriorityHandoffTarget } from "./roleMechanics";
 import { getViewForRole } from "./roleFilters";
 import { saveSession as persistSession } from "./sessionApi";
 import { getUiState } from "./uiState";
@@ -99,6 +100,17 @@ export default function ArtemisLost({
     setTimeout(() => inputRef.current?.focus(), 100);
   }
 
+  function resolveNextTurnIndex(nextWorldState) {
+    const priorityTarget = getPriorityHandoffTarget(nextWorldState);
+    const priorityIndex = getCrewTurnIndexById(nextWorldState?.crew, priorityTarget?.id);
+
+    if (priorityIndex >= 0 && priorityIndex !== turn) {
+      return priorityIndex;
+    }
+
+    return getNextTurnIndex(nextWorldState?.crew || ws.crew, turn);
+  }
+
   async function resolveTurn(action) {
     if (!action.trim() || waiting) return;
     const actionText = action.trim();
@@ -135,7 +147,7 @@ export default function ArtemisLost({
       };
       const roleEffect = createRoleTurnEffect(baseWorldState, activeCrew, actionText);
       const nextWorldState = applyStateDelta(baseWorldState, roleEffect.delta);
-      const nextTurn = getNextTurnIndex(ws.crew, turn);
+      const nextTurn = resolveNextTurnIndex(nextWorldState);
 
       setNarration(errorNarration);
       setWs(nextWorldState);
@@ -177,7 +189,7 @@ export default function ArtemisLost({
     );
     const roleEffect = createRoleTurnEffect(dmResolvedWorldState, activeCrew, actionText);
     const nextWorldState = applyStateDelta(dmResolvedWorldState, roleEffect.delta);
-    const nextTurn = getNextTurnIndex(ws.crew, turn);
+    const nextTurn = resolveNextTurnIndex(nextWorldState);
 
     setWs(nextWorldState);
     setNarration(nextText);

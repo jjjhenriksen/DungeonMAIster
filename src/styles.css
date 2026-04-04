@@ -3025,6 +3025,92 @@ body::after {
   color: var(--text-good-strong);
 }
 
+.action-input__alignment {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.action-input__alignment-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid var(--status-chip-border);
+  background: var(--status-chip-bg);
+  color: var(--text-body);
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.action-input__alignment-copy {
+  flex: 1;
+  min-width: 180px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.action-input__alignment--aligned .action-input__alignment-chip {
+  border-color: var(--border-good);
+  background: var(--bg-pill-good);
+  color: var(--text-good-strong);
+}
+
+.action-input__alignment--stretch .action-input__alignment-chip {
+  border-color: var(--border-warn);
+  background: color-mix(in srgb, var(--bg-pill-warn) 64%, var(--surface-elevated));
+  color: var(--text-warn-soft);
+}
+
+.action-input__alignment--offrole .action-input__alignment-chip {
+  border-color: var(--tag-risk-border);
+  background: color-mix(in srgb, var(--tag-risk-bg) 72%, var(--surface-elevated));
+  color: var(--tag-risk-text);
+}
+
+.action-input__support {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.action-input__support-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.action-input__support-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--tag-system-border);
+  background: var(--tag-system-bg);
+  color: var(--tag-system-text);
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.action-input__support-copy {
+  flex: 1;
+  min-width: 180px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--text-body);
+}
+
 .action-input__bot-preview {
   margin-bottom: 10px;
   padding: 9px 11px;
