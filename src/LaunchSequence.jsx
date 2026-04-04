@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DEFAULT_DURATION_MS = 9600;
 const REDUCED_MOTION_DURATION_MS = 1200;
@@ -12,6 +12,7 @@ const LAUNCH_STAGES = [
 ];
 
 export default function LaunchSequence({ session, slotId, themeId, themes, onComplete }) {
+  const [readyToContinue, setReadyToContinue] = useState(false);
   const mission = session?.worldState?.mission || {};
   const crew = session?.worldState?.crew || [];
   const activeTheme = themes?.find((theme) => theme.id === themeId) || themes?.[0] || null;
@@ -36,11 +37,11 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const duration = prefersReducedMotion ? REDUCED_MOTION_DURATION_MS : DEFAULT_DURATION_MS;
     const timer = window.setTimeout(() => {
-      onComplete?.();
+      setReadyToContinue(true);
     }, duration);
 
     return () => window.clearTimeout(timer);
-  }, [onComplete]);
+  }, []);
 
   return (
     <section className="launch-screen" aria-label="Mission launch sequence">
@@ -171,9 +172,21 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
         </div>
       </div>
 
-      <button type="button" className="launch-screen__skip" onClick={() => onComplete?.()}>
-        Skip Launch
-      </button>
+      <div className="launch-screen__actions">
+        {!readyToContinue ? (
+          <button type="button" className="launch-screen__skip" onClick={() => onComplete?.()}>
+            Skip Launch
+          </button>
+        ) : null}
+        <button
+          type="button"
+          className="launch-screen__continue"
+          onClick={() => onComplete?.()}
+          disabled={!readyToContinue}
+        >
+          {readyToContinue ? "Continue To Mission" : "Launch In Progress"}
+        </button>
+      </div>
     </section>
   );
 }

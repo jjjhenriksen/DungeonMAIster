@@ -1298,8 +1298,8 @@ body::after {
   position: relative;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 420px);
-  align-items: end;
+  grid-template-columns: minmax(280px, 420px) minmax(420px, 1fr) minmax(280px, 420px);
+  align-items: center;
   gap: 24px;
   padding: clamp(24px, 4vw, 44px);
   background:
@@ -1329,7 +1329,7 @@ body::after {
 .launch-pad,
 .launch-screen__hud,
 .launch-screen__manifest,
-.launch-screen__skip {
+.launch-screen__actions {
   position: relative;
   z-index: 1;
 }
@@ -1424,8 +1424,8 @@ body::after {
 }
 
 .launch-screen__hud {
-  align-self: start;
-  width: min(100%, 640px);
+  align-self: stretch;
+  width: 100%;
   padding: clamp(18px, 3vw, 28px);
   border: 1px solid color-mix(in srgb, var(--text-info) 24%, transparent);
   border-radius: 24px;
@@ -1555,6 +1555,7 @@ body::after {
 }
 
 .launch-screen__viewport {
+  align-self: stretch;
   min-height: 72vh;
   border-radius: 28px;
   border: 1px solid color-mix(in srgb, var(--panel-border-strong) 78%, transparent);
@@ -1645,7 +1646,7 @@ body::after {
 }
 
 .launch-pad {
-  min-height: 72vh;
+  min-height: 100%;
   display: grid;
   align-items: end;
   justify-items: center;
@@ -1835,10 +1836,17 @@ body::after {
   transform: translateX(-50%);
   border-radius: 30px 30px 10px 10px;
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--surface-elevated) 60%, black) 0%, color-mix(in srgb, var(--text-body) 18%, var(--surface-elevated)) 18%, color-mix(in srgb, var(--text-primary) 94%, white) 48%, color-mix(in srgb, var(--text-dim) 68%, var(--surface-elevated)) 100%);
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, black 78%, var(--surface-elevated)) 0%,
+      color-mix(in srgb, var(--surface-elevated) 88%, black) 22%,
+      color-mix(in srgb, var(--text-info) 16%, var(--surface-elevated)) 49%,
+      color-mix(in srgb, var(--surface-elevated) 90%, black) 78%,
+      color-mix(in srgb, black 74%, var(--surface-elevated)) 100%
+    );
   box-shadow:
-    inset -14px 0 24px color-mix(in srgb, var(--launch-sky-mid) 28%, transparent),
-    0 0 26px color-mix(in srgb, var(--text-primary) 12%, transparent);
+    inset -10px 0 16px color-mix(in srgb, black 28%, transparent),
+    0 0 18px color-mix(in srgb, var(--text-info) 8%, transparent);
 }
 
 .rocket__tip {
@@ -1850,7 +1858,12 @@ body::after {
   transform: translateX(-50%);
   clip-path: polygon(50% 0%, 84% 100%, 16% 100%);
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--text-body) 62%, var(--surface-elevated)) 0%, color-mix(in srgb, var(--launch-rocket-tip) 72%, white) 46%, color-mix(in srgb, var(--surface-elevated) 52%, black) 100%);
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, black 66%, var(--surface-elevated)) 0%,
+      color-mix(in srgb, var(--text-info) 20%, var(--surface-elevated)) 46%,
+      color-mix(in srgb, black 66%, var(--surface-elevated)) 100%
+    );
 }
 
 .rocket__spine {
@@ -1860,7 +1873,7 @@ body::after {
   bottom: 30px;
   width: 3px;
   transform: translateX(-50%);
-  background: color-mix(in srgb, var(--text-info) 26%, transparent);
+  background: color-mix(in srgb, var(--text-info) 18%, transparent);
 }
 
 .rocket__band {
@@ -1868,7 +1881,12 @@ body::after {
   left: 10px;
   right: 10px;
   height: 6px;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--surface-elevated) 44%, black), color-mix(in srgb, var(--text-info) 42%, transparent), color-mix(in srgb, var(--surface-elevated) 44%, black));
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, black 64%, var(--surface-elevated)),
+    color-mix(in srgb, var(--text-info) 26%, transparent),
+    color-mix(in srgb, black 64%, var(--surface-elevated))
+  );
   border-radius: 999px;
 }
 
@@ -1889,7 +1907,11 @@ body::after {
   bottom: 30px;
   width: 28px;
   height: 118px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-elevated) 28%, white) 0%, color-mix(in srgb, var(--text-dim) 48%, var(--surface-elevated)) 100%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-elevated) 76%, black) 0%,
+    color-mix(in srgb, black 52%, var(--surface-elevated)) 100%
+  );
 }
 
 .rocket__wing--left {
@@ -1910,7 +1932,11 @@ body::after {
   height: 24px;
   transform: translateX(-50%);
   border-radius: 0 0 10px 10px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--text-dim) 80%, var(--surface-elevated)) 0%, color-mix(in srgb, var(--launch-sky-top) 40%, black) 100%);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-elevated) 66%, var(--text-dim)) 0%,
+    color-mix(in srgb, black 58%, var(--launch-sky-top)) 100%
+  );
 }
 
 .rocket__flame {
@@ -1927,7 +1953,7 @@ body::after {
   width: 22px;
   height: 162px;
   background:
-    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.96), var(--launch-exhaust-core) 28%, var(--launch-exhaust-edge) 62%, rgba(255, 76, 29, 0) 100%);
+    radial-gradient(circle at 50% 16%, color-mix(in srgb, white 78%, var(--launch-exhaust-core)), var(--launch-exhaust-core) 18%, color-mix(in srgb, var(--launch-exhaust-edge) 68%, transparent) 54%, rgba(255, 76, 29, 0) 100%);
   animation: rocketFlameCore 0.18s ease-in-out infinite alternate;
 }
 
@@ -1936,15 +1962,15 @@ body::after {
   width: 58px;
   height: 220px;
   background:
-    radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--launch-exhaust-core) 86%, transparent), color-mix(in srgb, var(--launch-exhaust-edge) 42%, transparent) 48%, rgba(255, 91, 25, 0) 100%);
+    radial-gradient(circle at 50% 12%, color-mix(in srgb, var(--launch-exhaust-core) 52%, transparent), color-mix(in srgb, var(--launch-exhaust-edge) 24%, transparent) 42%, rgba(255, 91, 25, 0) 100%);
   filter: blur(14px);
   animation: rocketFlameGlow 0.3s ease-in-out infinite alternate;
 }
 
 .launch-screen__manifest {
-  align-self: center;
-  justify-self: end;
-  width: min(100%, 420px);
+  align-self: stretch;
+  justify-self: stretch;
+  width: 100%;
   padding: 18px;
   border-radius: 22px;
   border: 1px solid color-mix(in srgb, var(--text-info) 18%, transparent);
@@ -2053,31 +2079,89 @@ body::after {
   animation: launchProgress 9.6s linear forwards;
 }
 
-.launch-screen__skip {
+.launch-screen__actions {
   position: absolute;
   right: clamp(20px, 4vw, 34px);
   bottom: clamp(20px, 4vw, 30px);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 4;
+}
+
+.launch-screen__skip,
+.launch-screen__continue {
+  position: relative;
   padding: 11px 16px;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--text-info) 24%, transparent);
-  background: color-mix(in srgb, var(--surface-modal-start) 54%, transparent);
-  color: color-mix(in srgb, var(--text-primary) 90%, transparent);
   font-family: inherit;
   font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  cursor: pointer;
   backdrop-filter: blur(10px);
   transition:
     transform 0.16s ease,
     border-color 0.16s ease,
-    background 0.16s ease;
+    background 0.16s ease,
+    color 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.launch-screen__skip {
+  border: 1px solid color-mix(in srgb, var(--text-info) 24%, transparent);
+  background: color-mix(in srgb, var(--surface-modal-start) 54%, transparent);
+  color: color-mix(in srgb, var(--text-primary) 90%, transparent);
+  cursor: pointer;
+}
+
+.launch-screen__continue {
+  border: 1px solid color-mix(in srgb, var(--surface-continue-border) 88%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface-continue-start) 92%, transparent),
+      color-mix(in srgb, var(--surface-continue-end) 90%, transparent)
+    );
+  color: color-mix(in srgb, var(--text-primary) 96%, transparent);
+  cursor: pointer;
+}
+
+.launch-screen__continue:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  border-color: color-mix(in srgb, var(--border-soft) 76%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface-elevated) 88%, transparent),
+      color-mix(in srgb, var(--surface-base) 78%, transparent)
+    );
+  color: color-mix(in srgb, var(--text-dim) 88%, transparent);
+}
+
+.launch-screen__skip:hover,
+.launch-screen__continue:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .launch-screen__skip:hover {
-  transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--text-info) 60%, transparent);
   background: color-mix(in srgb, var(--surface-modal-start) 72%, transparent);
+}
+
+.launch-screen__continue:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--text-info) 46%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface-continue-start) 96%, transparent),
+      color-mix(in srgb, var(--surface-continue-end) 96%, transparent)
+    );
+}
+
+.launch-screen__skip:active,
+.launch-screen__continue:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .menu-panel,
@@ -2988,7 +3072,8 @@ body::after {
   }
 
   .launch-screen__hud,
-  .launch-screen__manifest {
+  .launch-screen__manifest,
+  .launch-screen__viewport {
     width: 100%;
   }
 
@@ -3018,10 +3103,11 @@ body::after {
     bottom: 14%;
   }
 
-  .launch-screen__skip {
+  .launch-screen__actions {
     position: relative;
     right: auto;
     bottom: auto;
     justify-self: start;
+    flex-wrap: wrap;
   }
 }
