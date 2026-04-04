@@ -58,8 +58,8 @@ export default function App() {
     setScreen("game");
   }
 
-  async function handleStartMission(slotId, profiles) {
-    const session = createMissionSession(profiles);
+  async function handleStartMission(slotId, profiles, missionSeed) {
+    const session = createMissionSession(profiles, missionSeed);
     const saved = await saveSession(slotId, session);
     if (saved?.error) return;
     await refreshSlots();

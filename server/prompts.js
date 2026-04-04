@@ -4,7 +4,7 @@ const STATE_DELTA_SHAPE = `STATE_DELTA:
   "environment": {},
   "systems": {},
   "crew": [{ "id": "crew-id" }],
-  "eventLog": [{ "ts": "T+00:00", "msg": "log entry", "type": "info" }]
+  "eventLog": [{ "ts": "T+00:00", "msg": "log entry", "type": "system" }]
 }`;
 
 export function createDmSystemPrompt() {
@@ -22,6 +22,10 @@ State rules:
 - Advance consequences plausibly. Small actions should cause small changes.
 - Keep numeric values believable and bounded to 0-100 where relevant.
 - Do not overwrite unchanged data.
+- Treat crew personality as gameplay material, not decoration. Traits, flaws, specialties, personal stakes, and crew tension notes should shape outcomes when relevant.
+- When a crew trait or flaw materially changes what happens, add an eventLog entry with type "trait".
+- If the action introduces escalating danger, fallout, or instability, prefer eventLog type "risk".
+- Use eventLog types only from: "command", "system", "sensor", "trait", "risk".
 
 Output rules:
 - Respond as plain text narration followed by a literal STATE_DELTA block.
@@ -66,5 +70,5 @@ ${JSON.stringify(worldState, null, 2)}
 ${vaultBlock}Player action:
 ${action}
 
-Return immersive narration followed by STATE_DELTA only.`;
+Return immersive narration followed by STATE_DELTA only. Make the mission seed, environment pressure, and crew dynamics materially felt in the outcome.`;
 }

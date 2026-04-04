@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import ThemePicker from "./ThemePicker";
 import {
-  createRandomCharacterProfiles,
   DEFAULT_CHARACTER_PROFILES,
   deriveCrewDynamics,
+  rerollCharacterProfile,
+  rerollCharacterProfiles,
 } from "./worldState";
+import { MISSION_SEEDS, pickMissionSeed, getMissionSeedById } from "./missionSeeds";
 
 function cloneProfiles(profiles) {
   return profiles.map((profile) => ({ ...profile }));
@@ -19,7 +21,19 @@ export default function CharacterCreation({
   onThemeChange,
 }) {
   const [profiles, setProfiles] = useState(() => cloneProfiles(DEFAULT_CHARACTER_PROFILES));
+  const [lockedProfileIds, setLockedProfileIds] = useState(() => new Set());
+  const [missionSeed, setMissionSeed] = useState(() => pickMissionSeed());
   const crewDynamics = useMemo(() => deriveCrewDynamics(profiles), [profiles]);
+  const lockedCount = lockedProfileIds.size;
+
+  function toggleLockedProfile(id) {
+    setLockedProfileIds((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   function updateProfile(id, field, value) {
     setProfiles((current) =>
@@ -41,7 +55,8 @@ export default function CharacterCreation({
         specialty: profile.specialty.trim(),
         flaw: profile.flaw.trim(),
         personalStake: profile.personalStake.trim(),
-      }))
+      })),
+      missionSeed
     );
   }
 
@@ -70,10 +85,52 @@ export default function CharacterCreation({
           </div>
         ) : null}
 
+        <div className="creator-seed">
+          <div className="creator-seed__header">
+            <div>
+              <div className="section-title section-title--mb-6">MISSION SEED</div>
+              <div className="creator-seed__title">{missionSeed.label}</div>
+            </div>
+            <button
+              type="button"
+              className="menu-button"
+              onClick={() => setMissionSeed((current) => pickMissionSeed(current?.id))}
+            >
+              Reroll Mission
+            </button>
+          </div>
+          <div className="creator-seed__summary">{missionSeed.summary}</div>
+          <div className="creator-seed__meta">
+            <span>{missionSeed.environment.location}</span>
+            <span>{missionSeed.environment.pressure}</span>
+            <span>{missionSeed.mission.phase}</span>
+          </div>
+        </div>
+
         <div className="creator-grid">
           {profiles.map((profile) => (
             <section key={profile.id} className="creator-card">
-              <div className="creator-card__title">{profile.role}</div>
+              <div className="creator-card__header">
+                <div className="creator-card__title">{profile.role}</div>
+                <div className="creator-card__controls">
+                  <button
+                    type="button"
+                    className={`creator-pill ${lockedProfileIds.has(profile.id) ? "creator-pill--active" : ""}`}
+                    onClick={() => toggleLockedProfile(profile.id)}
+                  >
+                    {lockedProfileIds.has(profile.id) ? "Locked" : "Unlocked"}
+                  </button>
+                  <button
+                    type="button"
+                    className="creator-pill"
+                    onClick={() =>
+                      setProfiles((current) => rerollCharacterProfile(current, profile.id))
+                    }
+                  >
+                    Reroll This
+                  </button>
+                </div>
+              </div>
 
               <label className="creator-field">
                 <span>Name</span>
@@ -152,16 +209,20 @@ export default function CharacterCreation({
           <button
             type="button"
             className="menu-button"
-            onClick={() => setProfiles(cloneProfiles(DEFAULT_CHARACTER_PROFILES))}
+            onClick={() => {
+              setProfiles(cloneProfiles(DEFAULT_CHARACTER_PROFILES));
+              setLockedProfileIds(new Set());
+              setMissionSeed(getMissionSeedById(MISSION_SEEDS[0]?.id));
+            }}
           >
             Reset Defaults
           </button>
           <button
             type="button"
             className="menu-button"
-            onClick={() => setProfiles(createRandomCharacterProfiles())}
+            onClick={() => setProfiles((current) => rerollCharacterProfiles(current, lockedProfileIds))}
           >
-            Reroll Crew
+            Reroll Crew{lockedCount ? ` (${lockedCount} locked)` : ""}
           </button>
           <button type="submit" className="menu-button menu-button--primary">
             Launch Mission

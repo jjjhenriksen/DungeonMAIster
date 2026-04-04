@@ -1,5 +1,6 @@
 import { EVENT_LOG_TYPES } from "./eventLogTypes";
 import { CHARACTER_BANKS, CREW_TENSION_PATTERNS } from "./characterBanks";
+import { getMissionSeedById, MISSION_SEEDS } from "./missionSeeds";
 
 function clampPercent(value) {
   const num = Number(value);
@@ -40,65 +41,7 @@ function createCrewMember({
   };
 }
 
-const MISSION_TEMPLATE = {
-  id: "ARTEMIS-07",
-  name: "Lost Signal",
-  phase: "Crater approach - active",
-  met: "T+14:22:07",
-  objectives: [
-    "Trace the dormant Apollo-band signal source.",
-    "Keep the rover crew alive until a stable comms link is restored.",
-    "Recover enough anomaly data to justify a return window.",
-  ],
-  briefing:
-    "Artemis-07 diverted after receiving a structured radio pulse from Shackleton Crater. Mission control lost clean contact twelve minutes later.",
-};
-
-const ENVIRONMENT_TEMPLATE = {
-  location: "Shackleton Crater Rim",
-  hazards: ["Signal interference", "Knife-edge crater terrain", "Shadowed ice vents"],
-  anomaly: "Apollo-band signal with repeating geometric carrier modulation",
-  visibility: "Low-angle glare on the rim, deep shadow inside the crater",
-  pressure: "EVA only",
-};
-
-const SYSTEMS_TEMPLATE = {
-  o2: 71,
-  power: 82,
-  comms: 35,
-  propulsion: 64,
-  scrubber: "patched",
-  thermal: 76,
-  nav: 58,
-};
-
-const EVENT_LOG_TEMPLATE = [
-  {
-    ts: "T+14:22",
-    msg: "Anomaly signal detected from Shackleton Crater interior.",
-    type: EVENT_LOG_TYPES.SENSOR,
-  },
-  {
-    ts: "T+14:19",
-    msg: "Telemetry confirms the signal is repeating in deliberate geometric bursts.",
-    type: EVENT_LOG_TYPES.SENSOR,
-  },
-  {
-    ts: "T+14:18",
-    msg: "Long-range comms degraded after the rover crossed the rim shadow line.",
-    type: EVENT_LOG_TYPES.RISK,
-  },
-  {
-    ts: "T+14:11",
-    msg: "Okafor patched the primary scrubber bypass after a dust-line leak.",
-    type: EVENT_LOG_TYPES.SYSTEM,
-  },
-  {
-    ts: "T+13:55",
-    msg: "Artemis-07 rover reached the crater rim with all crew nominal.",
-    type: EVENT_LOG_TYPES.SYSTEM,
-  },
-];
+const DEFAULT_MISSION_SEED = MISSION_SEEDS[0];
 
 const CREW_BLUEPRINTS = [
   {
@@ -217,6 +160,11 @@ function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function normalizeMissionSeed(seed) {
+  const resolved = typeof seed === "string" ? getMissionSeedById(seed) : seed || DEFAULT_MISSION_SEED;
+  return resolved || DEFAULT_MISSION_SEED;
+}
+
 function hasAnyTag(entry, tags = []) {
   return entry?.tags?.some((tag) => tags.includes(tag));
 }
@@ -308,11 +256,20 @@ export function deriveCrewDynamics(profiles = []) {
 }
 
 export function createRandomCharacterProfiles() {
+  return rerollCharacterProfiles(DEFAULT_CHARACTER_PROFILES);
+}
+
+export function rerollCharacterProfiles(
+  currentProfiles = DEFAULT_CHARACTER_PROFILES,
+  lockedProfileIds = []
+) {
   const usedNames = new Set();
   const usedCallSigns = new Set();
   const usedTraits = new Set();
   const usedFlaws = new Set();
   const selectedProfiles = new Map();
+  const lockedIds = new Set(lockedProfileIds);
+  const existingProfilesById = new Map(currentProfiles.map((profile) => [profile.id, profile]));
   const tensionPattern = Math.random() < 0.55 ? pickRandom(CREW_TENSION_PATTERNS) : null;
   const tensionRoles = new Map(
     tensionPattern
@@ -321,6 +278,25 @@ export function createRandomCharacterProfiles() {
   );
 
   CREW_BLUEPRINTS.forEach((blueprint) => {
+    if (!lockedIds.has(blueprint.id)) return;
+    const lockedProfile = existingProfilesById.get(blueprint.id);
+    if (!lockedProfile) return;
+
+    usedNames.add(lockedProfile.name);
+    usedCallSigns.add(lockedProfile.callSign);
+    usedTraits.add(lockedProfile.trait);
+    usedFlaws.add(lockedProfile.flaw);
+    selectedProfiles.set(
+      blueprint.id,
+      createProfileFromBlueprint(blueprint, {
+        ...lockedProfile,
+        tensionNote: tensionRoles.has(blueprint.role) ? tensionPattern?.summary || "" : "",
+      })
+    );
+  });
+
+  CREW_BLUEPRINTS.forEach((blueprint) => {
+    if (selectedProfiles.has(blueprint.id)) return;
     const roleBank = CHARACTER_BANKS[blueprint.bankKey] || {};
     const availableNames = (roleBank.names || [blueprint.defaultName]).filter(
       (name) => !usedNames.has(name)
@@ -360,6 +336,13 @@ export function createRandomCharacterProfiles() {
   return CREW_BLUEPRINTS.map((blueprint) => selectedProfiles.get(blueprint.id));
 }
 
+export function rerollCharacterProfile(currentProfiles, targetProfileId) {
+  const lockedIds = (currentProfiles || [])
+    .map((profile) => profile.id)
+    .filter((profileId) => profileId !== targetProfileId);
+  return rerollCharacterProfiles(currentProfiles, lockedIds);
+}
+
 function withDerivedCrewDynamics(profiles = DEFAULT_CHARACTER_PROFILES) {
   const normalizedProfiles = profiles.map((profile) => ({
     ...profile,
@@ -383,12 +366,26 @@ function getCharacterProfileMap(profiles = DEFAULT_CHARACTER_PROFILES) {
 }
 
 export function createInitialWorldState(profiles = DEFAULT_CHARACTER_PROFILES) {
+  return createInitialWorldStateForSeed(profiles, DEFAULT_MISSION_SEED);
+}
+
+export function createInitialWorldStateForSeed(
+  profiles = DEFAULT_CHARACTER_PROFILES,
+  missionSeed = DEFAULT_MISSION_SEED
+) {
   const profilesById = getCharacterProfileMap(profiles);
+  const seed = normalizeMissionSeed(missionSeed);
 
   return {
-    mission: { ...MISSION_TEMPLATE },
-    environment: { ...ENVIRONMENT_TEMPLATE },
-    systems: { ...SYSTEMS_TEMPLATE },
+    mission: {
+      id: "ARTEMIS-07",
+      seedId: seed.id,
+      seedLabel: seed.label,
+      seedSummary: seed.summary,
+      ...seed.mission,
+    },
+    environment: { ...seed.environment },
+    systems: { ...seed.systems },
     crew: CREW_BLUEPRINTS.map((blueprint) => {
       const profile = profilesById.get(blueprint.id) || {};
       const name = profile.name?.trim() || blueprint.defaultName;
@@ -417,7 +414,10 @@ export function createInitialWorldState(profiles = DEFAULT_CHARACTER_PROFILES) {
         },
       });
     }),
-    eventLog: EVENT_LOG_TEMPLATE.map((entry) => ({ ...entry })),
+    eventLog: (seed.eventLog || []).map((entry) => ({
+      ...entry,
+      type: entry.type || EVENT_LOG_TYPES.SYSTEM,
+    })),
   };
 }
 
@@ -426,14 +426,27 @@ export function createOpeningNarration(worldState) {
   const engineer = worldState?.crew?.[1]?.name || "Okafor";
   const scientist = worldState?.crew?.[2]?.name || "Reyes";
   const specialist = worldState?.crew?.[3]?.name || "Park";
+  const location = worldState?.environment?.location || "the crater rim";
+  const anomaly = worldState?.environment?.anomaly || "an impossible signal";
+  const visibility = worldState?.environment?.visibility || "hard, hostile lunar light";
+  const pressure = worldState?.environment?.pressure || "EVA pressure";
+  const briefing = worldState?.mission?.briefing || "The mission state has become unstable.";
+  const objective = worldState?.mission?.objectives?.[0] || "Find the source before the window closes.";
 
-  return `The rover eases to a halt on the knife-edge rim of Shackleton Crater, and every speaker in the cabin hisses with an impossible transmission. The signal is old Apollo-band hardware, dead for decades, yet it is pulsing from the darkness below with machine-perfect rhythm.
+  return `Artemis-07 settles into a tense hold at ${location}. ${briefing} Outside the hull, ${visibility.toLowerCase()}, and every instrument on board keeps circling back to the same impossible fact: ${anomaly}.
 
-${scientist} has already stripped the noise away once and the pattern only became stranger. ${engineer} warns the scrubber patch may not survive a long delay. ${specialist} is halfway into a damaged EVA suit. ${commander}, the crew is looking to you.`;
+${scientist} has already pushed the first pass of analysis and only made the situation stranger. ${engineer} is tracking how long the rover can keep absorbing this strain. ${specialist} is poised to move the moment the order comes. ${commander}, the crew is reading you for the next call.
+
+Primary pressure: ${pressure}. Immediate objective: ${objective}`;
 }
 
-export function createMissionSession(profiles = DEFAULT_CHARACTER_PROFILES) {
-  const worldState = createInitialWorldState(withDerivedCrewDynamics(profiles));
+export function createMissionSession(
+  profiles = DEFAULT_CHARACTER_PROFILES,
+  missionSeed = DEFAULT_MISSION_SEED
+) {
+  const resolvedProfiles = withDerivedCrewDynamics(profiles);
+  const seed = normalizeMissionSeed(missionSeed);
+  const worldState = createInitialWorldStateForSeed(resolvedProfiles, seed);
   return {
     worldState,
     narration: createOpeningNarration(worldState),
@@ -443,12 +456,15 @@ export function createMissionSession(profiles = DEFAULT_CHARACTER_PROFILES) {
         role: "system",
         turn: 0,
         crewName: worldState.crew[0]?.name || "n/a",
-        content: "Mission initialized from character roster.",
+        content: `Mission initialized from character roster under seed ${seed.label}.`,
       },
     ],
     createdFromCharacterCreation: true,
   };
 }
 
-export const INITIAL_WORLD_STATE = createInitialWorldState();
+export const INITIAL_WORLD_STATE = createInitialWorldStateForSeed(
+  DEFAULT_CHARACTER_PROFILES,
+  DEFAULT_MISSION_SEED
+);
 export const OPENING_NARRATION = createOpeningNarration(INITIAL_WORLD_STATE);
