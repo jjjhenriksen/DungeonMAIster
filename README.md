@@ -24,9 +24,19 @@ The current app is a React + Vite frontend with a small Express development serv
 │   └── dmServer.mjs
 ├── src/
 │   ├── App.jsx
+│   ├── ActionInput.jsx
+│   ├── CrewCard.jsx
+│   ├── CrewStatusBar.jsx
+│   ├── EventLog.jsx
+│   ├── NarrationPanel.jsx
+│   ├── RoleView.jsx
+│   ├── TurnIndicator.jsx
 │   ├── UI.jsx
 │   ├── applyStateDelta.js
-│   └── dmApi.js
+│   ├── dmApi.js
+│   ├── roleFilters.js
+│   ├── useTypewriter.js
+│   └── worldState.js
 ├── index.html
 ├── package.json
 └── vite.config.js
@@ -85,10 +95,9 @@ The prototype already includes:
 - Anthropic-backed turn requests through a local server
 
 The next natural improvements are:
-- splitting the large UI file into focused components
-- moving world state and role filters into dedicated modules
 - adding persistence for session state and logs
 - hardening the model response validation path
+- moving shared styling out of inline component markup
 
 ## Notes
 

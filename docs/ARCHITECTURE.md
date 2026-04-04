@@ -5,7 +5,17 @@ This project is currently a small full-stack prototype with one frontend app and
 ## High-Level Layout
 
 - [src/App.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/App.jsx): minimal app entry that renders the main UI
-- [src/UI.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/UI.jsx): primary gameplay surface, world-state seed, role views, narration display, turn handling, and interaction logic
+- [src/UI.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/UI.jsx): primary gameplay container and turn orchestration
+- [src/worldState.js](/Users/jacquelinehenriksen/DungeonMAIster/src/worldState.js): seeded mission state and opening narration
+- [src/roleFilters.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleFilters.js): role-specific dashboard data selection
+- [src/NarrationPanel.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/NarrationPanel.jsx): DM narration display and event-log shell
+- [src/EventLog.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/EventLog.jsx): recent mission history display
+- [src/CrewCard.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CrewCard.jsx): crew summary cards and stat bars
+- [src/RoleView.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/RoleView.jsx): active role telemetry panel
+- [src/ActionInput.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/ActionInput.jsx): player input form and waiting-state handling
+- [src/TurnIndicator.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/TurnIndicator.jsx): active-turn status line
+- [src/CrewStatusBar.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CrewStatusBar.jsx): mission header metrics
+- [src/useTypewriter.js](/Users/jacquelinehenriksen/DungeonMAIster/src/useTypewriter.js): narration typing effect hook
 - [src/dmApi.js](/Users/jacquelinehenriksen/DungeonMAIster/src/dmApi.js): browser-side helper for posting turn requests to the local API
 - [src/applyStateDelta.js](/Users/jacquelinehenriksen/DungeonMAIster/src/applyStateDelta.js): merges model-generated state changes into the current world state
 - [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs): Express server that validates input, calls Anthropic, and returns structured narration plus state updates
@@ -15,15 +25,13 @@ This project is currently a small full-stack prototype with one frontend app and
 ### Frontend
 
 The React app currently owns:
-- the initial world state seed
+- the current world state in memory
 - active-turn selection
-- role-filtered view generation
+- composition of presentational gameplay components
 - local action submission flow
-- narration display
-- event log rendering
 - application of returned `stateDelta` objects
 
-This keeps iteration fast for a hackathon-style prototype, but it means several responsibilities are concentrated in one file.
+The refactor now separates seeded data, role filtering, and major UI surfaces into their own modules, while keeping the game loop orchestration in one place.
 
 ### Backend
 
@@ -68,16 +76,13 @@ Merge behavior today:
 
 ## Known Structural Gaps
 
-- [src/UI.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/UI.jsx) combines presentational components, seeded data, turn control, and role filtering
-- the canonical world state schema is not yet extracted into its own module
-- role filters still live alongside rendering logic
 - there is no persistence layer for mission sessions, logs, or vault content yet
 - model response validation is serviceable but still lightweight
+- most styling is still inline, which is fine for a prototype but will get harder to maintain
 
 ## Recommended Refactor Path
 
-1. Extract `INITIAL_WORLD_STATE` into `src/worldState.js`.
-2. Move `getViewForRole()` into `src/roleFilters.js`.
-3. Split [src/UI.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/UI.jsx) into focused components for crew cards, narration, action input, and status bars.
-4. Add stronger response validation in [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs).
-5. Introduce session persistence once the game loop stabilizes.
+1. Move shared styling tokens into CSS modules, a theme file, or a design-system layer.
+2. Add stronger response validation in [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs).
+3. Introduce session persistence once the game loop stabilizes.
+4. Separate domain logic such as turn progression and event-log capping into dedicated helpers if gameplay rules grow.
