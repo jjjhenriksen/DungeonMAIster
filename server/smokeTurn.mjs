@@ -37,7 +37,12 @@ const worldState = {
 const activeCrew = worldState.crew[0];
 const action = "Have Reyes isolate the signal harmonics while Vasquez orders the rover to hold position.";
 const conversationHistory = [
-  { role: "dm", text: "Commander Vasquez, you have the conn. What are your orders?" },
+  {
+    role: "assistant",
+    turn: 0,
+    crewName: activeCrew.name,
+    content: "Commander Vasquez, you have the conn. What are your orders?",
+  },
 ];
 
 try {

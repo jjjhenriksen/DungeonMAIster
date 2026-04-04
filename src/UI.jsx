@@ -22,7 +22,14 @@ function createFallbackSession() {
     worldState: INITIAL_WORLD_STATE,
     narration: OPENING_NARRATION,
     turn: 0,
-    conversationHistory: [],
+    conversationHistory: [
+      {
+        role: "assistant",
+        turn: 0,
+        crewName: INITIAL_WORLD_STATE.crew[0]?.name || "Vasquez",
+        content: OPENING_NARRATION,
+      },
+    ],
     createdFromCharacterCreation: false,
   };
 }

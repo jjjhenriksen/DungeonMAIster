@@ -117,10 +117,11 @@ with the DM API server running.
 3. The frontend includes recent conversation history and the current turn index when posting to `/api/turn`.
 4. The Express server calls OpenAI with a structured system prompt.
 5. The server enriches the prompt with vault content and validates the model output.
-6. The model returns JSON containing:
+6. The model returns narration followed by a `STATE_DELTA:` block.
+7. The server parses that response into:
    - `narration`
    - `stateDelta`
-7. The frontend merges `stateDelta` into the current world state, advances the turn, and persists the updated session.
+8. The frontend merges `stateDelta` into the current world state, advances the turn, and persists the updated session.
 
 ## Documentation
 
