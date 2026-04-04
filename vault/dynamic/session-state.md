@@ -1,9 +1,10 @@
 # Session State
 
 ## Meta
-- turn: 0
+- slot: slot-1
+- turn: 1
 - phase: Crater approach - active
-- lastUpdatedIso: 2026-04-04T00:59:15.447Z
+- lastUpdatedIso: 2026-04-04T01:12:29.238Z
 
 ## Snapshot
 - currentLocationId: shackleton-crater-rim
@@ -27,6 +28,7 @@
 - nav | nominal snapshot | 58 | no automated alert summary
 
 ## New Events
+- T+14:22:07 | all | action | Commander Alma Vasquez: "Head over to the crew"
 - T+14:22 | all | alert | Anomaly signal detected from Shackleton Crater interior.
 - T+14:19 | all | info | Telemetry confirms the signal is repeating in deliberate geometric bursts.
 - T+14:18 | all | warn | Long-range comms degraded after the rover crossed the rim shadow line.
@@ -34,7 +36,7 @@
 - T+13:55 | all | info | Artemis-07 rover reached the crater rim with all crew nominal.
 
 ## GM Notes
-- latestNarration: The rover eases to a halt on the knife-edge rim of Shackleton Crater, and every speaker in the cabin hisses with an impossible transmission. The signal is old Apollo-band hardware, dead for decades, yet it is pulsing from the darkness below with machine-perfect rhythm.
-- recentHistoryCount: 1
+- latestNarration: Could not reach the DM service.
+- recentHistoryCount: 2
 - anomaly: Apollo-band signal with repeating geometric carrier modulation
 - unresolvedThreats: Signal interference, Knife-edge crater terrain, Shadowed ice vents

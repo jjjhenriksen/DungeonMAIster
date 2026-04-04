@@ -1,4 +1,6 @@
-export default function EventLog({ eventLog, logRef }) {
+import { memo } from "react";
+
+function EventLog({ eventLog, logRef }) {
   return (
     <>
       <div className="section-title section-title--mb-6">
@@ -21,3 +23,5 @@ export default function EventLog({ eventLog, logRef }) {
     </>
   );
 }
+
+export default memo(EventLog);

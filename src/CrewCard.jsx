@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 function getStatColor(value) {
   if (value > 70) return "#1D9E75";
   if (value > 40) return "#EF9F27";
@@ -21,7 +23,7 @@ function StatBar({ label, value, tone }) {
   );
 }
 
-export default function CrewCard({ member, isActive }) {
+function CrewCard({ member, isActive }) {
   const accent = isActive ? "#6fd3ff" : "#378ADD";
   // The third bar stays schema-light so Teammate 2 can keep driving it from `extra`.
   const extraLabel = member.extra.label.toUpperCase();
@@ -53,3 +55,5 @@ export default function CrewCard({ member, isActive }) {
     </div>
   );
 }
+
+export default memo(CrewCard);

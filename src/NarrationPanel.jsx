@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import EventLog from "./EventLog";
 import { useTypewriter } from "./useTypewriter";
 
-export default function NarrationPanel({ text, eventLog }) {
+function NarrationPanel({ text, eventLog }) {
   const { displayed, done } = useTypewriter(text);
   const logRef = useRef(null);
 
@@ -28,3 +28,5 @@ export default function NarrationPanel({ text, eventLog }) {
     </div>
   );
 }
+
+export default memo(NarrationPanel);

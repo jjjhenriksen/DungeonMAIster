@@ -1,4 +1,6 @@
-export default function CrewStatusBar({ mission, systems }) {
+import { memo } from "react";
+
+function CrewStatusBar({ mission, systems }) {
   const statusItems = [
     { label: "MET", val: mission.met, warn: false },
     { label: "O2", val: `${systems.o2}%`, warn: systems.o2 < 80 },
@@ -31,3 +33,5 @@ export default function CrewStatusBar({ mission, systems }) {
     </div>
   );
 }
+
+export default memo(CrewStatusBar);

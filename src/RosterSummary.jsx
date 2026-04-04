@@ -1,4 +1,6 @@
-export default function RosterSummary({ crew }) {
+import { memo } from "react";
+
+function RosterSummary({ crew }) {
   return (
     <div className="roster-summary">
       <div className="section-title section-title--mb-10">CREW DOSSIER</div>
@@ -20,3 +22,5 @@ export default function RosterSummary({ crew }) {
     </div>
   );
 }
+
+export default memo(RosterSummary);
