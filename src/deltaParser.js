@@ -3,6 +3,9 @@ import { normalizeEventType } from "./eventLogTypes.js";
 const MAX_EVENT_LOG_ENTRIES = 12;
 const NUMERIC_SYSTEM_FIELDS = new Set(["o2", "power", "comms", "propulsion", "thermal", "nav"]);
 const NUMERIC_CREW_FIELDS = new Set(["health", "morale"]);
+const MAX_SYSTEM_DELTA_PER_TURN = 12;
+const MAX_CREW_DELTA_PER_TURN = 15;
+const MAX_EXTRA_VALUE_DELTA_PER_TURN = 18;
 
 function isRecord(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -12,6 +15,18 @@ function clampPercent(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return 0;
   return Math.max(0, Math.min(100, Math.round(num)));
+}
+
+function constrainPercentChange(currentValue, nextValue, maxDelta) {
+  const current = clampPercent(currentValue);
+  const next = clampPercent(nextValue);
+  const delta = next - current;
+
+  if (Math.abs(delta) <= maxDelta) {
+    return next;
+  }
+
+  return clampPercent(current + Math.sign(delta) * maxDelta);
 }
 
 function extractJsonObject(text) {
@@ -122,12 +137,59 @@ function mergeCrew(wsCrew = [], deltaCrew = []) {
     const patch = deltaCrew.find((entry) => entry.id === member.id);
     if (!patch) return member;
 
+    const constrainedPatch = { ...patch };
+
+    for (const field of NUMERIC_CREW_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(constrainedPatch, field)) {
+        constrainedPatch[field] = constrainPercentChange(
+          member[field],
+          constrainedPatch[field],
+          MAX_CREW_DELTA_PER_TURN
+        );
+      }
+    }
+
+    if (
+      constrainedPatch.extra &&
+      Object.prototype.hasOwnProperty.call(constrainedPatch.extra, "value")
+    ) {
+      constrainedPatch.extra = {
+        ...constrainedPatch.extra,
+        value: constrainPercentChange(
+          member.extra?.value,
+          constrainedPatch.extra.value,
+          MAX_EXTRA_VALUE_DELTA_PER_TURN
+        ),
+      };
+    }
+
     return {
       ...member,
-      ...patch,
-      extra: patch.extra ? { ...member.extra, ...patch.extra } : member.extra,
+      ...constrainedPatch,
+      extra: constrainedPatch.extra
+        ? { ...member.extra, ...constrainedPatch.extra }
+        : member.extra,
     };
   });
+}
+
+function mergeSystems(currentSystems = {}, deltaSystems = {}) {
+  const next = { ...currentSystems };
+
+  for (const [key, value] of Object.entries(deltaSystems)) {
+    if (NUMERIC_SYSTEM_FIELDS.has(key)) {
+      next[key] = constrainPercentChange(
+        currentSystems[key],
+        value,
+        MAX_SYSTEM_DELTA_PER_TURN
+      );
+      continue;
+    }
+
+    next[key] = value;
+  }
+
+  return next;
 }
 
 function mergeEventLog(currentLog = [], deltaLog = [], limit = MAX_EVENT_LOG_ENTRIES) {
@@ -157,7 +219,9 @@ export function mergeStateDelta(worldState, delta, options = {}) {
     environment: safeDelta.environment
       ? { ...worldState.environment, ...safeDelta.environment }
       : worldState.environment,
-    systems: safeDelta.systems ? { ...worldState.systems, ...safeDelta.systems } : worldState.systems,
+    systems: safeDelta.systems
+      ? mergeSystems(worldState.systems, safeDelta.systems)
+      : worldState.systems,
     crew: safeDelta.crew ? mergeCrew(worldState.crew, safeDelta.crew) : worldState.crew,
     eventLog: safeDelta.eventLog
       ? mergeEventLog(worldState.eventLog, safeDelta.eventLog, eventLogLimit)

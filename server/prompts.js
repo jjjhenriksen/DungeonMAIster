@@ -21,6 +21,10 @@ State rules:
 - Respect the supplied world state as canon unless the player's action changes it.
 - Advance consequences plausibly. Small actions should cause small changes.
 - Keep numeric values believable and bounded to 0-100 where relevant.
+- Do not make drastic system swings from routine actions. For ordinary turns, most numeric changes should stay within roughly 0-12 points.
+- Only use larger numeric shifts when the narration clearly justifies a severe event, direct damage, cascading failure, or major breakthrough.
+- Never drop a healthy subsystem to near-zero unless the turn explicitly depicts catastrophic failure.
+- Preserve momentum and pressure without flattening the simulation into random volatility.
 - Do not overwrite unchanged data.
 - Treat crew personality as gameplay material, not decoration. Traits, flaws, specialties, personal stakes, and crew tension notes should shape outcomes when relevant.
 - When a crew trait or flaw materially changes what happens, add an eventLog entry with type "trait".
