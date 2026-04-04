@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const DEFAULT_DURATION_MS = 9600;
 const REDUCED_MOTION_DURATION_MS = 1200;
+const COUNTDOWN_START = 10;
 
 const LAUNCH_STAGES = [
   { time: "T-06", label: "Fuel lines pressurized" },
@@ -13,6 +14,7 @@ const LAUNCH_STAGES = [
 
 export default function LaunchSequence({ session, slotId, themeId, themes, onComplete }) {
   const [readyToContinue, setReadyToContinue] = useState(false);
+  const [countdownValue, setCountdownValue] = useState(COUNTDOWN_START);
   const mission = session?.worldState?.mission || {};
   const crew = session?.worldState?.crew || [];
   const slotLabel = session?.slotLabel || slotId?.replace(/^slot-/, "Slot ") || "Slot 1";
@@ -41,7 +43,26 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
       setReadyToContinue(true);
     }, duration);
 
-    return () => window.clearTimeout(timer);
+    if (prefersReducedMotion) {
+      setCountdownValue(0);
+      return () => window.clearTimeout(timer);
+    }
+
+    const stepDuration = Math.max(520, Math.floor(duration / (COUNTDOWN_START + 1)));
+    const countdownTimer = window.setInterval(() => {
+      setCountdownValue((current) => {
+        if (current <= 0) {
+          window.clearInterval(countdownTimer);
+          return 0;
+        }
+        return current - 1;
+      });
+    }, stepDuration);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.clearInterval(countdownTimer);
+    };
   }, []);
 
   return (
@@ -102,6 +123,15 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
           <span className="launch-screen__viewport-corner launch-screen__viewport-corner--br" />
           <div className="launch-screen__viewport-grid" />
         </div>
+        {!readyToContinue ? (
+          <div
+            key={countdownValue}
+            className="launch-screen__countdown"
+            aria-live="polite"
+          >
+            <span className="launch-screen__countdown-value">{countdownValue}</span>
+          </div>
+        ) : null}
         <div className="launch-pad" aria-hidden="true">
           <div className="launch-pad__halo" />
           <div className="launch-pad__shockwave" />
