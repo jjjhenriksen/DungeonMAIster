@@ -7,6 +7,8 @@ const ACTIVE_OUTCOME = {
   summary: "",
 };
 
+const MIN_RESOLUTION_TURNS = 3;
+
 const PHASE_VICTORY_KEYWORDS = [
   "complete",
   "secured",
@@ -42,6 +44,7 @@ const OUTCOME_RULES = {
       o2: 20,
       power: 20,
     },
+    minResolvedTurns: 3,
     roleTargets: [{ role: "Science Officer", extra: 66 }],
   },
   "cryovent-whisper": {
@@ -53,6 +56,7 @@ const OUTCOME_RULES = {
       o2: 20,
       power: 20,
     },
+    minResolvedTurns: 3,
     roleTargets: [{ role: "Mission Specialist", extra: 40 }],
   },
   "buried-array": {
@@ -64,6 +68,7 @@ const OUTCOME_RULES = {
       comms: 50,
       power: 20,
     },
+    minResolvedTurns: 3,
     roleTargets: [{ role: "Science Officer", extra: 64 }],
   },
   "blackglass-breach": {
@@ -75,6 +80,7 @@ const OUTCOME_RULES = {
       o2: 20,
       power: 20,
     },
+    minResolvedTurns: 3,
     roleTargets: [{ role: "Mission Specialist", extra: 42 }],
   },
 };
@@ -105,6 +111,17 @@ function isCatastrophicFailure(worldState) {
   );
 }
 
+function isImmediateCatastrophe(worldState) {
+  const systems = worldState?.systems || {};
+  const incapacitatedCrew = (worldState?.crew || []).filter((member) => member.health <= 5).length;
+
+  return (
+    systems.o2 <= 3 ||
+    systems.power <= 3 ||
+    incapacitatedCrew >= 3
+  );
+}
+
 function hasCompletionSignal(worldState) {
   const phaseText = worldState?.mission?.phase || "";
   if (includesAny(phaseText, PHASE_VICTORY_KEYWORDS)) return true;
@@ -128,11 +145,30 @@ function meetsRoleTargets(worldState, roleTargets = []) {
   });
 }
 
+function getResolvedTurnCount(worldState) {
+  const latestMet = worldState?.mission?.met || "";
+  const match = latestMet.match(/^T\+(\d+):(\d{2})/);
+  if (!match) return 0;
+
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
 export function getMissionOutcome(worldState) {
   const currentOutcome = worldState?.mission?.outcome || ACTIVE_OUTCOME;
   if (isResolved(currentOutcome)) return currentOutcome;
 
-  if (isCatastrophicFailure(worldState)) {
+  const resolvedTurnCount = getResolvedTurnCount(worldState);
+
+  if (isImmediateCatastrophe(worldState)) {
+    return {
+      status: "defeat",
+      title: "Mission Lost",
+      summary:
+        "The crew no longer has enough life support, power, or healthy personnel to keep the operation viable.",
+    };
+  }
+
+  if (resolvedTurnCount >= MIN_RESOLUTION_TURNS && isCatastrophicFailure(worldState)) {
     return {
       status: "defeat",
       title: "Mission Lost",
@@ -143,6 +179,9 @@ export function getMissionOutcome(worldState) {
 
   const rule = OUTCOME_RULES[worldState?.mission?.seedId];
   if (!rule) return ACTIVE_OUTCOME;
+  if (resolvedTurnCount < (rule.minResolvedTurns || 0)) {
+    return ACTIVE_OUTCOME;
+  }
 
   const victory =
     hasEnoughFunctionalCrew(worldState) &&
