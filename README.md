@@ -21,12 +21,17 @@ The current app is a React + Vite frontend with a small Express development serv
 │   ├── INDEX.md
 │   └── team/
 ├── server/
-│   └── dmServer.mjs
+│   ├── api.js
+│   ├── dmServer.mjs
+│   ├── prompts.js
+│   ├── sessionStore.js
+│   └── vault.js
 ├── src/
 │   ├── App.jsx
 │   ├── ActionInput.jsx
 │   ├── CrewCard.jsx
 │   ├── CrewStatusBar.jsx
+│   ├── deltaParser.js
 │   ├── EventLog.jsx
 │   ├── NarrationPanel.jsx
 │   ├── RoleView.jsx
