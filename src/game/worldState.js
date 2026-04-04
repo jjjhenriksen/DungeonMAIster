@@ -42,7 +42,7 @@ const CREW_BLUEPRINTS = [
   {
     id: "vasquez",
     role: "Commander",
-    defaultName: "Commander Alma Vasquez",
+    defaultName: "Kendall Harris",
     defaultCallSign: "Aegis",
     defaultTrait: "Calm under cascading pressure",
     defaultSpecialty: "Command tempo and crisis triage",
@@ -65,7 +65,7 @@ const CREW_BLUEPRINTS = [
   {
     id: "okafor",
     role: "Flight Engineer",
-    defaultName: "Chief Engineer Tunde Okafor",
+    defaultName: "LouAnne Boyd",
     defaultCallSign: "Patchbay",
     defaultTrait: "Turns panic into procedure",
     defaultSpecialty: "Life support stabilization and field repair",
@@ -88,7 +88,7 @@ const CREW_BLUEPRINTS = [
   {
     id: "reyes",
     role: "Science Officer",
-    defaultName: "Dr. Imani Reyes",
+    defaultName: "Trudi Qi",
     defaultCallSign: "Spectra",
     defaultTrait: "Curiosity sharp enough to feel dangerous",
     defaultSpecialty: "Signal analysis and anomaly interpretation",
@@ -111,7 +111,7 @@ const CREW_BLUEPRINTS = [
   {
     id: "park",
     role: "Mission Specialist",
-    defaultName: "Lt. Hana Park",
+    defaultName: "Nicole Wagner",
     defaultCallSign: "Waypoint",
     defaultTrait: "Most comfortable at the edge of the risk envelope",
     defaultSpecialty: "EVA deployment and field improvisation",
@@ -294,8 +294,9 @@ export function rerollCharacterProfiles(
   CREW_BLUEPRINTS.forEach((blueprint) => {
     if (selectedProfiles.has(blueprint.id)) return;
     const roleBank = CHARACTER_BANKS[blueprint.bankKey] || {};
+    const candidateNames = roleBank.names || CHARACTER_BANKS.global.facultyNames || [blueprint.defaultName];
     const currentProfile = existingProfilesById.get(blueprint.id);
-    const availableNames = (roleBank.names || [blueprint.defaultName]).filter(
+    const availableNames = candidateNames.filter(
       (name) => !usedNames.has(name)
     );
     const availableCallSigns = (roleBank.callSigns || [blueprint.defaultCallSign]).filter(
@@ -306,7 +307,7 @@ export function rerollCharacterProfiles(
     const flawEntry = pickTaggedEntry(CHARACTER_BANKS.global.flaws, preferredTags, usedFlaws);
 
     const selected = {
-      name: pickRandom(availableNames.length > 0 ? availableNames : roleBank.names || [blueprint.defaultName]),
+      name: pickRandom(availableNames.length > 0 ? availableNames : candidateNames),
       callSign: pickRandom(
         availableCallSigns.length > 0 ? availableCallSigns : roleBank.callSigns || [blueprint.defaultCallSign]
       ),
