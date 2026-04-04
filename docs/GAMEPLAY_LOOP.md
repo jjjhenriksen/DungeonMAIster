@@ -10,7 +10,9 @@ This document describes the current end-to-end runtime flow for a mission turn.
 4. Each profile can be assigned `Human` or `Autonomous`.
 5. A mission seed is selected or rerolled.
 6. The selected crew and mission seed are combined into a mission session.
-7. The session is saved and the in-mission UI boots from that state.
+7. The session is saved.
+8. The launch sequence runs.
+9. The in-mission UI boots from that state.
 
 ## Turn Flow
 
@@ -37,10 +39,23 @@ This document describes the current end-to-end runtime flow for a mission turn.
    - advances mission elapsed time
    - prepends the local command log entry
    - merges the returned delta
+   - applies local role mechanics
+   - applies local mission mechanics
    - updates narration
    - appends the assistant response to conversation history
-   - advances the turn index
+   - resolves initiative using follow-through and priority handoff rules
    - autosaves the session
+
+## Local Turn Layers
+
+After DM resolution, the client applies several deterministic layers locally:
+
+1. role mechanics
+2. support-window and relationship updates
+3. mission-specific mechanics
+4. follow-through turn targeting
+
+This means some of the game feel now comes from local rules, not only from model narration.
 
 ## Data Sent To The Model
 
@@ -100,6 +115,14 @@ The frontend shows each entry with a typed badge. The backend prompt explicitly 
 - mission elapsed time lives in `worldState.mission.met`
 - the frontend advances it once per resolved turn
 - this applies to both successful turns and failed DM requests
+
+## Turn Order
+
+- base turn order is round-robin
+- commander-directed priority handoffs can immediately push initiative
+- strong follow-through windows also jump turn order
+- soft windows can also jump when the pair is not currently tense
+- fragile windows fall back to standard round-robin
 
 ## Error Path
 

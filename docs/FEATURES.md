@@ -7,7 +7,7 @@ This document summarizes the major player-facing and system-facing features curr
 - four rotating crew roles share one mission state
 - each turn sends the active crew member, recent conversation history, full world state, and vault context to the DM
 - the DM returns narration plus a partial `STATE_DELTA`
-- the frontend merges the delta, updates the event log, advances mission elapsed time, advances the turn, and autosaves
+- the frontend merges the delta, applies local role and mission systems, resolves handoff-driven initiative, and autosaves
 
 ## Character Creation
 
@@ -77,6 +77,52 @@ Current seeds include:
 
 Mission seeds are resolved against the selected crew before launch, so seeded text uses the actual roster names rather than assuming the default cast.
 
+## Launch Sequence
+
+Mission start now includes a dedicated launch transition between setup and play.
+
+- theme-aware cinematic launch treatment
+- stronger full-screen transition between character creation and gameplay
+- explicit continue control at the end of the sequence
+- reduced-motion and skip support
+
+## Role Guidance And Action Suggestions
+
+The action panel is now an actual tactical layer rather than a plain text box.
+
+- each role gets a live tactical focus summary
+- suggested action chips are generated from role and mission context
+- role fit is previewed before submission
+- mission-specific opportunity is previewed before submission
+
+## Role Mechanics And Handoffs
+
+Role differences now matter mechanically.
+
+- command actions improve comms and stabilize the crew
+- engineering actions recover the weakest system
+- science actions improve scan confidence and support telemetry
+- specialist actions recover EVA margin and reduce physical strain
+- turns can open follow-through windows for another role
+- stronger handoffs can reorder turn flow instead of always staying round-robin
+
+## Crew Coordination
+
+Crew relationships are now part of the running mission state.
+
+- commander handoff strength depends on personality
+- pair synergy can read as `trusted`, `standard`, or `tense`
+- successful or failed follow-through changes that relationship over time
+- the UI surfaces active handoffs, pair state, and top-level coordination alerts
+
+## Mission-Specific Mechanics
+
+Mission seeds now have bespoke local payoff rules, not just flavor.
+
+- certain seeds reward specific roles more strongly
+- mission leverage is previewed in the action panel
+- aligned actions can trigger seed-specific boosts to systems, health, or role meters
+
 ## Event Log Instrumentation
 
 The event log is now a lightweight system trace rather than plain narrative text.
@@ -121,10 +167,11 @@ The interface supports multiple color themes:
 - `Nocturne`
 
 The theme system includes:
-- shared visual tokens
+- light and dark variants for each family
 - persistent theme selection
 - themed status colors
 - theme-aware UI surfaces
+- theme-aware launch visuals
 - restrained animated background atmosphere
 
 ## Live Console And Role Views
@@ -136,6 +183,7 @@ It now reflects:
 - mission/system pressure
 - role-specific operational context
 - current crew and anomaly state
+- live coordination and handoff pressure
 
 ## Vault-Backed Prompt Context
 

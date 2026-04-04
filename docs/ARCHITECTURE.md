@@ -9,15 +9,18 @@ DungeonMAIster is a small full-stack app with a React frontend, a local Express 
 - [src/App.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/App.jsx): app entry, screen routing, theme persistence, save-slot hydration
 - [src/MainMenu.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/MainMenu.jsx): front-door flow for new mission, continue, load, and delete
 - [src/CharacterCreation.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CharacterCreation.jsx): crew editing, lock/reroll controls, human-vs-autonomous role assignment, mission-seed preview
+- [src/LaunchSequence.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/LaunchSequence.jsx): cinematic transition between setup and live mission
 - [src/UI.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/UI.jsx): in-mission turn orchestration, autosave, autonomous-turn auto-play, and DM integration
 
 ### World-State And Scenario Layer
 
 - [src/worldState.js](/Users/jacquelinehenriksen/DungeonMAIster/src/worldState.js): crew blueprints, mission-session creation, seed resolution, opening narration, and world-state creation
 - [src/missionSeeds.js](/Users/jacquelinehenriksen/DungeonMAIster/src/missionSeeds.js): scenario-seed definitions and mission-seed helpers
+- [src/missionMechanics.js](/Users/jacquelinehenriksen/DungeonMAIster/src/missionMechanics.js): seed-specific leverage windows and local mission effects
 - [src/characterBanks.js](/Users/jacquelinehenriksen/DungeonMAIster/src/characterBanks.js): names, call signs, traits, flaws, specialties, stakes, and tension patterns
 - [src/botTurns.js](/Users/jacquelinehenriksen/DungeonMAIster/src/botTurns.js): autonomous-action generation for underfilled crews
 - [src/gameLoop.js](/Users/jacquelinehenriksen/DungeonMAIster/src/gameLoop.js): turn helpers, MET advancement, conversation helpers, and log-entry creation
+- [src/stateUtils.js](/Users/jacquelinehenriksen/DungeonMAIster/src/stateUtils.js): shared state selectors and numeric clamping helpers
 
 ### Presentation Layer
 
@@ -30,8 +33,16 @@ DungeonMAIster is a small full-stack app with a React frontend, a local Express 
 - [src/CrewStatusBar.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CrewStatusBar.jsx): mission/system header strip
 - [src/ThemePicker.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/ThemePicker.jsx): shared theme-switching control
 - [src/roleFilters.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleFilters.js): role-specific view selection and console brief generation
+- [src/uiState.js](/Users/jacquelinehenriksen/DungeonMAIster/src/uiState.js): derived UI-facing state for headers, alerts, and action-panel previews
 - [src/styles.css](/Users/jacquelinehenriksen/DungeonMAIster/src/styles.css): shared tokens, themes, component styles, and ambient background treatment
 - [src/themes.js](/Users/jacquelinehenriksen/DungeonMAIster/src/themes.js): theme registry and storage helpers
+
+### Role And Coordination Systems
+
+- [src/roleSemantics.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleSemantics.js): role-alignment keywords and follow-through targeting rules
+- [src/roleGuidance.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleGuidance.js): tactical focus generation and suggested commands
+- [src/crewCoordination.js](/Users/jacquelinehenriksen/DungeonMAIster/src/crewCoordination.js): delegation profiles, crew-fit scoring, handoff windows, and coordination alerts
+- [src/roleMechanics.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleMechanics.js): local per-role effects and public role/coordination selectors
 
 ### DM Integration Layer
 
@@ -155,11 +166,21 @@ Before launch, a seed is resolved against the selected crew so placeholder text 
 
 ## Turn And Control Model
 
-- turn order is still round-robin across the four crew seats
+- base turn order is round-robin across the four crew seats
+- follow-through windows can now override round-robin and jump initiative to the targeted role
 - each role can be `human` or `autonomous`
 - human seats expose the text action input
 - autonomous roles generate a role-aware action automatically and submit it through the same DM path
 - the session must contain at least one human-controlled role
+
+## Local Gameplay Systems
+
+The frontend no longer relies only on the DM for progression. It also applies local gameplay layers after DM resolution:
+
+- role mechanics: aligned actions create role-specific numeric benefits
+- mission mechanics: certain seeds expose bespoke leverage windows with custom local bonuses
+- crew coordination: handoff windows, delegation strength, and trust/friction evolve over time
+- derived UI state: action recommendations and warnings are computed from the live world state before submission
 
 ## Event Log Model
 
@@ -189,6 +210,8 @@ The DM prompt now explicitly encodes:
 - structured `STATE_DELTA` output
 - mission-seed pressure and atmosphere
 - crew traits, flaws, stakes, and tension
+- role specialization and off-role friction
+- active crew coordination and follow-through context
 - typed event-log expectations
 
 Trait-driven outcomes are expected to produce `trait` log entries when personality materially affects the turn result.
