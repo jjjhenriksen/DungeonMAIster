@@ -68,7 +68,14 @@ export default function ArtemisLost({
 
   const activeCrew = ws.crew[turn];
   const roleView = useMemo(() => getViewForRole(ws, turn), [ws, turn]);
-  const uiState = useMemo(() => getUiState(ws), [ws]);
+  const uiState = useMemo(
+    () =>
+      getUiState(ws, {
+        activeCrew,
+        input,
+      }),
+    [activeCrew, input, ws]
+  );
   const isBotTurn = activeCrew?.character?.controller === "bot";
 
   function buildSessionPayload(overrides = {}) {
@@ -334,7 +341,6 @@ export default function ArtemisLost({
             botPreview={botPreview}
             botPreviewLoading={botPreviewLoading}
             narrationReady={narrationReady}
-            worldState={ws}
             uiState={uiState}
           />
         </div>

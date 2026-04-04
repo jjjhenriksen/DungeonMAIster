@@ -1,11 +1,4 @@
 import TurnIndicator from "./TurnIndicator";
-import { getMissionMechanicSummary, getMissionOpportunityPreview } from "./missionMechanics";
-import { getRoleGuidance } from "./roleGuidance";
-import {
-  getRoleAlignmentPreview,
-  getRoleMechanicSummary,
-  getRoleSupportPreview,
-} from "./roleMechanics";
 
 function formatSetupStrength(strength) {
   if (strength === "strong") return "strong";
@@ -25,15 +18,15 @@ export default function ActionInput({
   botPreview,
   botPreviewLoading,
   narrationReady,
-  worldState,
   uiState,
 }) {
-  const roleGuidance = getRoleGuidance(worldState, activeCrew);
-  const roleMechanicSummary = getRoleMechanicSummary(activeCrew);
-  const roleAlignmentPreview = getRoleAlignmentPreview(activeCrew, input);
-  const roleSupportPreview = getRoleSupportPreview(worldState, activeCrew, input);
-  const missionMechanicSummary = getMissionMechanicSummary(worldState, activeCrew);
-  const missionOpportunityPreview = getMissionOpportunityPreview(worldState, activeCrew, input);
+  const actionPanelState = uiState?.actionPanel;
+  const roleGuidance = actionPanelState?.roleGuidance;
+  const roleMechanicSummary = actionPanelState?.roleMechanicSummary;
+  const roleAlignmentPreview = actionPanelState?.roleAlignmentPreview;
+  const roleSupportPreview = actionPanelState?.roleSupportPreview;
+  const missionMechanicSummary = actionPanelState?.missionMechanicSummary;
+  const missionOpportunityPreview = actionPanelState?.missionOpportunityPreview;
 
   return (
     <div className="action-input">
@@ -51,7 +44,7 @@ export default function ActionInput({
         {!waiting && !isBotTurn ? (
           <div className="action-input__focus">
             <div className="action-input__focus-label">TACTICAL FOCUS</div>
-            <div className="action-input__focus-copy">{roleGuidance.focus}</div>
+            <div className="action-input__focus-copy">{roleGuidance?.focus}</div>
             <div className="action-input__hint">
               Role leverage: {roleMechanicSummary}
             </div>
@@ -70,9 +63,9 @@ export default function ActionInput({
               <div className="action-input__alignment-chip">{missionOpportunityPreview.label}</div>
               <div className="action-input__alignment-copy">{missionOpportunityPreview.detail}</div>
             </div>
-            {roleSupportPreview.incoming || roleSupportPreview.outgoing ? (
+            {roleSupportPreview?.incoming || roleSupportPreview?.outgoing ? (
               <div className="action-input__support">
-                {roleSupportPreview.delegationProfile ? (
+                {roleSupportPreview?.delegationProfile ? (
                   <div className="action-input__support-row">
                     <span className="action-input__support-label">Command style</span>
                     <span className="action-input__support-copy">
@@ -82,7 +75,7 @@ export default function ActionInput({
                     </span>
                   </div>
                 ) : null}
-                {roleSupportPreview.relationshipProfile ? (
+                {roleSupportPreview?.relationshipProfile ? (
                   <div className="action-input__support-row">
                     <span className="action-input__support-label">Crew fit</span>
                     <span className="action-input__support-copy">
@@ -92,7 +85,7 @@ export default function ActionInput({
                     </span>
                   </div>
                 ) : null}
-                {roleSupportPreview.incoming ? (
+                {roleSupportPreview?.incoming ? (
                   <div className="action-input__support-row">
                     <span className="action-input__support-label">Incoming setup</span>
                     <span className="action-input__support-copy">
@@ -101,7 +94,7 @@ export default function ActionInput({
                     </span>
                   </div>
                 ) : null}
-                {roleSupportPreview.outgoing ? (
+                {roleSupportPreview?.outgoing ? (
                   <div className="action-input__support-row">
                     <span className="action-input__support-label">Follow-through</span>
                     <span className="action-input__support-copy">
@@ -138,7 +131,7 @@ export default function ActionInput({
           </div>
         ) : null}
 
-        {!waiting && !isBotTurn && roleGuidance.suggestions.length > 0 ? (
+        {!waiting && !isBotTurn && roleGuidance?.suggestions?.length > 0 ? (
           <div className="action-input__suggestions">
             {roleGuidance.suggestions.map((suggestion) => (
               <button
