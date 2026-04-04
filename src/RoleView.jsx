@@ -10,77 +10,26 @@ const ROLE_FLAVOR = {
 
 export default function RoleView({ activeCrew, roleView }) {
   return (
-    <div
-      style={{
-        borderTop: "1px solid #1e3a5f",
-        paddingTop: 12,
-      }}
-    >
-      <div
-        style={{
-          fontSize: 10,
-          color: "#378ADD",
-          letterSpacing: 2,
-          marginBottom: 10,
-        }}
-      >
+    <div className="role-view">
+      <div className="section-title section-title--mb-10">
         {activeCrew.role.toUpperCase()} VIEW
       </div>
 
-      <div
-        style={{
-          background: "#0d1219",
-          border: "1px solid #1a304a",
-          borderRadius: 10,
-          padding: 12,
-          marginBottom: 10,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 12,
-            color: "#e8f4ff",
-            marginBottom: 4,
-          }}
-        >
-          {activeCrew.name} console
-        </div>
-        <div style={{ fontSize: 11, lineHeight: 1.6, color: "#7f9db9" }}>
+      <div className="role-view__console">
+        <div className="role-view__console-title">{activeCrew.name} console</div>
+        <div className="role-view__console-copy">
           {ROLE_FLAVOR[activeCrew.role] ?? "Role-specific telemetry incoming."}
         </div>
       </div>
 
-      <div style={{ display: "grid", gap: 8 }}>
+      <div className="role-view__list">
         {roleView.map(({ key, val, warn }) => (
           <div
             key={key}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "100px 1fr",
-              gap: 10,
-              alignItems: "start",
-              background: warn ? "#251912" : "#0b1016",
-              border: `1px solid ${warn ? "#5f3824" : "#16283d"}`,
-              borderRadius: 8,
-              padding: "9px 10px",
-            }}
+            className={`role-view__item${warn ? " role-view__item--warn" : ""}`}
           >
-            <div
-              style={{
-                fontSize: 10,
-                color: "#5a7a99",
-                letterSpacing: 1.2,
-              }}
-            >
-              {key}
-            </div>
-            <div
-              style={{
-                fontSize: 11,
-                lineHeight: 1.55,
-                color: warn ? "#F6B15A" : "#8fe2bb",
-              }}
-            >
+            <div className="role-view__key">{key}</div>
+            <div className={`role-view__value${warn ? " role-view__value--warn" : ""}`}>
               {val}
             </div>
           </div>

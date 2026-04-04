@@ -44,6 +44,8 @@ The current app is a React + Vite frontend with a small Express development serv
 
 ## Getting Started
 
+### Development
+
 1. Install dependencies:
 
 ```bash
@@ -61,19 +63,6 @@ DM_API_PORT=8787
 3. Start the app:
 
 ```bash
-npm run dev
-```
-
-This should start the Vite app and the local DM server used by the frontend.
-
-## Run Instructions
-
-### Development
-
-Use this during active development:
-
-```bash
-npm install
 npm run dev
 ```
 

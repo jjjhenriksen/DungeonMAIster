@@ -15,11 +15,17 @@ export default function CrewStatusBar({ mission, systems }) {
   ];
 
   return (
-    <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+    <div className="status-strip">
       {statusItems.map((item) => (
-        <div key={item.label} style={{ fontSize: 11, color: "#5a7a99", letterSpacing: 1 }}>
+        <div key={item.label} className="status-strip__item">
           {item.label}{" "}
-          <span style={{ color: item.warn ? "#EF9F27" : "#1D9E75" }}>{item.val}</span>
+          <span
+            className={
+              item.warn ? "status-strip__value--warn" : "status-strip__value--good"
+            }
+          >
+            {item.val}
+          </span>
         </div>
       ))}
     </div>

@@ -11,6 +11,7 @@ export function createActionLogEntry(worldState, activeCrew, action) {
   };
 }
 
-export function appendConversationEntry(history, entry) {
-  return [...history, entry].slice(-12);
+export function prependCappedEntries(entries, newEntries, limit = 12) {
+  const normalizedNewEntries = Array.isArray(newEntries) ? newEntries : [newEntries];
+  return [...normalizedNewEntries, ...entries].slice(0, limit);
 }
