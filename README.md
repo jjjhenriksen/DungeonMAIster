@@ -66,6 +66,51 @@ npm run dev
 
 This should start the Vite app and the local DM server used by the frontend.
 
+## Run Instructions
+
+### Development
+
+Use this during active development:
+
+```bash
+npm install
+npm run dev
+```
+
+What this does:
+- starts the Vite frontend
+- starts the local DM API server at `localhost:8787`
+- proxies frontend `/api` requests to the local DM server
+
+### Build And Preview
+
+To test the production build locally:
+
+```bash
+npm run build
+npm run preview
+```
+
+Then open the preview URL printed by Vite in your terminal.
+
+### Opening The Built HTML Directly
+
+The build now uses relative asset paths, so [dist/index.html](/Users/jacquelinehenriksen/DungeonMAIster/dist/index.html) can be opened directly to inspect the UI shell.
+
+However, direct file opening is only suitable for static UI viewing. DM turn requests to `/api/turn` still require a running server setup, so interactive gameplay should be tested with:
+
+```bash
+npm run dev
+```
+
+or:
+
+```bash
+npm run preview
+```
+
+with the DM API server running.
+
 ## How It Works
 
 1. The frontend renders a seeded mission state and a role-based UI.
