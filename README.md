@@ -76,6 +76,12 @@ OPENAI_API_KEY=your_key_here
 OPENAI_MODEL=gpt-4.1-mini
 ```
 
+Optional persistent storage variable:
+
+```bash
+DATA_DIR=/var/data/dungeonmaister
+```
+
 Operational endpoints:
 
 - `GET /healthz`: deployment health probe for the combined app
@@ -89,12 +95,14 @@ Render path:
    - Start command: `npm start`
    - Health check path: `/healthz`
 3. Add `OPENAI_API_KEY` and optionally `OPENAI_MODEL`.
+4. For durable saves, mount a persistent disk and set `DATA_DIR` to a folder on that disk.
 
 Deployment note:
 
-- Save slots currently write to the app filesystem under `vault/dynamic/`.
-- That works locally and on a live service between restarts, but it is not durable cloud storage.
-- If you want persistent saves across redeploys/restarts, the next step is moving session storage to a database or attached disk.
+- Static lore continues to load from the repository under `vault/static/`.
+- Dynamic saves and session mirrors now write to a configurable data root.
+- If `DATA_DIR` is unset, they fall back to local `vault/dynamic/` behavior.
+- On Render, set `DATA_DIR` to your mounted disk path to keep saves across restarts and redeploys.
 
 ## Current Gameplay Flow
 

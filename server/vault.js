@@ -1,11 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, "..");
-const vaultRoot = path.join(projectRoot, "vault");
+import { dynamicVaultRoot, staticVaultRoot } from "./storagePaths.js";
 
 async function safeRead(filePath) {
   try {
@@ -29,17 +24,16 @@ function trimToSection(label, content) {
 }
 
 async function readStaticContext(worldState, activeCrew) {
-  const staticRoot = path.join(vaultRoot, "static");
   const locationSlug = slugify(worldState?.environment?.location);
   const crewId = activeCrew?.id;
 
   const [locationFile, crewFile, missionBrief, anomaly] = await Promise.all([
     locationSlug
-      ? safeRead(path.join(staticRoot, "locations", `${locationSlug}.md`))
+      ? safeRead(path.join(staticVaultRoot, "locations", `${locationSlug}.md`))
       : "",
-    crewId ? safeRead(path.join(staticRoot, "crew", `${crewId}.md`)) : "",
-    safeRead(path.join(staticRoot, "lore", "mission-brief.md")),
-    safeRead(path.join(staticRoot, "lore", "anomaly.md")),
+    crewId ? safeRead(path.join(staticVaultRoot, "crew", `${crewId}.md`)) : "",
+    safeRead(path.join(staticVaultRoot, "lore", "mission-brief.md")),
+    safeRead(path.join(staticVaultRoot, "lore", "anomaly.md")),
   ]);
 
   return {
@@ -51,13 +45,12 @@ async function readStaticContext(worldState, activeCrew) {
 }
 
 export async function loadVaultContext({ worldState, activeCrew }) {
-  const dynamicRoot = path.join(vaultRoot, "dynamic");
   const [staticContext, sessionState, log, npcOverride, locationDelta] = await Promise.all([
     readStaticContext(worldState, activeCrew),
-    safeRead(path.join(dynamicRoot, "session-state.md")),
-    safeRead(path.join(dynamicRoot, "log.md")),
-    safeRead(path.join(dynamicRoot, "overrides", "npc-override.md")),
-    safeRead(path.join(dynamicRoot, "overrides", "location-delta.md")),
+    safeRead(path.join(dynamicVaultRoot, "session-state.md")),
+    safeRead(path.join(dynamicVaultRoot, "log.md")),
+    safeRead(path.join(dynamicVaultRoot, "overrides", "npc-override.md")),
+    safeRead(path.join(dynamicVaultRoot, "overrides", "location-delta.md")),
   ]);
 
   return {

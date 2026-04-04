@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { assertDmConfig, requestAutonomousCrewAction, requestDmTurn } from "./api.js";
 import { deleteSession, listSessions, loadSession, saveSession } from "./sessionStore.js";
+import { dynamicVaultRoot, storageMode } from "./storagePaths.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,7 @@ app.get("/healthz", (_req, res) => {
     service: "dungeonmaister",
     frontend: hasBuiltClient ? "built" : "not-built",
     api: "up",
+    storageMode,
   });
 });
 
@@ -37,6 +39,8 @@ app.get("/api/health", (_req, res) => {
     frontend: hasBuiltClient ? "built" : "not-built",
     openaiConfigured: hasOpenAiKey,
     model: modelName,
+    storageMode,
+    dynamicVaultRoot,
   });
 });
 
@@ -186,4 +190,5 @@ app.listen(PORT, () => {
   if (!hasOpenAiKey) {
     console.warn("OPENAI_API_KEY is not set. Gameplay requests to /api/turn and /api/autonomous-action will return 503.");
   }
+  console.log(`Dynamic session storage: ${dynamicVaultRoot} (${storageMode})`);
 });

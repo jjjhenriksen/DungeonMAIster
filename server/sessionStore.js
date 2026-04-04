@@ -1,13 +1,8 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { dynamicVaultRoot } from "./storagePaths.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, "..");
-
-const vaultRoot = path.join(projectRoot, "vault");
-const dynamicRoot = path.join(vaultRoot, "dynamic");
+const dynamicRoot = dynamicVaultRoot;
 const overridesRoot = path.join(dynamicRoot, "overrides");
 const slotsRoot = path.join(dynamicRoot, "slots");
 const slotsIndexPath = path.join(slotsRoot, "index.json");
