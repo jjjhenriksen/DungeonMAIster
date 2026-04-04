@@ -5,6 +5,7 @@ services:
     plan: free
     buildCommand: npm install && npm run build
     startCommand: npm start
+    healthCheckPath: /healthz
     envVars:
       - key: OPENAI_API_KEY
         sync: false

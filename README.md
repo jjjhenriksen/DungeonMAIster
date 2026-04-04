@@ -29,7 +29,13 @@ Install dependencies:
 npm install
 ```
 
-Create `.env`:
+Create `.env` from `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Then fill in:
 
 ```bash
 OPENAI_API_KEY=your_key_here
@@ -70,12 +76,18 @@ OPENAI_API_KEY=your_key_here
 OPENAI_MODEL=gpt-4.1-mini
 ```
 
+Operational endpoints:
+
+- `GET /healthz`: deployment health probe for the combined app
+- `GET /api/health`: runtime status including whether OpenAI is configured
+
 Render path:
 
 1. Create a new `Web Service` from this repo.
 2. Use the included `render.yaml`, or set:
    - Build command: `npm install && npm run build`
    - Start command: `npm start`
+   - Health check path: `/healthz`
 3. Add `OPENAI_API_KEY` and optionally `OPENAI_MODEL`.
 
 Deployment note:

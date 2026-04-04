@@ -14,9 +14,31 @@ const indexHtmlPath = path.join(distRoot, "index.html");
 
 const PORT = Number(process.env.PORT || process.env.DM_API_PORT || 8787);
 const hasBuiltClient = existsSync(indexHtmlPath);
+const hasOpenAiKey = Boolean(process.env.OPENAI_API_KEY);
+const modelName = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 
 const app = express();
+app.disable("x-powered-by");
 app.use(express.json({ limit: "512kb" }));
+
+app.get("/healthz", (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    service: "dungeonmaister",
+    frontend: hasBuiltClient ? "built" : "not-built",
+    api: "up",
+  });
+});
+
+app.get("/api/health", (_req, res) => {
+  res.status(200).json({
+    ok: true,
+    service: "dungeonmaister",
+    frontend: hasBuiltClient ? "built" : "not-built",
+    openaiConfigured: hasOpenAiKey,
+    model: modelName,
+  });
+});
 
 app.get("/api/sessions", async (_req, res) => {
   try {
@@ -161,4 +183,7 @@ app.listen(PORT, () => {
       ? `Artemis Lost listening on http://localhost:${PORT}`
       : `DM API listening on http://localhost:${PORT}`
   );
+  if (!hasOpenAiKey) {
+    console.warn("OPENAI_API_KEY is not set. Gameplay requests to /api/turn and /api/autonomous-action will return 503.");
+  }
 });
