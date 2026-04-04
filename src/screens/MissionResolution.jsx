@@ -83,6 +83,7 @@ export default function MissionResolution({
             <div className="resolution-screen__capsule resolution-screen__capsule--drift">
               <div className="resolution-screen__capsule-body" />
               <div className="resolution-screen__capsule-window" />
+              <div className="resolution-screen__capsule-beacon" />
               <div className="resolution-screen__capsule-trail" />
             </div>
           )}

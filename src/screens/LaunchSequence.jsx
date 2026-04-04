@@ -141,11 +141,20 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
         </div>
         {!readyToContinue ? (
           <div
-            key={countdownValue}
             className="launch-screen__countdown"
             aria-live="polite"
           >
-            <span className="launch-screen__countdown-value">{countdownValue}</span>
+            <span
+              className="launch-screen__countdown-value"
+              style={{
+                animationName:
+                  countdownValue % 2 === 0
+                    ? "launchCountdownPulseA"
+                    : "launchCountdownPulseB",
+              }}
+            >
+              {countdownValue}
+            </span>
           </div>
         ) : null}
         <div className="launch-pad" aria-hidden="true">
