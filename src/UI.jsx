@@ -7,20 +7,11 @@ import NarrationPanel from "./NarrationPanel";
 import RosterSummary from "./RosterSummary";
 import RoleView from "./RoleView";
 import ThemePicker from "./ThemePicker";
-import { applyStateDelta } from "./applyStateDelta";
 import { requestAutonomousAction, requestDmTurn } from "./dmApi";
-import {
-  advanceMissionMet,
-  appendConversationEntry,
-  createActionLogEntry,
-  getCrewTurnIndexById,
-  getNextTurnIndex,
-  prependCappedEntries,
-} from "./gameLoop";
-import { createMissionTurnEffect } from "./missionMechanics";
-import { createRoleTurnEffect, getFollowThroughTurnTarget } from "./roleMechanics";
+import { appendConversationEntry } from "./gameLoop";
 import { getViewForRole } from "./roleFilters";
 import { saveSession as persistSession } from "./sessionApi";
+import { resolveTurnWorldState } from "./turnRuntime.js";
 import { getUiState } from "./uiState";
 import { INITIAL_WORLD_STATE, OPENING_NARRATION } from "./worldState";
 
@@ -108,24 +99,12 @@ export default function ArtemisLost({
     setTimeout(() => inputRef.current?.focus(), 100);
   }
 
-  function resolveNextTurnIndex(nextWorldState) {
-    const followThroughTarget = getFollowThroughTurnTarget(nextWorldState);
-    const priorityIndex = getCrewTurnIndexById(nextWorldState?.crew, followThroughTarget?.id);
-
-    if (priorityIndex >= 0 && priorityIndex !== turn) {
-      return priorityIndex;
-    }
-
-    return getNextTurnIndex(nextWorldState?.crew || ws.crew, turn);
-  }
-
   async function resolveTurn(action) {
     if (!action.trim() || waiting) return;
     const actionText = action.trim();
 
     setWaiting(true);
 
-    const newLog = createActionLogEntry(ws, activeCrew, actionText);
     const nextConversationHistory = appendConversationEntry(conversationHistory, {
       role: "user",
       turn,
@@ -144,20 +123,12 @@ export default function ArtemisLost({
 
     if (result.error) {
       const errorNarration = `Could not reach the DM service.\n\n${result.error}\n\nCheck that both dev servers are running (\`npm run dev\`), your .env has OPENAI_API_KEY, and OPENAI_MODEL matches an available model.`;
-      const advancedMet = advanceMissionMet(ws.mission.met);
-      const baseWorldState = {
-        ...ws,
-        mission: {
-          ...ws.mission,
-          met: advancedMet,
-        },
-        eventLog: prependCappedEntries(ws.eventLog, newLog),
-      };
-      const roleEffect = createRoleTurnEffect(baseWorldState, activeCrew, actionText);
-      const roleResolvedWorldState = applyStateDelta(baseWorldState, roleEffect.delta);
-      const missionEffect = createMissionTurnEffect(roleResolvedWorldState, activeCrew, actionText);
-      const nextWorldState = applyStateDelta(roleResolvedWorldState, missionEffect.delta);
-      const nextTurn = resolveNextTurnIndex(nextWorldState);
+      const { nextWorldState, nextTurn } = resolveTurnWorldState({
+        worldState: ws,
+        activeCrew,
+        actionText,
+        currentTurn: turn,
+      });
 
       setNarration(errorNarration);
       setWs(nextWorldState);
@@ -172,36 +143,19 @@ export default function ArtemisLost({
     }
 
     const { narration: nextText, stateDelta } = result;
-    const advancedMet = advanceMissionMet(ws.mission.met);
     const assistantHistory = appendConversationEntry(nextConversationHistory, {
       role: "assistant",
       turn,
       crewName: activeCrew.name,
       content: nextText,
     });
-    const baseWorldState = {
-      ...ws,
-      mission: {
-        ...ws.mission,
-        met: advancedMet,
-      },
-      eventLog: prependCappedEntries(ws.eventLog, newLog),
-    };
-    const dmResolvedWorldState = applyStateDelta(
-      baseWorldState,
-      {
-        ...stateDelta,
-        mission: {
-          ...(stateDelta.mission || {}),
-          met: stateDelta?.mission?.met || advancedMet,
-        },
-      }
-    );
-    const roleEffect = createRoleTurnEffect(dmResolvedWorldState, activeCrew, actionText);
-    const roleResolvedWorldState = applyStateDelta(dmResolvedWorldState, roleEffect.delta);
-    const missionEffect = createMissionTurnEffect(roleResolvedWorldState, activeCrew, actionText);
-    const nextWorldState = applyStateDelta(roleResolvedWorldState, missionEffect.delta);
-    const nextTurn = resolveNextTurnIndex(nextWorldState);
+    const { nextWorldState, nextTurn } = resolveTurnWorldState({
+      worldState: ws,
+      activeCrew,
+      actionText,
+      stateDelta,
+      currentTurn: turn,
+    });
 
     setWs(nextWorldState);
     setNarration(nextText);
