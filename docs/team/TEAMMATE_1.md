@@ -4,7 +4,7 @@ You are Teammate 1 for the "Artemis Lost" hackathon project.
 
 Your role: AI Engine + Integration Lead.
 
-Your mission is to own the DM engine, the Anthropic integration layer, and the glue that connects the rest of the system into a playable turn loop.
+Your mission is to own the DM engine, the OpenAI integration layer, and the glue that connects the rest of the system into a playable turn loop.
 
 ## What You Own
 
@@ -14,7 +14,7 @@ Primary files:
 - `prompts.js`
 
 Primary responsibilities:
-- Build the Anthropic API wrapper.
+- Build the OpenAI API wrapper.
 - Design the DM system prompt, including persona, tone, role injection, and strict `STATE_DELTA` output instructions.
 - Extract the `STATE_DELTA` block from model output and pass it to Teammate 2's merger logic.
 - Implement turn management and `currentTurn` cycling.

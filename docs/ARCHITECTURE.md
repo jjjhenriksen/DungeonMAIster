@@ -21,8 +21,8 @@ This project is currently a small full-stack prototype with one frontend app and
 - [src/applyStateDelta.js](/Users/jacquelinehenriksen/DungeonMAIster/src/applyStateDelta.js): merges model-generated state changes into the current world state
 - [src/deltaParser.js](/Users/jacquelinehenriksen/DungeonMAIster/src/deltaParser.js): canonical state-delta parsing, normalization, and merge rules
 - [src/styles.css](/Users/jacquelinehenriksen/DungeonMAIster/src/styles.css): shared UI theme tokens and component classes
-- [server/api.js](/Users/jacquelinehenriksen/DungeonMAIster/server/api.js): Anthropic wrapper plus DM response extraction and validation
-- [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs): Express server that validates input, calls Anthropic, and returns structured narration plus state updates
+- [server/api.js](/Users/jacquelinehenriksen/DungeonMAIster/server/api.js): OpenAI wrapper plus DM response extraction and validation
+- [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs): Express server that validates input, calls OpenAI, and returns structured narration plus state updates
 - [server/sessionStore.js](/Users/jacquelinehenriksen/DungeonMAIster/server/sessionStore.js): persists gameplay state into `vault/dynamic`
 - [server/vault.js](/Users/jacquelinehenriksen/DungeonMAIster/server/vault.js): loads static and dynamic vault markdown into prompt context
 
@@ -45,7 +45,7 @@ The refactor now separates seeded data, role filtering, and major UI surfaces in
 
 The local Express server currently owns:
 - reading environment variables
-- constructing the Anthropic system prompt
+- constructing the OpenAI system prompt
 - loading vault markdown context for prompt assembly
 - sending the current world state and player action to the model
 - extracting JSON from the model response

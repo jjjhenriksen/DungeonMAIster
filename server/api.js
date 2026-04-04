@@ -1,13 +1,29 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { extractTurnResult } from "../src/deltaParser.js";
 import { createDmSystemPrompt, createDmUserPrompt } from "./prompts.js";
 import { formatVaultContext, loadVaultContext } from "./vault.js";
 
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-20250514";
+const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
+const OPENAI_API_URL = "https://api.openai.com/v1/responses";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+function extractResponseText(payload) {
+  if (typeof payload?.output_text === "string" && payload.output_text.trim()) {
+    return payload.output_text.trim();
+  }
+
+  const fragments = [];
+  for (const item of payload?.output || []) {
+    for (const content of item?.content || []) {
+      if (content?.type === "output_text" && typeof content.text === "string") {
+        fragments.push(content.text);
+      }
+      if (content?.type === "text" && typeof content.text === "string") {
+        fragments.push(content.text);
+      }
+    }
+  }
+
+  return fragments.join("\n").trim();
+}
 
 export async function requestDmTurn({
   worldState,
@@ -16,40 +32,47 @@ export async function requestDmTurn({
   conversationHistory = [],
   currentTurn = 0,
 }) {
-  // Pull static lore and crew/location context into the prompt on each turn.
   const vaultContext = formatVaultContext(await loadVaultContext());
 
-  const message = await client.messages.create({
-    model: MODEL,
-    max_tokens: 4096,
-    system: createDmSystemPrompt(),
-    messages: [
-      {
-        role: "user",
-        content: createDmUserPrompt({
-          worldState,
-          action,
-          activeCrew,
-          conversationHistory,
-          currentTurn,
-          vaultContext,
-        }),
-      },
-    ],
+  const res = await fetch(OPENAI_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      instructions: createDmSystemPrompt(),
+      input: createDmUserPrompt({
+        worldState,
+        action,
+        activeCrew,
+        conversationHistory,
+        currentTurn,
+        vaultContext,
+      }),
+    }),
   });
 
-  // Anthropic responses arrive as content blocks; flatten the text blocks into one DM reply.
-  const text = message.content
-    .filter((block) => block?.type === "text")
-    .map((block) => block.text)
-    .join("\n");
+  const payload = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const message =
+      payload?.error?.message ||
+      payload?.message ||
+      `OpenAI request failed (${res.status})`;
+    throw new Error(message);
+  }
+
+  const text = extractResponseText(payload);
+  if (!text) {
+    throw new Error("OpenAI returned an empty response");
+  }
 
   return extractTurnResult(text);
 }
 
 export function assertDmConfig() {
-  // Fail fast with a teammate-friendly message before we ever try to hit the API.
-  if (!process.env.ANTHROPIC_API_KEY) {
-    throw new Error("ANTHROPIC_API_KEY is not set. Copy .env.example to .env and add your key.");
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not set. Copy .env.example to .env and add your key.");
   }
 }

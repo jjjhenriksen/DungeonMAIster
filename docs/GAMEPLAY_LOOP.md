@@ -11,7 +11,7 @@ This document describes the current end-to-end turn flow in the prototype.
 5. The frontend adds the player action to the local event log.
 6. The frontend appends the move to recent conversation history.
 7. The frontend sends `worldState`, `action`, `activeCrew`, `conversationHistory`, and `currentTurn` to the DM API.
-8. The backend adds vault context and sends that prompt to Anthropic using a strict JSON contract.
+8. The backend adds vault context and sends that prompt to OpenAI using a strict JSON contract.
 9. The model returns:
    - `narration`
    - `stateDelta`

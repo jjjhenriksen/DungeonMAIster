@@ -2,13 +2,13 @@
 
 DungeonMAIster is a lightweight prototype for "Artemis Lost," a turn-based sci-fi roleplaying experience where a language model acts as the dungeon master for a stranded lunar mission.
 
-The current app is a React + Vite frontend with a small Express development server that proxies requests to Anthropic. A player submits an action, the DM responds with narration plus a structured state delta, and the UI applies those changes to the shared mission state.
+The current app is a React + Vite frontend with a small Express development server that proxies requests to OpenAI. A player submits an action, the DM responds with narration plus a structured state delta, and the UI applies those changes to the shared mission state.
 
 ## Current Stack
 
 - Frontend: React + Vite
 - Backend: Express dev server
-- Model provider: Anthropic API
+- Model provider: OpenAI API
 - State model: in-memory world state with delta-based updates
 
 ## Project Structure
@@ -62,11 +62,11 @@ The current app is a React + Vite frontend with a small Express development serv
 npm install
 ```
 
-2. Create a `.env` file with your Anthropic credentials:
+2. Create a `.env` file with your OpenAI credentials:
 
 ```bash
-ANTHROPIC_API_KEY=your_key_here
-ANTHROPIC_MODEL=claude-sonnet-4-20250514
+OPENAI_API_KEY=your_key_here
+OPENAI_MODEL=gpt-4.1-mini
 DM_API_PORT=8787
 ```
 
@@ -115,7 +115,7 @@ with the DM API server running.
 1. The frontend renders a seeded mission state and a role-based UI.
 2. A player enters an action for the active crew member.
 3. The frontend includes recent conversation history and the current turn index when posting to `/api/turn`.
-4. The Express server calls Anthropic with a structured system prompt.
+4. The Express server calls OpenAI with a structured system prompt.
 5. The server enriches the prompt with vault content and validates the model output.
 6. The model returns JSON containing:
    - `narration`
@@ -137,7 +137,7 @@ The prototype already includes:
 - DM narration rendering
 - event log updates
 - state-delta application
-- Anthropic-backed turn requests through a local server
+- OpenAI-backed turn requests through a local server
 - conversation history passed through the DM loop
 - vault-backed session persistence in `vault/dynamic`
 - prompt context assembled from `vault/static`

@@ -1,6 +1,6 @@
 # Artemis Lost — Team Responsibilities
 
-Hackathon duration: 48 hours. Stack: React + Vite, Anthropic API, Obsidian markdown vault.
+Hackathon duration: 48 hours. Stack: React + Vite, OpenAI API, Obsidian markdown vault.
 
 ---
 
@@ -9,7 +9,7 @@ Hackathon duration: 48 hours. Stack: React + Vite, Anthropic API, Obsidian markd
 **Primary files:** `api.js`, `gameLoop.js`, `prompts.js`
 
 ### Responsibilities
-- Anthropic API wrapper — single function that takes world state + player action + conversation history and returns narration + state delta
+- OpenAI API wrapper — single function that takes world state + player action + conversation history and returns narration + state delta
 - DM system prompt design — persona, tone, STATE_DELTA instruction, role injection
 - STATE_DELTA extraction — parse the LLM response and hand structured changes to Teammate 2's merger function
 - Turn manager — `currentTurn` cycling logic, game loop orchestration
@@ -147,7 +147,7 @@ vault/
 ## Integration Checklist (Hour 24 gate)
 
 - [ ] Player can type an action and hit Transmit
-- [ ] Anthropic API call fires with world state + action
+- [ ] OpenAI API call fires with world state + action
 - [ ] DM returns narration and STATE_DELTA
 - [ ] State delta applied to world state
 - [ ] Narration appears in DM panel with typewriter effect

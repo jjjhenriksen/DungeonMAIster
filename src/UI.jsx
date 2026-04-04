@@ -104,7 +104,7 @@ export default function ArtemisLost({
     });
 
     if (result.error) {
-      const errorNarration = `Could not reach the DM service.\n\n${result.error}\n\nCheck that both dev servers are running (\`npm run dev\`), your .env has ANTHROPIC_API_KEY, and ANTHROPIC_MODEL matches an available model.`;
+      const errorNarration = `Could not reach the DM service.\n\n${result.error}\n\nCheck that both dev servers are running (\`npm run dev\`), your .env has OPENAI_API_KEY, and OPENAI_MODEL matches an available model.`;
       const nextWorldState = {
         ...ws,
         eventLog: prependCappedEntries(ws.eventLog, newLog),

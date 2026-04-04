@@ -1,0 +1,20 @@
+{
+  "activeSlotId": "slot-1",
+  "slots": [
+    {
+      "id": "slot-1",
+      "label": "Slot 1",
+      "lastUpdatedIso": "2026-04-04T01:14:04.698Z"
+    },
+    {
+      "id": "slot-2",
+      "label": "Slot 2",
+      "lastUpdatedIso": null
+    },
+    {
+      "id": "slot-3",
+      "label": "Slot 3",
+      "lastUpdatedIso": null
+    }
+  ]
+}

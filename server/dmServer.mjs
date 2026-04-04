@@ -96,7 +96,7 @@ app.post("/api/turn", async (req, res) => {
     res.json({ narration, stateDelta });
   } catch (err) {
     console.error(err);
-    const status = /ANTHROPIC_API_KEY/.test(err.message || "") ? 503 : 500;
+    const status = /OPENAI_API_KEY/.test(err.message || "") ? 503 : 500;
     res.status(status).json({ error: err.message || String(err) });
   }
 });
