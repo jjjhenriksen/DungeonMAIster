@@ -16,6 +16,7 @@ import {
   getNextTurnIndex,
   prependCappedEntries,
 } from "./gameLoop";
+import { createRoleTurnEffect } from "./roleMechanics";
 import { getViewForRole } from "./roleFilters";
 import { saveSession as persistSession } from "./sessionApi";
 import { getUiState } from "./uiState";
@@ -124,7 +125,7 @@ export default function ArtemisLost({
     if (result.error) {
       const errorNarration = `Could not reach the DM service.\n\n${result.error}\n\nCheck that both dev servers are running (\`npm run dev\`), your .env has OPENAI_API_KEY, and OPENAI_MODEL matches an available model.`;
       const advancedMet = advanceMissionMet(ws.mission.met);
-      const nextWorldState = {
+      const baseWorldState = {
         ...ws,
         mission: {
           ...ws.mission,
@@ -132,6 +133,8 @@ export default function ArtemisLost({
         },
         eventLog: prependCappedEntries(ws.eventLog, newLog),
       };
+      const roleEffect = createRoleTurnEffect(baseWorldState, activeCrew, actionText);
+      const nextWorldState = applyStateDelta(baseWorldState, roleEffect.delta);
       const nextTurn = getNextTurnIndex(ws.crew, turn);
 
       setNarration(errorNarration);
@@ -154,15 +157,16 @@ export default function ArtemisLost({
       crewName: activeCrew.name,
       content: nextText,
     });
-    const nextWorldState = applyStateDelta(
-      {
-        ...ws,
-        mission: {
-          ...ws.mission,
-          met: advancedMet,
-        },
-        eventLog: prependCappedEntries(ws.eventLog, newLog),
+    const baseWorldState = {
+      ...ws,
+      mission: {
+        ...ws.mission,
+        met: advancedMet,
       },
+      eventLog: prependCappedEntries(ws.eventLog, newLog),
+    };
+    const dmResolvedWorldState = applyStateDelta(
+      baseWorldState,
       {
         ...stateDelta,
         mission: {
@@ -171,6 +175,8 @@ export default function ArtemisLost({
         },
       }
     );
+    const roleEffect = createRoleTurnEffect(dmResolvedWorldState, activeCrew, actionText);
+    const nextWorldState = applyStateDelta(dmResolvedWorldState, roleEffect.delta);
     const nextTurn = getNextTurnIndex(ws.crew, turn);
 
     setWs(nextWorldState);

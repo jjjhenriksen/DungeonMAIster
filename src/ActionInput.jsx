@@ -1,5 +1,6 @@
 import TurnIndicator from "./TurnIndicator";
 import { getRoleGuidance } from "./roleGuidance";
+import { getRoleMechanicSummary } from "./roleMechanics";
 
 export default function ActionInput({
   activeCrew,
@@ -16,6 +17,7 @@ export default function ActionInput({
   worldState,
 }) {
   const roleGuidance = getRoleGuidance(worldState, activeCrew);
+  const roleMechanicSummary = getRoleMechanicSummary(activeCrew);
 
   return (
     <div className="action-input">
@@ -30,6 +32,9 @@ export default function ActionInput({
           <div className="action-input__focus">
             <div className="action-input__focus-label">TACTICAL FOCUS</div>
             <div className="action-input__focus-copy">{roleGuidance.focus}</div>
+            <div className="action-input__hint">
+              Role leverage: {roleMechanicSummary}
+            </div>
           </div>
         ) : null}
 
