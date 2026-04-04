@@ -15,6 +15,7 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
   const [readyToContinue, setReadyToContinue] = useState(false);
   const mission = session?.worldState?.mission || {};
   const crew = session?.worldState?.crew || [];
+  const slotLabel = session?.slotLabel || slotId?.replace(/^slot-/, "Slot ") || "Slot 1";
   const activeTheme = themes?.find((theme) => theme.id === themeId) || themes?.[0] || null;
   const roster = crew.map((member) => ({
     id: member.id,
@@ -77,7 +78,7 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
         <div className="launch-screen__meta">
           <span>{mission.id || "ARTEMIS-07"}</span>
           <span>{mission.seedLabel || "Mission profile armed"}</span>
-          <span>Save slot {slotId}</span>
+          <span>{slotLabel}</span>
         </div>
         <div className="launch-screen__timeline">
           {LAUNCH_STAGES.map((stage) => (
