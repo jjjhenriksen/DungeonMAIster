@@ -1,11 +1,19 @@
 import { useState } from "react";
+import ThemePicker from "./ThemePicker";
 import { DEFAULT_CHARACTER_PROFILES } from "./worldState";
 
 function cloneProfiles(profiles) {
   return profiles.map((profile) => ({ ...profile }));
 }
 
-export default function CharacterCreation({ onBack, onStartMission, slotId }) {
+export default function CharacterCreation({
+  onBack,
+  onStartMission,
+  slotId,
+  themeId,
+  themes,
+  onThemeChange,
+}) {
   const [profiles, setProfiles] = useState(() => cloneProfiles(DEFAULT_CHARACTER_PROFILES));
 
   function updateProfile(id, field, value) {
@@ -42,6 +50,13 @@ export default function CharacterCreation({ onBack, onStartMission, slotId }) {
           carried into the save file, vault context, and DM prompt.
         </p>
         <div className="creator-slot">Target save slot: {slotId}</div>
+
+        <ThemePicker
+          themeId={themeId}
+          themes={themes}
+          onThemeChange={onThemeChange}
+          title="INTERFACE THEME"
+        />
 
         <div className="creator-grid">
           {profiles.map((profile) => (

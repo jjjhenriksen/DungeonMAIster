@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ThemePicker from "./ThemePicker";
 
 function formatSaveSummary(session) {
   if (!session?.worldState) return "Empty slot.";
@@ -11,6 +12,9 @@ export default function MainMenu({
   activeSession,
   activeSlotId,
   slots,
+  themeId,
+  themes,
+  onThemeChange,
   onContinue,
   onDeleteSlot,
   onLoadSlot,
@@ -31,6 +35,13 @@ export default function MainMenu({
           Build a crew, manage multiple save slots, and re-enter Artemis Lost from the
           exact point where the pressure was highest.
         </p>
+
+        <ThemePicker
+          themeId={themeId}
+          themes={themes}
+          onThemeChange={onThemeChange}
+          title="INTERFACE THEME"
+        />
 
         <div className="menu-actions">
           {hasContinueSlot ? (

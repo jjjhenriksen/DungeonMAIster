@@ -1,9 +1,9 @@
 import { memo } from "react";
 
 function getStatColor(value) {
-  if (value > 70) return "#1D9E75";
-  if (value > 40) return "#EF9F27";
-  return "#E24B4A";
+  if (value > 70) return "var(--stat-health)";
+  if (value > 40) return "var(--stat-warning)";
+  return "var(--stat-critical)";
 }
 
 function StatBar({ label, value, tone }) {
@@ -24,7 +24,7 @@ function StatBar({ label, value, tone }) {
 }
 
 function CrewCard({ member, isActive }) {
-  const accent = isActive ? "#6fd3ff" : "#378ADD";
+  const accent = isActive ? "var(--stat-accent-active)" : "var(--stat-accent-idle)";
   // The third bar stays schema-light so Teammate 2 can keep driving it from `extra`.
   const extraLabel = member.extra.label.toUpperCase();
 
@@ -50,7 +50,7 @@ function CrewCard({ member, isActive }) {
       </div>
 
       <StatBar label="HEALTH" value={member.health} />
-      <StatBar label="MORALE" value={member.morale} tone="#9D8CFF" />
+      <StatBar label="MORALE" value={member.morale} tone="var(--stat-morale)" />
       <StatBar label={extraLabel.slice(0, 6)} value={member.extra.value} tone={accent} />
     </div>
   );

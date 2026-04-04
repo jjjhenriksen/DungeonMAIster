@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CharacterCreation from "./CharacterCreation";
 import MainMenu from "./MainMenu";
 import { deleteSession, listSessions, loadSession, saveSession } from "./sessionApi";
+import { getStoredTheme, THEMES, THEME_STORAGE_KEY } from "./themes";
 import ArtemisLost from "./UI.jsx";
 import { createMissionSession } from "./worldState";
 
@@ -12,6 +13,7 @@ export default function App() {
   const [activeSlotId, setActiveSlotId] = useState(null);
   const [pendingSlotId, setPendingSlotId] = useState("slot-1");
   const [gameInstanceKey, setGameInstanceKey] = useState(0);
+  const [themeId, setThemeId] = useState(getStoredTheme);
 
   async function refreshSlots() {
     const response = await listSessions();
@@ -42,6 +44,12 @@ export default function App() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = themeId;
+    document.body.dataset.theme = themeId;
+    window.localStorage.setItem(THEME_STORAGE_KEY, themeId);
+  }, [themeId]);
 
   function launchSession(slotId, session) {
     setActiveSession(session);
@@ -98,6 +106,9 @@ export default function App() {
     return (
       <CharacterCreation
         slotId={pendingSlotId}
+        themeId={themeId}
+        themes={THEMES}
+        onThemeChange={setThemeId}
         onBack={() => setScreen("menu")}
         onStartMission={handleStartMission}
       />
@@ -110,6 +121,9 @@ export default function App() {
         key={gameInstanceKey}
         initialSession={activeSession}
         slotId={activeSlotId}
+        themeId={themeId}
+        themes={THEMES}
+        onThemeChange={setThemeId}
         onExitToMenu={() => setScreen("menu")}
         onSessionPersisted={handleSessionPersisted}
       />
@@ -121,6 +135,9 @@ export default function App() {
       activeSession={activeSession}
       activeSlotId={activeSlotId}
       slots={slots}
+      themeId={themeId}
+      themes={THEMES}
+      onThemeChange={setThemeId}
       onContinue={handleContinue}
       onDeleteSlot={handleDeleteSlot}
       onLoadSlot={handleLoadSlot}

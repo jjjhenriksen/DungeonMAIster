@@ -5,6 +5,7 @@ import CrewStatusBar from "./CrewStatusBar";
 import NarrationPanel from "./NarrationPanel";
 import RosterSummary from "./RosterSummary";
 import RoleView from "./RoleView";
+import ThemePicker from "./ThemePicker";
 import { applyStateDelta } from "./applyStateDelta";
 import { requestDmTurn } from "./dmApi";
 import {
@@ -37,6 +38,9 @@ function createFallbackSession() {
 export default function ArtemisLost({
   initialSession,
   slotId,
+  themeId,
+  themes,
+  onThemeChange,
   onExitToMenu,
   onSessionPersisted,
 }) {
@@ -185,6 +189,13 @@ export default function ArtemisLost({
 
         <div className="app-header__controls">
           <CrewStatusBar mission={ws.mission} systems={ws.systems} />
+          <ThemePicker
+            compact
+            themeId={themeId}
+            themes={themes}
+            onThemeChange={onThemeChange}
+            title="THEME"
+          />
           <div className="header-actions">
             <div className={`save-indicator save-indicator--${saveState}`}>
               {saveState === "saving"
