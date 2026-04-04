@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import ActionInput from "./ActionInput";
 import CrewCard from "./CrewCard";
 import CrewStatusBar from "./CrewStatusBar";
@@ -47,7 +47,7 @@ export default function ArtemisLost({
   const inputRef = useRef(null);
 
   const activeCrew = ws.crew[turn];
-  const roleView = getViewForRole(ws, turn);
+  const roleView = useMemo(() => getViewForRole(ws, turn), [ws, turn]);
 
   function buildSessionPayload(overrides = {}) {
     return {

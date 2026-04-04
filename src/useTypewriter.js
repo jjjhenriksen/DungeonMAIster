@@ -5,18 +5,26 @@ export function useTypewriter(text, speed = 18) {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
+    if (!text) {
+      setDisplayed("");
+      setDone(true);
+      return undefined;
+    }
+
     setDisplayed("");
     setDone(false);
 
     let index = 0;
+    const chunkSize = text.length > 420 ? 4 : text.length > 180 ? 3 : 2;
     const interval = setInterval(() => {
-      index += 1;
+      index += chunkSize;
       setDisplayed(text.slice(0, index));
       if (index >= text.length) {
         clearInterval(interval);
+        setDisplayed(text);
         setDone(true);
       }
-    }, speed);
+    }, Math.max(speed, 28));
 
     return () => clearInterval(interval);
   }, [text, speed]);

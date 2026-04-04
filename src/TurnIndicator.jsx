@@ -1,4 +1,6 @@
-export default function TurnIndicator({ activeCrew, waiting }) {
+import { memo } from "react";
+
+function TurnIndicator({ activeCrew, waiting }) {
   return (
     <div className={`turn-indicator${waiting ? " turn-indicator--waiting" : ""}`}>
       <div>
@@ -24,3 +26,5 @@ export default function TurnIndicator({ activeCrew, waiting }) {
     </div>
   );
 }
+
+export default memo(TurnIndicator);

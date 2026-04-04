@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 const ROLE_FLAVOR = {
   Commander: "You hold the tempo. Weigh the signal, the crew, and the cost of every order.",
   "Flight Engineer":
@@ -8,7 +10,7 @@ const ROLE_FLAVOR = {
     "You operate where the risk becomes physical. Every tool choice is a bet against the environment.",
 };
 
-export default function RoleView({ activeCrew, roleView }) {
+function RoleView({ activeCrew, roleView }) {
   return (
     <div className="role-view">
       <div className="section-title section-title--mb-10">
@@ -39,3 +41,5 @@ export default function RoleView({ activeCrew, roleView }) {
     </div>
   );
 }
+
+export default memo(RoleView);

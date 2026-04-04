@@ -149,16 +149,6 @@
     ],
     "eventLog": [
       {
-        "ts": "T+14:23",
-        "msg": "Commander Vasquez orders a detailed scan and analysis of the Shackleton signal anomaly.",
-        "type": "info"
-      },
-      {
-        "ts": "T+14:22:07",
-        "msg": "Commander Alma Vasquez: \"Further assessment on the situation.\"",
-        "type": "action"
-      },
-      {
         "ts": "T+14:22",
         "msg": "Anomaly signal detected from Shackleton Crater interior.",
         "type": "alert"
@@ -185,30 +175,16 @@
       }
     ]
   },
-  "narration": "The rover’s sensors buzz and recalibrate as you dig deeper into the data flooding the cockpit consoles. The anomaly’s signature pulses persist—teasing with precision through the haze of interference. Scans show the geometry of subsurface formations is unlike anything natural; straight lines and sharp angles slicing through regolith shadows. Yet every glimpse is shadowed by uncertainty—comms drift, the scrubber patching, the jagged rim prying open like a blade beneath you.\n\nYour orders lay heavy: trace the signal, ensure the crew survives, and gather proof to dictate whether a return window will open. The tension thrums, palpable—a calculus of risk balancing the crew’s fragile state and the nature of the signal, which feels alive and watchful. The silence in the cabin dims only when the anomaly’s strange pulse swells again, steady as a drumbeat yet sinking beneath the hover of static.",
-  "turn": 1,
+  "narration": "The rover eases to a halt on the knife-edge rim of Shackleton Crater, and every speaker in the cabin hisses with an impossible transmission. The signal is old Apollo-band hardware, dead for decades, yet it is pulsing from the darkness below with machine-perfect rhythm.\n\nDr. Imani Reyes has already stripped the noise away once and the pattern only became stranger. Chief Engineer Tunde Okafor warns the scrubber patch may not survive a long delay. Lt. Hana Park is halfway into a damaged EVA suit. Commander Alma Vasquez, the crew is looking to you.",
+  "turn": 0,
   "conversationHistory": [
     {
       "role": "system",
       "turn": 0,
       "crewName": "Commander Alma Vasquez",
       "content": "Mission initialized from character roster."
-    },
-    {
-      "role": "user",
-      "turn": 0,
-      "crewName": "Commander Alma Vasquez",
-      "content": "Further assessment on the situation."
-    },
-    {
-      "role": "assistant",
-      "turn": 0,
-      "crewName": "Commander Alma Vasquez",
-      "content": "The rover’s sensors buzz and recalibrate as you dig deeper into the data flooding the cockpit consoles. The anomaly’s signature pulses persist—teasing with precision through the haze of interference. Scans show the geometry of subsurface formations is unlike anything natural; straight lines and sharp angles slicing through regolith shadows. Yet every glimpse is shadowed by uncertainty—comms drift, the scrubber patching, the jagged rim prying open like a blade beneath you.\n\nYour orders lay heavy: trace the signal, ensure the crew survives, and gather proof to dictate whether a return window will open. The tension thrums, palpable—a calculus of risk balancing the crew’s fragile state and the nature of the signal, which feels alive and watchful. The silence in the cabin dims only when the anomaly’s strange pulse swells again, steady as a drumbeat yet sinking beneath the hover of static."
     }
   ],
   "createdFromCharacterCreation": true,
-  "lastUpdatedIso": "2026-04-04T01:14:04.698Z",
-  "slotId": "slot-1",
-  "slotLabel": "Slot 1"
+  "lastUpdatedIso": "2026-04-04T00:59:15.446Z"
 }
