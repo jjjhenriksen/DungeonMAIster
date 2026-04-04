@@ -1,5 +1,5 @@
 import { EVENT_LOG_TYPES } from "./eventLogTypes";
-import { CHARACTER_BANKS } from "./characterBanks";
+import { CHARACTER_BANKS, CREW_TENSION_PATTERNS } from "./characterBanks";
 
 function clampPercent(value) {
   const num = Number(value);
@@ -205,6 +205,7 @@ function createProfileFromBlueprint(blueprint, overrides = {}) {
     specialty: overrides.specialty || blueprint.defaultSpecialty,
     flaw: overrides.flaw || blueprint.defaultFlaw,
     personalStake: overrides.personalStake || blueprint.defaultStake,
+    tensionNote: overrides.tensionNote || "",
   };
 }
 
@@ -216,20 +217,165 @@ function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function hasAnyTag(entry, tags = []) {
+  return entry?.tags?.some((tag) => tags.includes(tag));
+}
+
+function pickTaggedEntry(entries, preferredTags = [], usedTexts = new Set()) {
+  const matching = entries.filter(
+    (entry) => hasAnyTag(entry, preferredTags) && !usedTexts.has(entry.text)
+  );
+  if (matching.length > 0) return pickRandom(matching);
+
+  const unused = entries.filter((entry) => !usedTexts.has(entry.text));
+  if (unused.length > 0) return pickRandom(unused);
+
+  return pickRandom(entries);
+}
+
+const TAG_KEYWORDS = {
+  steady: ["calm", "clarity", "composure", "steady", "stabil", "discipline"],
+  leader: ["command", "lead", "crew", "tempo", "triage", "decision"],
+  empathetic: ["morale", "crew", "people", "compassion", "stabilization"],
+  social: ["morale", "crew", "speaks", "vulnerability", "consensus"],
+  procedural: ["procedure", "repair", "systems", "maintenance", "patch", "stabilization"],
+  analytical: ["pattern", "analysis", "telemetry", "signal", "model", "geology"],
+  curious: ["curiosity", "discovery", "anomaly", "signal", "meaning", "phenomena"],
+  risk: ["risk", "edge", "eva", "surface", "hazard", "violent"],
+  bold: ["decisive", "confident", "forward", "alive", "high-risk", "danger"],
+  measured: ["disciplined", "deliberate", "balanced", "observation", "careful"],
+  cautious: ["safety", "worst-case", "margin", "caution", "slipping"],
+  control: ["control", "delegating", "consensus", "plan", "command"],
+  obsessive: ["obsession", "vindicate", "walk away", "proof", "redefine"],
+  closed: ["hides", "secrets", "admitting", "alone", "sound colder"],
+  impulsive: ["reflex", "instinct", "faster", "forward"],
+  rigid: ["commits", "pivots", "overcorrects", "doctrine"],
+  intuitive: ["instinct", "meaning", "fragments"],
+  self_erasing: ["injuries", "pain", "exhaustion", "relief"],
+  reckless: ["risk", "dangerous", "pain", "highest-risk", "one more"],
+};
+
+function inferTagsFromText(text = "") {
+  const normalized = text.toLowerCase();
+  return Object.entries(TAG_KEYWORDS)
+    .filter(([, keywords]) => keywords.some((keyword) => normalized.includes(keyword)))
+    .map(([tag]) => tag);
+}
+
+function inferProfileTags(profile = {}) {
+  const parts = [profile.trait, profile.flaw, profile.specialty, profile.personalStake].filter(Boolean);
+  return new Set(parts.flatMap((part) => inferTagsFromText(part)));
+}
+
+function scorePatternForProfiles(pattern, profilesByRole) {
+  return pattern.roles.reduce((score, role, index) => {
+    const profile = profilesByRole.get(role);
+    if (!profile) return score;
+
+    const tags = inferProfileTags(profile);
+    const preferred = pattern.preferredTags[index] || [];
+    return score + preferred.filter((tag) => tags.has(tag)).length;
+  }, 0);
+}
+
+export function deriveCrewDynamics(profiles = []) {
+  const profilesByRole = new Map(profiles.map((profile) => [profile.role, profile]));
+  let bestPattern = null;
+  let bestScore = 0;
+
+  CREW_TENSION_PATTERNS.forEach((pattern) => {
+    const score = scorePatternForProfiles(pattern, profilesByRole);
+    if (score > bestScore) {
+      bestPattern = pattern;
+      bestScore = score;
+    }
+  });
+
+  const notesById = {};
+  let summary = "";
+
+  if (bestPattern && bestScore > 0) {
+    summary = bestPattern.summary;
+    bestPattern.roles.forEach((role) => {
+      const profile = profilesByRole.get(role);
+      if (profile?.id) {
+        notesById[profile.id] = bestPattern.summary;
+      }
+    });
+  }
+
+  return { summary, notesById };
+}
+
 export function createRandomCharacterProfiles() {
-  return CREW_BLUEPRINTS.map((blueprint) => {
+  const usedNames = new Set();
+  const usedCallSigns = new Set();
+  const usedTraits = new Set();
+  const usedFlaws = new Set();
+  const selectedProfiles = new Map();
+  const tensionPattern = Math.random() < 0.55 ? pickRandom(CREW_TENSION_PATTERNS) : null;
+  const tensionRoles = new Map(
+    tensionPattern
+      ? tensionPattern.roles.map((role, index) => [role, tensionPattern.preferredTags[index]])
+      : []
+  );
+
+  CREW_BLUEPRINTS.forEach((blueprint) => {
     const roleBank = CHARACTER_BANKS[blueprint.bankKey] || {};
+    const availableNames = (roleBank.names || [blueprint.defaultName]).filter(
+      (name) => !usedNames.has(name)
+    );
+    const availableCallSigns = (roleBank.callSigns || [blueprint.defaultCallSign]).filter(
+      (callSign) => !usedCallSigns.has(callSign)
+    );
+    const preferredTags = tensionRoles.get(blueprint.role) || [];
+    const traitEntry = pickTaggedEntry(CHARACTER_BANKS.global.traits, preferredTags, usedTraits);
+    const flawEntry = pickTaggedEntry(CHARACTER_BANKS.global.flaws, preferredTags, usedFlaws);
+
     const selected = {
-      name: pickRandom(roleBank.names || [blueprint.defaultName]),
-      callSign: pickRandom(roleBank.callSigns || [blueprint.defaultCallSign]),
-      trait: pickRandom(CHARACTER_BANKS.global.traits || [blueprint.defaultTrait]),
+      name: pickRandom(availableNames.length > 0 ? availableNames : roleBank.names || [blueprint.defaultName]),
+      callSign: pickRandom(
+        availableCallSigns.length > 0 ? availableCallSigns : roleBank.callSigns || [blueprint.defaultCallSign]
+      ),
+      trait: traitEntry.text,
       specialty: pickRandom(roleBank.specialties || [blueprint.defaultSpecialty]),
-      flaw: pickRandom(CHARACTER_BANKS.global.flaws || [blueprint.defaultFlaw]),
+      flaw: flawEntry.text,
       personalStake: pickRandom(roleBank.stakes || [blueprint.defaultStake]),
     };
 
-    return createProfileFromBlueprint(blueprint, selected);
+    usedNames.add(selected.name);
+    usedCallSigns.add(selected.callSign);
+    usedTraits.add(selected.trait);
+    usedFlaws.add(selected.flaw);
+
+    selectedProfiles.set(
+      blueprint.id,
+      createProfileFromBlueprint(blueprint, {
+        ...selected,
+        tensionNote: tensionRoles.has(blueprint.role) ? tensionPattern.summary : "",
+      })
+    );
   });
+
+  return CREW_BLUEPRINTS.map((blueprint) => selectedProfiles.get(blueprint.id));
+}
+
+function withDerivedCrewDynamics(profiles = DEFAULT_CHARACTER_PROFILES) {
+  const normalizedProfiles = profiles.map((profile) => ({
+    ...profile,
+    name: profile.name?.trim() || "",
+    callSign: profile.callSign?.trim() || "",
+    trait: profile.trait?.trim() || "",
+    specialty: profile.specialty?.trim() || "",
+    flaw: profile.flaw?.trim() || "",
+    personalStake: profile.personalStake?.trim() || "",
+  }));
+  const { notesById } = deriveCrewDynamics(normalizedProfiles);
+
+  return normalizedProfiles.map((profile) => ({
+    ...profile,
+    tensionNote: profile.tensionNote?.trim() || notesById[profile.id] || "",
+  }));
 }
 
 function getCharacterProfileMap(profiles = DEFAULT_CHARACTER_PROFILES) {
@@ -251,6 +397,7 @@ export function createInitialWorldState(profiles = DEFAULT_CHARACTER_PROFILES) {
       const specialty = profile.specialty?.trim() || blueprint.defaultSpecialty;
       const flaw = profile.flaw?.trim() || blueprint.defaultFlaw;
       const personalStake = profile.personalStake?.trim() || blueprint.defaultStake;
+      const tensionNote = profile.tensionNote?.trim();
 
       return createCrewMember({
         ...blueprint,
@@ -259,13 +406,14 @@ export function createInitialWorldState(profiles = DEFAULT_CHARACTER_PROFILES) {
           ...blueprint.extra,
           detail: specialty,
         },
-        notes: `${blueprint.notes} Trait: ${trait}. Flaw: ${flaw}. Stake: ${personalStake}. Call sign: ${callSign}.`,
+        notes: `${blueprint.notes} Trait: ${trait}. Flaw: ${flaw}. Stake: ${personalStake}. Call sign: ${callSign}.${tensionNote ? ` Crew tension: ${tensionNote}.` : ""}`,
         character: {
           callSign,
           trait,
           specialty,
           flaw,
           personalStake,
+          tensionNote,
         },
       });
     }),
@@ -285,7 +433,7 @@ ${scientist} has already stripped the noise away once and the pattern only becam
 }
 
 export function createMissionSession(profiles = DEFAULT_CHARACTER_PROFILES) {
-  const worldState = createInitialWorldState(profiles);
+  const worldState = createInitialWorldState(withDerivedCrewDynamics(profiles));
   return {
     worldState,
     narration: createOpeningNarration(worldState),

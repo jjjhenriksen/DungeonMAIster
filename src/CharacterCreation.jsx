@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import ThemePicker from "./ThemePicker";
-import { createRandomCharacterProfiles, DEFAULT_CHARACTER_PROFILES } from "./worldState";
+import {
+  createRandomCharacterProfiles,
+  DEFAULT_CHARACTER_PROFILES,
+  deriveCrewDynamics,
+} from "./worldState";
 
 function cloneProfiles(profiles) {
   return profiles.map((profile) => ({ ...profile }));
@@ -15,6 +19,7 @@ export default function CharacterCreation({
   onThemeChange,
 }) {
   const [profiles, setProfiles] = useState(() => cloneProfiles(DEFAULT_CHARACTER_PROFILES));
+  const crewDynamics = useMemo(() => deriveCrewDynamics(profiles), [profiles]);
 
   function updateProfile(id, field, value) {
     setProfiles((current) =>
@@ -57,6 +62,13 @@ export default function CharacterCreation({
           onThemeChange={onThemeChange}
           title="INTERFACE THEME"
         />
+
+        {crewDynamics.summary ? (
+          <div className="creator-dynamics">
+            <div className="section-title section-title--mb-6">CREW DYNAMIC</div>
+            <div className="creator-dynamics__copy">{crewDynamics.summary}</div>
+          </div>
+        ) : null}
 
         <div className="creator-grid">
           {profiles.map((profile) => (
