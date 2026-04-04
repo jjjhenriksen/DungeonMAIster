@@ -1,9 +1,19 @@
 import "dotenv/config";
 import express from "express";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { assertDmConfig, requestAutonomousCrewAction, requestDmTurn } from "./api.js";
 import { deleteSession, listSessions, loadSession, saveSession } from "./sessionStore.js";
 
-const PORT = Number(process.env.DM_API_PORT || 8787);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, "..");
+const distRoot = path.join(projectRoot, "dist");
+const indexHtmlPath = path.join(distRoot, "index.html");
+
+const PORT = Number(process.env.PORT || process.env.DM_API_PORT || 8787);
+const hasBuiltClient = existsSync(indexHtmlPath);
 
 const app = express();
 app.use(express.json({ limit: "512kb" }));
@@ -132,6 +142,23 @@ app.post("/api/autonomous-action", async (req, res) => {
   }
 });
 
+if (hasBuiltClient) {
+  app.use(express.static(distRoot));
+
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      next();
+      return;
+    }
+
+    res.sendFile(indexHtmlPath);
+  });
+}
+
 app.listen(PORT, () => {
-  console.log(`DM API listening on http://localhost:${PORT}`);
+  console.log(
+    hasBuiltClient
+      ? `Artemis Lost listening on http://localhost:${PORT}`
+      : `DM API listening on http://localhost:${PORT}`
+  );
 });

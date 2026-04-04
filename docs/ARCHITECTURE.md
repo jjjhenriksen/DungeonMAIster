@@ -6,58 +6,58 @@ DungeonMAIster is a small full-stack app with a React frontend, a local Express 
 
 ### App Shell And Navigation
 
-- [src/App.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/App.jsx): app entry, screen routing, theme persistence, save-slot hydration
-- [src/MainMenu.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/MainMenu.jsx): front-door flow for new mission, continue, load, and delete
-- [src/CharacterCreation.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CharacterCreation.jsx): crew editing, lock/reroll controls, human-vs-autonomous role assignment, mission-seed preview
-- [src/LaunchSequence.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/LaunchSequence.jsx): cinematic transition between setup and live mission
-- [src/UI.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/UI.jsx): in-mission turn orchestration, autosave, autonomous-turn auto-play, and DM integration
+- [src/App.jsx](../src/App.jsx): app entry, screen routing, theme persistence, save-slot hydration
+- [src/MainMenu.jsx](../src/MainMenu.jsx): front-door flow for new mission, continue, load, and delete
+- [src/CharacterCreation.jsx](../src/CharacterCreation.jsx): crew editing, lock/reroll controls, human-vs-autonomous role assignment, mission-seed preview
+- [src/LaunchSequence.jsx](../src/LaunchSequence.jsx): cinematic transition between setup and live mission
+- [src/UI.jsx](../src/UI.jsx): in-mission turn orchestration, autosave, autonomous-turn auto-play, and DM integration
 
 ### World-State And Scenario Layer
 
-- [src/worldState.js](/Users/jacquelinehenriksen/DungeonMAIster/src/worldState.js): crew blueprints, mission-session creation, seed resolution, opening narration, and world-state creation
-- [src/missionSeeds.js](/Users/jacquelinehenriksen/DungeonMAIster/src/missionSeeds.js): scenario-seed definitions and mission-seed helpers
-- [src/missionMechanics.js](/Users/jacquelinehenriksen/DungeonMAIster/src/missionMechanics.js): seed-specific leverage windows and local mission effects
-- [src/characterBanks.js](/Users/jacquelinehenriksen/DungeonMAIster/src/characterBanks.js): names, call signs, traits, flaws, specialties, stakes, and tension patterns
-- [src/botTurns.js](/Users/jacquelinehenriksen/DungeonMAIster/src/botTurns.js): autonomous-action generation for underfilled crews
-- [src/gameLoop.js](/Users/jacquelinehenriksen/DungeonMAIster/src/gameLoop.js): turn helpers, MET advancement, conversation helpers, and log-entry creation
-- [src/stateUtils.js](/Users/jacquelinehenriksen/DungeonMAIster/src/stateUtils.js): shared state selectors and numeric clamping helpers
+- [src/worldState.js](../src/worldState.js): crew blueprints, mission-session creation, seed resolution, opening narration, and world-state creation
+- [src/missionSeeds.js](../src/missionSeeds.js): scenario-seed definitions and mission-seed helpers
+- [src/missionMechanics.js](../src/missionMechanics.js): seed-specific leverage windows and local mission effects
+- [src/characterBanks.js](../src/characterBanks.js): names, call signs, traits, flaws, specialties, stakes, and tension patterns
+- [src/botTurns.js](../src/botTurns.js): autonomous-action generation for underfilled crews
+- [src/gameLoop.js](../src/gameLoop.js): turn helpers, MET advancement, conversation helpers, and log-entry creation
+- [src/stateUtils.js](../src/stateUtils.js): shared state selectors and numeric clamping helpers
 
 ### Presentation Layer
 
-- [src/NarrationPanel.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/NarrationPanel.jsx): DM narration plus event-log panel
-- [src/EventLog.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/EventLog.jsx): instrumented log rendering
-- [src/ActionInput.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/ActionInput.jsx): human-turn controls and autonomous-turn status
-- [src/CrewCard.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CrewCard.jsx): crew cards, status bars, and controller badges
-- [src/RosterSummary.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/RosterSummary.jsx): crew dossier with trait, flaw, and controller mode
-- [src/RoleView.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/RoleView.jsx): active-role console and operational context
-- [src/CrewStatusBar.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/CrewStatusBar.jsx): mission/system header strip
-- [src/ThemePicker.jsx](/Users/jacquelinehenriksen/DungeonMAIster/src/ThemePicker.jsx): shared theme-switching control
-- [src/roleFilters.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleFilters.js): role-specific view selection and console brief generation
-- [src/uiState.js](/Users/jacquelinehenriksen/DungeonMAIster/src/uiState.js): derived UI-facing state for headers, alerts, and action-panel previews
-- [src/styles.css](/Users/jacquelinehenriksen/DungeonMAIster/src/styles.css): shared tokens, themes, component styles, and ambient background treatment
-- [src/themes.js](/Users/jacquelinehenriksen/DungeonMAIster/src/themes.js): theme registry and storage helpers
+- [src/NarrationPanel.jsx](../src/NarrationPanel.jsx): DM narration plus event-log panel
+- [src/EventLog.jsx](../src/EventLog.jsx): instrumented log rendering
+- [src/ActionInput.jsx](../src/ActionInput.jsx): human-turn controls and autonomous-turn status
+- [src/CrewCard.jsx](../src/CrewCard.jsx): crew cards, status bars, and controller badges
+- [src/RosterSummary.jsx](../src/RosterSummary.jsx): crew dossier with trait, flaw, and controller mode
+- [src/RoleView.jsx](../src/RoleView.jsx): active-role console and operational context
+- [src/CrewStatusBar.jsx](../src/CrewStatusBar.jsx): mission/system header strip
+- [src/ThemePicker.jsx](../src/ThemePicker.jsx): shared theme-switching control
+- [src/roleFilters.js](../src/roleFilters.js): role-specific view selection and console brief generation
+- [src/uiState.js](../src/uiState.js): derived UI-facing state for headers, alerts, and action-panel previews
+- [src/styles.css](../src/styles.css): shared tokens, themes, component styles, and ambient background treatment
+- [src/themes.js](../src/themes.js): theme registry and storage helpers
 
 ### Role And Coordination Systems
 
-- [src/roleSemantics.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleSemantics.js): role-alignment keywords and follow-through targeting rules
-- [src/roleGuidance.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleGuidance.js): tactical focus generation and suggested commands
-- [src/crewCoordination.js](/Users/jacquelinehenriksen/DungeonMAIster/src/crewCoordination.js): delegation profiles, crew-fit scoring, handoff windows, and coordination alerts
-- [src/roleMechanics.js](/Users/jacquelinehenriksen/DungeonMAIster/src/roleMechanics.js): local per-role effects and public role/coordination selectors
+- [src/roleSemantics.js](../src/roleSemantics.js): role-alignment keywords and follow-through targeting rules
+- [src/roleGuidance.js](../src/roleGuidance.js): tactical focus generation and suggested commands
+- [src/crewCoordination.js](../src/crewCoordination.js): delegation profiles, crew-fit scoring, handoff windows, and coordination alerts
+- [src/roleMechanics.js](../src/roleMechanics.js): local per-role effects and public role/coordination selectors
 
 ### DM Integration Layer
 
-- [src/dmApi.js](/Users/jacquelinehenriksen/DungeonMAIster/src/dmApi.js): browser request helper for `/api/turn`
-- [server/dmServer.mjs](/Users/jacquelinehenriksen/DungeonMAIster/server/dmServer.mjs): Express API for DM turns and sessions
-- [server/api.js](/Users/jacquelinehenriksen/DungeonMAIster/server/api.js): OpenAI Responses API call path and response extraction
-- [server/prompts.js](/Users/jacquelinehenriksen/DungeonMAIster/server/prompts.js): system and user prompt assembly rules
-- [src/deltaParser.js](/Users/jacquelinehenriksen/DungeonMAIster/src/deltaParser.js): normalizes model output into safe state deltas
-- [src/applyStateDelta.js](/Users/jacquelinehenriksen/DungeonMAIster/src/applyStateDelta.js): merges validated deltas into local state
+- [src/dmApi.js](../src/dmApi.js): browser request helper for `/api/turn`
+- [server/dmServer.mjs](../server/dmServer.mjs): Express API for DM turns and sessions
+- [server/api.js](../server/api.js): OpenAI Responses API call path and response extraction
+- [server/prompts.js](../server/prompts.js): system and user prompt assembly rules
+- [src/deltaParser.js](../src/deltaParser.js): normalizes model output into safe state deltas
+- [src/applyStateDelta.js](../src/applyStateDelta.js): merges validated deltas into local state
 
 ### Session And Vault Layer
 
-- [src/sessionApi.js](/Users/jacquelinehenriksen/DungeonMAIster/src/sessionApi.js): load/save/delete/list session helpers
-- [server/sessionStore.js](/Users/jacquelinehenriksen/DungeonMAIster/server/sessionStore.js): slot persistence and vault markdown mirrors
-- [server/vault.js](/Users/jacquelinehenriksen/DungeonMAIster/server/vault.js): static/dynamic vault loading and prompt-context assembly
+- [src/sessionApi.js](../src/sessionApi.js): load/save/delete/list session helpers
+- [server/sessionStore.js](../server/sessionStore.js): slot persistence and vault markdown mirrors
+- [server/vault.js](../server/vault.js): static/dynamic vault loading and prompt-context assembly
 
 ## Runtime Responsibilities
 

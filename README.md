@@ -50,7 +50,39 @@ npm run build
 npm run preview
 ```
 
-Opening `dist/index.html` directly is fine for checking the built UI shell, but interactive DM turns still require the local API server.
+Run the production server locally:
+
+```bash
+npm run build
+npm start
+```
+
+The production server serves both the built frontend and the `/api` routes from one Node process.
+
+## Deploy
+
+The repo is now set up for single-service deployment on hosts like Render or Railway.
+
+Required environment variables:
+
+```bash
+OPENAI_API_KEY=your_key_here
+OPENAI_MODEL=gpt-4.1-mini
+```
+
+Render path:
+
+1. Create a new `Web Service` from this repo.
+2. Use the included `render.yaml`, or set:
+   - Build command: `npm install && npm run build`
+   - Start command: `npm start`
+3. Add `OPENAI_API_KEY` and optionally `OPENAI_MODEL`.
+
+Deployment note:
+
+- Save slots currently write to the app filesystem under `vault/dynamic/`.
+- That works locally and on a live service between restarts, but it is not durable cloud storage.
+- If you want persistent saves across redeploys/restarts, the next step is moving session storage to a database or attached disk.
 
 ## Current Gameplay Flow
 
@@ -126,8 +158,8 @@ Opening `dist/index.html` directly is fine for checking the built UI shell, but 
 
 ## Docs
 
-- Overview: [docs/INDEX.md](/Users/jacquelinehenriksen/DungeonMAIster/docs/INDEX.md)
-- Features: [docs/FEATURES.md](/Users/jacquelinehenriksen/DungeonMAIster/docs/FEATURES.md)
-- Architecture: [docs/ARCHITECTURE.md](/Users/jacquelinehenriksen/DungeonMAIster/docs/ARCHITECTURE.md)
-- Gameplay loop: [docs/GAMEPLAY_LOOP.md](/Users/jacquelinehenriksen/DungeonMAIster/docs/GAMEPLAY_LOOP.md)
-- Project journal: [docs/PROJECT_JOURNAL.md](/Users/jacquelinehenriksen/DungeonMAIster/docs/PROJECT_JOURNAL.md)
+- Overview: [docs/INDEX.md](docs/INDEX.md)
+- Features: [docs/FEATURES.md](docs/FEATURES.md)
+- Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Gameplay loop: [docs/GAMEPLAY_LOOP.md](docs/GAMEPLAY_LOOP.md)
+- Project journal: [docs/PROJECT_JOURNAL.md](docs/PROJECT_JOURNAL.md)
