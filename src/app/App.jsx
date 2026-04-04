@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CharacterCreation from "../screens/CharacterCreation.jsx";
 import LaunchSequence from "../screens/LaunchSequence.jsx";
 import MainMenu from "../screens/MainMenu.jsx";
+import MissionResolution from "../screens/MissionResolution.jsx";
 import { deleteSession, listSessions, loadSession, saveSession } from "../services/sessionApi.js";
 import {
   getStoredTheme,
@@ -13,6 +14,68 @@ import {
 import ArtemisLost from "../screens/UI.jsx";
 import { createMissionSession } from "../game/worldState.js";
 
+function getResolutionPreviewMode() {
+  if (typeof window === "undefined") return null;
+
+  const params = new URLSearchParams(window.location.search);
+  const preview = params.get("preview");
+  return preview === "victory" || preview === "defeat" ? preview : null;
+}
+
+function createResolutionPreviewSession(status) {
+  const session = createMissionSession();
+  const isVictory = status === "victory";
+
+  return {
+    ...session,
+    narration: isVictory
+      ? "Recovery forces have visual on the capsule as it breaks the surface hard, throws spray high, and settles into a stable retrieval posture."
+      : "No recovery call answers. The capsule drifts cold beyond the return corridor while the last telemetry packet keeps repeating into the dark.",
+    worldState: {
+      ...session.worldState,
+      systems: isVictory
+        ? {
+            ...session.worldState.systems,
+            o2: 63,
+            power: 58,
+            comms: 71,
+            nav: 64,
+            thermal: 68,
+          }
+        : {
+            ...session.worldState.systems,
+            o2: 4,
+            power: 6,
+            comms: 9,
+            nav: 11,
+            thermal: 22,
+          },
+      crew: (session.worldState.crew || []).map((member, index) => ({
+        ...member,
+        health: isVictory ? [78, 72, 69, 75][index] ?? member.health : [18, 11, 7, 24][index] ?? member.health,
+      })),
+      mission: {
+        ...session.worldState.mission,
+        met: isVictory ? "T+00:08" : "T+00:06",
+        phase: isVictory ? "Recovery corridor secured" : "Return corridor lost",
+        outcome: isVictory
+          ? {
+              status: "victory",
+              title: "Signal Secured",
+              summary:
+                "The crew got home with the source isolated, the evidence intact, and just enough margin left to make retrieval possible.",
+            }
+          : {
+              status: "defeat",
+              title: "Mission Lost",
+              summary:
+                "The return window collapsed before the crew could claw the mission back into survivable territory.",
+            },
+      },
+    },
+  };
+}
+
 export default function App() {
   const [screen, setScreen] = useState("loading");
   const [slots, setSlots] = useState([]);
@@ -21,6 +84,7 @@ export default function App() {
   const [pendingSlotId, setPendingSlotId] = useState("slot-1");
   const [gameInstanceKey, setGameInstanceKey] = useState(0);
   const [themeId, setThemeId] = useState(getStoredTheme);
+  const [resolutionPreviewMode, setResolutionPreviewMode] = useState(getResolutionPreviewMode);
 
   async function refreshSlots() {
     const response = await listSessions();
@@ -31,6 +95,10 @@ export default function App() {
   }
 
   useEffect(() => {
+    if (resolutionPreviewMode) {
+      return undefined;
+    }
+
     let cancelled = false;
 
     async function hydrateMenu() {
@@ -50,6 +118,15 @@ export default function App() {
     return () => {
       cancelled = true;
     };
+  }, [resolutionPreviewMode]);
+
+  useEffect(() => {
+    const previewMode = getResolutionPreviewMode();
+    if (!previewMode) return;
+
+    setActiveSession(createResolutionPreviewSession(previewMode));
+    setActiveSlotId("preview-slot");
+    setScreen("resolution-preview");
   }, []);
 
   useEffect(() => {
@@ -117,6 +194,16 @@ export default function App() {
     await refreshSlots();
   }
 
+  function handleExitResolutionPreview() {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preview");
+    window.history.replaceState({}, "", url);
+    setResolutionPreviewMode(null);
+    setActiveSession(null);
+    setActiveSlotId(null);
+    setScreen("menu");
+  }
+
   if (screen === "loading") {
     return <div className="menu-loading">Booting mission systems...</div>;
   }
@@ -157,6 +244,24 @@ export default function App() {
         onThemeChange={setThemeId}
         onExitToMenu={() => setScreen("menu")}
         onSessionPersisted={handleSessionPersisted}
+      />
+    );
+  }
+
+  if (
+    screen === "resolution-preview" &&
+    resolutionPreviewMode &&
+    activeSession?.worldState?.mission?.outcome?.status
+  ) {
+    return (
+      <MissionResolution
+        worldState={activeSession.worldState}
+        narration={activeSession.narration}
+        slotId={activeSlotId}
+        themeId={themeId}
+        themes={THEMES}
+        onReviewMission={handleExitResolutionPreview}
+        onReturnToMenu={handleExitResolutionPreview}
       />
     );
   }
