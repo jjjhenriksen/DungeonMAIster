@@ -56,6 +56,18 @@ npm run build
 npm run preview
 ```
 
+Run the test suite:
+
+```bash
+npm test
+```
+
+Run tests in watch mode:
+
+```bash
+npm run test:watch
+```
+
 Run the production server locally:
 
 ```bash

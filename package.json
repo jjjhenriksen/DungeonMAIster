@@ -9,6 +9,8 @@
     "dev:api": "node server/dmServer.mjs",
     "start": "node server/dmServer.mjs",
     "smoke:dm": "node server/smokeTurn.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -20,8 +22,13 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^4.3.4",
     "concurrently": "^9.1.2",
-    "vite": "^6.0.3"
+    "jsdom": "^29.0.1",
+    "supertest": "^7.2.2",
+    "vite": "^6.0.3",
+    "vitest": "^4.1.2"
   }
 }
