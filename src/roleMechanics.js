@@ -1,6 +1,11 @@
 import { EVENT_LOG_TYPES } from "./eventLogTypes.js";
-
-const SYSTEM_KEYS = ["o2", "power", "comms", "thermal", "nav", "propulsion"];
+import {
+  clampPercent,
+  createCrewPatch,
+  getCrewById,
+  getCrewByRole,
+  getWeakestSystemKey,
+} from "./stateUtils.js";
 
 const ROLE_KEYWORDS = {
   Commander: [
@@ -83,26 +88,10 @@ const COMMANDER_DELEGATION_STYLES = [
 const RELATIONSHIP_LEDGER_MIN = -2;
 const RELATIONSHIP_LEDGER_MAX = 2;
 
-function clampPercent(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return 0;
-  return Math.max(0, Math.min(100, Math.round(num)));
-}
-
 function clampRelationshipLedger(value) {
   const num = Number(value);
   if (!Number.isFinite(num)) return 0;
   return Math.max(RELATIONSHIP_LEDGER_MIN, Math.min(RELATIONSHIP_LEDGER_MAX, Math.round(num)));
-}
-
-function getCrewById(worldState, crewId) {
-  return worldState?.crew?.find((member) => member.id === crewId);
-}
-
-function getWeakestSystemKey(worldState) {
-  return SYSTEM_KEYS.filter((key) => typeof worldState?.systems?.[key] === "number").sort(
-    (left, right) => worldState.systems[left] - worldState.systems[right]
-  )[0];
 }
 
 function getLowestMoraleCrew(worldState) {
@@ -167,10 +156,6 @@ function getNextRoleTarget(role, actionText = "") {
   }
 
   return targets[0];
-}
-
-function getCrewByRole(worldState, role) {
-  return worldState?.crew?.find((member) => member.role === role);
 }
 
 function getCommanderDelegationProfile(activeCrew) {
@@ -444,13 +429,6 @@ function getActiveSupportWindow(worldState, activeCrew) {
   return null;
 }
 
-function createCrewPatch(member, fields) {
-  if (!member) return null;
-  return {
-    id: member.id,
-    ...fields,
-  };
-}
 
 function createCommanderEffect(worldState, activeCrew, effectStrength) {
   const targetCrew = getLowestMoraleCrew(worldState) || activeCrew;

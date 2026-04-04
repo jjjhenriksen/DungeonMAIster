@@ -1,29 +1,10 @@
 import { getMissionSuggestion } from "./missionMechanics";
-
-function getCrewByRole(worldState, role) {
-  return worldState?.crew?.find((member) => member.role === role);
-}
-
-function getWeakestSystem(worldState) {
-  const systems = [
-    ["o2", worldState?.systems?.o2],
-    ["power", worldState?.systems?.power],
-    ["comms", worldState?.systems?.comms],
-    ["thermal", worldState?.systems?.thermal],
-    ["nav", worldState?.systems?.nav],
-    ["propulsion", worldState?.systems?.propulsion],
-  ].filter(([, value]) => typeof value === "number");
-
-  return systems.sort((a, b) => a[1] - b[1])[0]?.[0] || "systems";
-}
-
-function getPrimaryHazard(worldState) {
-  return worldState?.environment?.hazards?.[0] || worldState?.environment?.anomaly || "the anomaly";
-}
-
-function getSecondaryHazard(worldState) {
-  return worldState?.environment?.hazards?.[1] || worldState?.environment?.visibility || "terrain instability";
-}
+import {
+  getCrewByRole,
+  getPrimaryHazard,
+  getSecondaryHazard,
+  getWeakestSystemKey,
+} from "./stateUtils.js";
 
 function getObjective(worldState, index = 0) {
   return (
@@ -37,7 +18,7 @@ function createCommanderGuidance(worldState) {
   const engineer = getCrewByRole(worldState, "Flight Engineer");
   const scientist = getCrewByRole(worldState, "Science Officer");
   const specialist = getCrewByRole(worldState, "Mission Specialist");
-  const weakestSystem = getWeakestSystem(worldState);
+  const weakestSystem = getWeakestSystemKey(worldState) || "systems";
 
   return {
     focus: `Set the crew's tempo around ${weakestSystem} pressure and decide who absorbs the next risk.`,
@@ -50,7 +31,7 @@ function createCommanderGuidance(worldState) {
 }
 
 function createEngineerGuidance(worldState, activeCrew) {
-  const weakestSystem = getWeakestSystem(worldState);
+  const weakestSystem = getWeakestSystemKey(worldState) || "systems";
   const hazard = getPrimaryHazard(worldState);
 
   return {

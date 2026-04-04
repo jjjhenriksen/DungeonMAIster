@@ -1,3 +1,5 @@
+import { getCrewByRole } from "./stateUtils.js";
+
 function summarizeCrewReadiness(crew = []) {
   const readyCount = crew.filter((member) => member.health >= 60).length;
   return `${readyCount}/${crew.length}`;
@@ -17,12 +19,8 @@ function summarizeObjective(ws) {
   return ws.mission.objectives[0] || "Maintain crew survival and recover useful signal data.";
 }
 
-function getCrewById(ws, id) {
-  return ws.crew.find((member) => member.id === id);
-}
-
 function commanderView(ws) {
-  const park = getCrewById(ws, "park");
+  const specialist = getCrewByRole(ws, "Mission Specialist");
 
   return [
     createItem("OBJECTIVE", ws.mission.objectives[0]),
@@ -31,8 +29,10 @@ function commanderView(ws) {
     createItem("COMMS", ws.systems.comms < 50 ? "Earth link degraded" : "Command relay nominal", ws.systems.comms < 50),
     createItem(
       "EVA RISK",
-      park && park.extra.value < 40 ? "Park suit integrity below safe margin" : "Park cleared for short EVA",
-      Boolean(park && park.extra.value < 40)
+      specialist && specialist.extra.value < 40
+        ? `${specialist.name} suit integrity below safe margin`
+        : `${specialist?.name || "Specialist"} cleared for short EVA`,
+      Boolean(specialist && specialist.extra.value < 40)
     ),
   ];
 }

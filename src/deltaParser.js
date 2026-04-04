@@ -1,4 +1,5 @@
 import { normalizeEventType } from "./eventLogTypes.js";
+import { clampPercent } from "./stateUtils.js";
 
 const MAX_EVENT_LOG_ENTRIES = 12;
 const NUMERIC_SYSTEM_FIELDS = new Set(["o2", "power", "comms", "propulsion", "thermal", "nav"]);
@@ -9,12 +10,6 @@ const MAX_EXTRA_VALUE_DELTA_PER_TURN = 18;
 
 function isRecord(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function clampPercent(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return 0;
-  return Math.max(0, Math.min(100, Math.round(num)));
 }
 
 function constrainPercentChange(currentValue, nextValue, maxDelta) {

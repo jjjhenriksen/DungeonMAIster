@@ -1,12 +1,7 @@
 import { EVENT_LOG_TYPES } from "./eventLogTypes.js";
 import { CHARACTER_BANKS, CREW_TENSION_PATTERNS } from "./characterBanks.js";
 import { getMissionSeedById, MISSION_SEEDS } from "./missionSeeds.js";
-
-function clampPercent(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return 0;
-  return Math.max(0, Math.min(100, Math.round(num)));
-}
+import { clampPercent } from "./stateUtils.js";
 
 function createCrewMember({
   id,

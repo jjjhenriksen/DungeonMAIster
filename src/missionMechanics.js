@@ -1,22 +1,5 @@
 import { EVENT_LOG_TYPES } from "./eventLogTypes.js";
-
-function clampPercent(value) {
-  const num = Number(value);
-  if (!Number.isFinite(num)) return 0;
-  return Math.max(0, Math.min(100, Math.round(num)));
-}
-
-function getCrewById(worldState, crewId) {
-  return worldState?.crew?.find((member) => member.id === crewId);
-}
-
-function createCrewPatch(member, fields) {
-  if (!member) return null;
-  return {
-    id: member.id,
-    ...fields,
-  };
-}
+import { clampPercent, createCrewPatch, getCrewById } from "./stateUtils.js";
 
 function actionIncludesAny(actionText = "", keywords = []) {
   const normalized = actionText.toLowerCase();
