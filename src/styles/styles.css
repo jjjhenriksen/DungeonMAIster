@@ -5423,6 +5423,7 @@ body::after {
   .menu-shell::before,
   .app-shell::after,
   .menu-shell::after,
+  .app-header::after,
   .telemetry-backdrop__column,
   .telemetry-backdrop__scanline,
   .launch-screen__stars,
@@ -5437,8 +5438,21 @@ body::after {
   .rocket,
   .rocket__contrail,
   .rocket__flame,
-  .launch-screen__progress-bar span {
+  .launch-screen__progress-bar span,
+  .narration-panel--listening::after,
+  .narration-panel__signal span,
+  .status-strip__item--pulse,
+  .event-log__row--entered,
+  .action-input__panel--drafting::after,
+  .action-input__drafting-dots span,
+  .crew-card__focus-sweep {
     animation: none;
+  }
+
+  .panel-boot {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   .launch-screen__countdown-value {
@@ -5446,6 +5460,11 @@ body::after {
     opacity: 0.92;
     transform: none;
     filter: none;
+  }
+
+  .narration-panel--listening::after,
+  .crew-card__focus-sweep {
+    opacity: 0;
   }
 
   .resolution-screen__spray,
