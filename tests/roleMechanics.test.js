@@ -65,4 +65,44 @@ describe("role coordination", () => {
 
     expect(getFollowThroughTurnTarget(worldState)).toBeNull();
   });
+
+  test("commander-directed handoffs ignore the acting crew's own name and resolve to the intended target", () => {
+    const commander = createCrewMember({
+      id: "commander",
+      role: "Commander",
+      name: "Commander Vasquez",
+      character: {
+        trait: "Calm leader with steady crew discipline",
+        flaw: "Carries too much alone",
+      },
+    });
+    const science = createCrewMember({
+      id: "science",
+      role: "Science Officer",
+      name: "Daniel Cárdenas",
+    });
+    const worldState = createWorldState({
+      crew: [
+        commander,
+        createCrewMember({ id: "engineer", role: "Flight Engineer", name: "Chief Tunde Okafor" }),
+        science,
+        createCrewMember({ id: "specialist", role: "Mission Specialist", name: "Lt. Niko Varela" }),
+      ],
+    });
+
+    const supportWindow = createFollowThroughWindow(
+      worldState,
+      commander,
+      "Commander Vasquez directs Science Officer Daniel Cárdenas to isolate the Apollo-band carrier.",
+      4
+    );
+
+    expect(supportWindow).toEqual(
+      expect.objectContaining({
+        targetCrewId: "science",
+        targetCrewName: "Daniel Cárdenas",
+        priorityHandoff: true,
+      })
+    );
+  });
 });

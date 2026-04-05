@@ -181,15 +181,16 @@ export function getPairRelationshipProfile(sourceCrew, targetCrew, worldState) {
   };
 }
 
-function inferDirectedCrew(worldState, actionText = "") {
+function inferDirectedCrew(worldState, actionText = "", activeCrewId = null) {
   const normalized = actionText.toLowerCase();
   const crew = worldState?.crew || [];
+  const candidateCrew = crew.filter((member) => member?.id && member.id !== activeCrewId);
 
   return (
-    crew.find((member) =>
+    candidateCrew.find((member) =>
       getCrewNameTokens(member.name).some((token) => token.length > 2 && normalized.includes(token))
     ) ||
-    crew.find((member) =>
+    candidateCrew.find((member) =>
       getRoleTokens(member.role).some((token) => token.length > 2 && normalized.includes(token))
     ) ||
     null
@@ -200,7 +201,7 @@ export function createFollowThroughWindow(worldState, activeCrew, actionText, ef
   const delegationProfile =
     activeCrew?.role === "Commander" ? getCommanderDelegationProfile(activeCrew) : null;
   const directedCrew =
-    activeCrew?.role === "Commander" ? inferDirectedCrew(worldState, actionText) : null;
+    activeCrew?.role === "Commander" ? inferDirectedCrew(worldState, actionText, activeCrew?.id) : null;
   const targetCrew =
     directedCrew ||
     getCrewByRole(worldState, getNextRoleTarget(activeCrew?.role, actionText));
@@ -302,7 +303,7 @@ export function createRelationshipLedgerDelta(worldState, supportWindow, baseStr
 export function getRoleSupportPreview(worldState, activeCrew, actionText = "") {
   const incoming = getActiveSupportWindow(worldState, activeCrew);
   const directedCrew =
-    activeCrew?.role === "Commander" ? inferDirectedCrew(worldState, actionText) : null;
+    activeCrew?.role === "Commander" ? inferDirectedCrew(worldState, actionText, activeCrew?.id) : null;
   const outgoingTargetRole = directedCrew?.role || getNextRoleTarget(activeCrew?.role, actionText);
   const outgoingTargetCrew = directedCrew || getCrewByRole(worldState, outgoingTargetRole);
   const delegationProfile =
