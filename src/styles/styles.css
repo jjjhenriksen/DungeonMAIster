@@ -987,7 +987,7 @@ body::after {
   height: 132%;
   overflow: hidden;
   color: color-mix(in srgb, var(--text-info) 44%, transparent);
-  font-size: clamp(8px, 0.55vw, 10px);
+  font-size: clamp(9px, 0.68vw, 12px);
   line-height: 0.88;
   letter-spacing: 0.8px;
   text-shadow: 0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 36%, transparent);
@@ -1053,8 +1053,13 @@ body::after {
 }
 
 .telemetry-backdrop--menu .telemetry-backdrop__column {
+  width: 4.9%;
+  min-width: 34px;
   color: color-mix(in srgb, var(--text-info) 68%, transparent);
   opacity: 0.4;
+  font-size: clamp(11px, 0.92vw, 16px);
+  line-height: 0.82;
+  letter-spacing: 1px;
   text-shadow:
     0 0 18px color-mix(in srgb, var(--ambient-grid-glow) 52%, transparent),
     0 0 32px color-mix(in srgb, var(--text-info) 14%, transparent);
@@ -1090,8 +1095,13 @@ body::after {
 }
 
 .telemetry-backdrop--creator .telemetry-backdrop__column {
+  width: 4.7%;
+  min-width: 32px;
   color: color-mix(in srgb, var(--text-info) 60%, transparent);
   opacity: 0.3;
+  font-size: clamp(10px, 0.82vw, 14px);
+  line-height: 0.84;
+  letter-spacing: 0.95px;
   text-shadow:
     0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 42%, transparent),
     0 0 24px color-mix(in srgb, var(--text-info) 10%, transparent);
