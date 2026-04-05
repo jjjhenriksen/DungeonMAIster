@@ -1085,6 +1085,42 @@ body::after {
   opacity: 0.32;
 }
 
+.telemetry-backdrop--creator {
+  opacity: 0.74;
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__column {
+  color: color-mix(in srgb, var(--text-info) 60%, transparent);
+  opacity: 0.24;
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 42%, transparent),
+    0 0 24px color-mix(in srgb, var(--text-info) 10%, transparent);
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__column--1 {
+  opacity: 0.18;
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__column--2 {
+  opacity: 0.22;
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__column--3 {
+  opacity: 0.28;
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__column--4 {
+  opacity: 0.2;
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__scanline {
+  opacity: 0.18;
+}
+
+.telemetry-backdrop--creator .telemetry-backdrop__noise {
+  opacity: 0.26;
+}
+
 .telemetry-backdrop--app {
   opacity: 0.66;
 }

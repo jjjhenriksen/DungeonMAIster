@@ -3,12 +3,14 @@ const TELEMETRY_PHRASES = [
   "I AM RESOLVED TO TRY",
   "FOR IF I STAY AWAY I KNOW",
   "I MUST FOREVER DIE",
-  "I CAN BUT PERISH IF I GO",
-  "I AM RESOLVED TO TRY",
-  "FOR IF I STAY AWAY I KNOW",
-  "I MUST FOREVER DIE",
-  "I CAN BUT PERISH IF I GO",
-  "I AM RESOLVED TO TRY",
+  "A LAND OF DEEPEST SHADE",
+  "UNPIERCED BY HUMAN THOUGHT",
+  "THE DREARY REGIONS OF THE DEAD",
+  "WHERE ALL THINGS ARE FORGOT",
+  "THE DAY IS PAST AND GONE",
+  "THE EVENING SHADES APPEAR",
+  "MAY WE ALL REMEMBER WELL",
+  "THE NIGHT OF DEATH DRAWS NEAR"
 ];
 
 function toBinaryString(text) {
@@ -21,15 +23,17 @@ function toBinaryString(text) {
 const BINARY_COLUMNS = TELEMETRY_PHRASES.map(toBinaryString);
 const COLUMN_LAYOUT = [
   { left: "3.5%", top: "-12%", scale: 0.94, className: "telemetry-backdrop__column--1" },
-  { left: "11.8%", top: "-4%", scale: 1.08, className: "telemetry-backdrop__column--3" },
-  { left: "21.2%", top: "-16%", scale: 0.88, className: "telemetry-backdrop__column--2" },
-  { left: "30.4%", top: "-7%", scale: 1.02, className: "telemetry-backdrop__column--4" },
-  { left: "38.1%", top: "-20%", scale: 1.12, className: "telemetry-backdrop__column--2" },
-  { left: "47.6%", top: "-9%", scale: 0.92, className: "telemetry-backdrop__column--1" },
-  { left: "58.8%", top: "-14%", scale: 1.05, className: "telemetry-backdrop__column--3" },
-  { left: "69.1%", top: "-5%", scale: 0.9, className: "telemetry-backdrop__column--4" },
-  { left: "79.6%", top: "-18%", scale: 1.14, className: "telemetry-backdrop__column--2" },
-  { left: "90.4%", top: "-8%", scale: 0.86, className: "telemetry-backdrop__column--1" },
+  { left: "10.2%", top: "-4%", scale: 1.08, className: "telemetry-backdrop__column--3" },
+  { left: "17.6%", top: "-16%", scale: 0.88, className: "telemetry-backdrop__column--2" },
+  { left: "25.9%", top: "-7%", scale: 1.02, className: "telemetry-backdrop__column--4" },
+  { left: "33.4%", top: "-20%", scale: 1.12, className: "telemetry-backdrop__column--2" },
+  { left: "41.8%", top: "-9%", scale: 0.92, className: "telemetry-backdrop__column--1" },
+  { left: "50.7%", top: "-14%", scale: 1.05, className: "telemetry-backdrop__column--3" },
+  { left: "59.4%", top: "-5%", scale: 0.9, className: "telemetry-backdrop__column--4" },
+  { left: "67.8%", top: "-18%", scale: 1.14, className: "telemetry-backdrop__column--2" },
+  { left: "76.2%", top: "-8%", scale: 0.86, className: "telemetry-backdrop__column--1" },
+  { left: "84.1%", top: "-15%", scale: 1.04, className: "telemetry-backdrop__column--3" },
+  { left: "91.3%", top: "-6%", scale: 0.9, className: "telemetry-backdrop__column--4" },
 ];
 
 export default function TelemetryBackdrop({ variant = "default" }) {
@@ -44,7 +48,7 @@ export default function TelemetryBackdrop({ variant = "default" }) {
       <div className="telemetry-backdrop__columns">
         {BINARY_COLUMNS.map((bits, index) => (
           (() => {
-            const layout = COLUMN_LAYOUT[index];
+            const layout = COLUMN_LAYOUT[index % COLUMN_LAYOUT.length];
             return (
           <div
             key={`${variant}-${index}`}
