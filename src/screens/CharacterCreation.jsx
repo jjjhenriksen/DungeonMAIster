@@ -99,7 +99,7 @@ export default function CharacterCreation({
   return (
     <div className="menu-shell">
       <TelemetryBackdrop variant="creator" />
-      <form className="creator-panel" onSubmit={handleSubmit}>
+      <form className="creator-panel panel-boot" style={{ "--boot-delay": "40ms" }} onSubmit={handleSubmit}>
         <div className="menu-panel__eyebrow">CREW ASSEMBLY</div>
         <h1 className="menu-panel__title">Crew Assembly</h1>
         <p className="menu-panel__copy">
@@ -111,7 +111,7 @@ export default function CharacterCreation({
         </div>
 
         {!hasGeneratedCrew ? (
-          <div className="creator-seed">
+          <div className="creator-seed panel-boot" style={{ "--boot-delay": "140ms" }}>
             <div className="creator-seed__header">
               <div>
                 <div className="section-title section-title--mb-6">PLAYER INSERT</div>
@@ -175,14 +175,14 @@ export default function CharacterCreation({
         ) : null}
 
         {hasGeneratedCrew && crewDynamics.summary ? (
-          <div className="creator-dynamics">
+          <div className="creator-dynamics panel-boot" style={{ "--boot-delay": "140ms" }}>
             <div className="section-title section-title--mb-6">CREW DYNAMIC</div>
             <div className="creator-dynamics__copy">{crewDynamics.summary}</div>
           </div>
         ) : null}
 
         {hasGeneratedCrew ? (
-        <div className="creator-seed">
+        <div className="creator-seed panel-boot" style={{ "--boot-delay": "200ms" }}>
           <div className="creator-seed__header">
             <div>
               <div className="section-title section-title--mb-6">INCIDENT PROFILE</div>
@@ -213,7 +213,11 @@ export default function CharacterCreation({
         {hasGeneratedCrew ? (
         <div className="creator-grid">
           {profiles.map((profile) => (
-            <section key={profile.id} className="creator-card">
+            <section
+              key={profile.id}
+              className="creator-card panel-boot"
+              style={{ "--boot-delay": `${260 + profiles.indexOf(profile) * 70}ms` }}
+            >
               <div className="creator-card__header">
                 <div className="creator-card__title">{profile.role}</div>
                 <div className="creator-card__controls">

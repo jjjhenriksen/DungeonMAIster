@@ -123,7 +123,7 @@ export default function LaunchSequence({ session, slotId, onComplete }) {
         <div className="launch-screen__trail launch-screen__trail--right" />
       </div>
 
-        <div className="launch-screen__hud">
+        <div className="launch-screen__hud panel-boot" style={{ "--boot-delay": "80ms" }}>
         <div className="launch-screen__eyebrow">LAUNCH COMMIT</div>
         <h1 className="launch-screen__title">{mission.name || "Artemis Lost"}</h1>
         <p className="launch-screen__copy">
@@ -144,7 +144,7 @@ export default function LaunchSequence({ session, slotId, onComplete }) {
         </div>
       </div>
 
-      <div className="launch-screen__viewport">
+      <div className="launch-screen__viewport panel-boot" style={{ "--boot-delay": "180ms" }}>
         <div className="launch-screen__viewport-header">
           <span>Launch feed // pad camera 02</span>
           <span>Range link nominal</span>
@@ -215,7 +215,7 @@ export default function LaunchSequence({ session, slotId, onComplete }) {
         </div>
       </div>
 
-        <div className="launch-screen__manifest">
+        <div className="launch-screen__manifest panel-boot" style={{ "--boot-delay": "280ms" }}>
         <div className="launch-screen__manifest-title">Crew manifest</div>
         <div className="launch-screen__manifest-list">
           {roster.map((member) => (
@@ -248,7 +248,7 @@ export default function LaunchSequence({ session, slotId, onComplete }) {
         </div>
       </div>
 
-      <div className="launch-screen__actions">
+      <div className="launch-screen__actions panel-boot" style={{ "--boot-delay": "360ms" }}>
         {!readyToContinue ? (
           <button type="button" className="launch-screen__skip" onClick={() => onComplete?.()}>
             Skip Ascent

@@ -41,6 +41,7 @@ function CrewCard({ member, isActive, uiState }) {
         isActive ? " crew-card--active" : ""
       }`}
     >
+      {isActive ? <span className="crew-card__focus-sweep" aria-hidden="true" /> : null}
       <div className="crew-card__header">
         <div>
           <div className="crew-card__name">{member.name}</div>

@@ -49,7 +49,7 @@ export default function MissionResolution({
         ) : null}
       </div>
 
-      <div className="resolution-screen__panel">
+      <div className="resolution-screen__panel panel-boot" style={{ "--boot-delay": "80ms" }}>
         <div className="resolution-screen__eyebrow">
           {outcome.status === "victory" ? "RECOVERY CONFIRMED" : "MISSION TERMINATION"}
         </div>

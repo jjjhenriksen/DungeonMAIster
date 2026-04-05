@@ -28,9 +28,11 @@ export default function ActionInput({
   const roleSupportPreview = actionPanelState?.roleSupportPreview;
   const missionMechanicSummary = actionPanelState?.missionMechanicSummary;
   const missionOpportunityPreview = actionPanelState?.missionOpportunityPreview;
+  const isDraftingAutonomousTurn =
+    !missionResolved && isBotTurn && !waiting && (botPreviewLoading || !narrationReady);
 
   return (
-    <div className="action-input">
+    <div className="action-input panel-boot" style={{ "--boot-delay": "240ms" }}>
       <div className="section-title section-title--mb-6">
         ACTION INPUT
       </div>
@@ -41,7 +43,11 @@ export default function ActionInput({
         coordinationAlert={uiState?.coordinationAlert}
       />
 
-      <div className={`action-input__panel${waiting ? " action-input__panel--waiting" : ""}`}>
+      <div
+        className={`action-input__panel${waiting ? " action-input__panel--waiting" : ""}${
+          isDraftingAutonomousTurn ? " action-input__panel--drafting" : ""
+        }`}
+      >
         {!waiting && !isBotTurn && !missionResolved ? (
           <div className="action-input__focus">
             <div className="action-input__focus-label">TACTICAL FOCUS</div>
@@ -131,6 +137,17 @@ export default function ActionInput({
         {isBotTurn && botPreview && !missionResolved ? (
           <div className="action-input__bot-preview">
             {botPreviewLoading ? "Drafting autonomous action..." : "Autonomous action:"} {botPreview}
+          </div>
+        ) : null}
+
+        {isDraftingAutonomousTurn ? (
+          <div className="action-input__drafting" aria-hidden="true">
+            <span className="action-input__drafting-label">COMPOSING RESPONSE</span>
+            <span className="action-input__drafting-dots">
+              <span />
+              <span />
+              <span />
+            </span>
           </div>
         ) : null}
 

@@ -2,7 +2,7 @@ import { memo, useEffect, useRef } from "react";
 import EventLog from "./EventLog.jsx";
 import { useTypewriter } from "../hooks/useTypewriter.js";
 
-function NarrationPanel({ text, eventLog, uiState, onTypewriterDone }) {
+function NarrationPanel({ text, eventLog, uiState, onTypewriterDone, listening = false }) {
   const { displayed, done } = useTypewriter(text);
   const logRef = useRef(null);
 
@@ -18,9 +18,19 @@ function NarrationPanel({ text, eventLog, uiState, onTypewriterDone }) {
   }, [done, onTypewriterDone]);
 
   return (
-    <div className={`narration-panel narration-panel--${uiState?.dangerLevel || "guarded"}`}>
+    <div
+      className={`narration-panel narration-panel--${uiState?.dangerLevel || "guarded"}${
+        listening ? " narration-panel--listening" : ""
+      } panel-boot`}
+      style={{ "--boot-delay": "160ms" }}
+    >
       <div className="section-title section-title--with-divider">
         MISSION CONTROL // INCIDENT FEED
+      </div>
+      <div className="narration-panel__signal" aria-hidden="true">
+        <span />
+        <span />
+        <span />
       </div>
       {uiState?.latestAlert ? (
         <div className={`mission-alert mission-alert--${uiState.latestAlert.type}`}>

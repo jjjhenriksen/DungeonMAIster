@@ -1228,6 +1228,31 @@ body::after {
   margin-bottom: 16px;
 }
 
+.app-header::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-info) 36%, transparent), transparent);
+  opacity: 0.48;
+}
+
+.app-header::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 18px;
+  width: 44px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-info) 84%, transparent), transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--text-info) 16%, transparent);
+  opacity: 0.42;
+  animation: headerTelemetryTick 10s linear infinite;
+}
+
 .app-shell--elevated .app-header,
 .app-shell--critical .app-header {
   border-color: color-mix(in srgb, var(--header-border) 60%, var(--text-warn-strong));
@@ -1393,6 +1418,13 @@ body::after {
   margin-bottom: 10px;
 }
 
+.panel-boot {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  animation: panelBootIn 620ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: var(--boot-delay, 0ms);
+}
+
 .status-strip {
   display: flex;
   gap: 16px;
@@ -1407,6 +1439,7 @@ body::after {
 }
 
 .status-strip__item {
+  position: relative;
   font-size: 11px;
   color: var(--text-dim);
   letter-spacing: 1px;
@@ -1414,6 +1447,10 @@ body::after {
   border-radius: 999px;
   background: var(--status-chip-bg);
   border: 1px solid var(--status-chip-border);
+}
+
+.status-strip__item--pulse {
+  animation: statusChipPulse 720ms ease-out;
 }
 
 .status-strip__value--good {
@@ -1510,6 +1547,19 @@ body::after {
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
+}
+
+.crew-card__focus-sweep {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: -18%;
+  width: 42%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-info) 16%, transparent), transparent);
+  opacity: 0;
+  filter: blur(1px);
+  animation: crewCardSweep 3.8s ease-in-out infinite;
 }
 
 .crew-card--active {
@@ -1745,6 +1795,50 @@ body::after {
   pointer-events: none;
 }
 
+.narration-panel--listening::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--text-info) 7%, transparent) 50%, transparent 100%);
+  opacity: 0;
+  animation: narrationListeningPulse 2.2s ease-in-out infinite;
+}
+
+.narration-panel__signal {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.narration-panel__signal span {
+  width: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-info) 68%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--text-info) 16%, transparent);
+  animation: narrationSignalBounce 1.6s ease-in-out infinite;
+}
+
+.narration-panel__signal span:nth-child(1) {
+  height: 8px;
+}
+
+.narration-panel__signal span:nth-child(2) {
+  height: 12px;
+  animation-delay: 0.18s;
+}
+
+.narration-panel__signal span:nth-child(3) {
+  height: 6px;
+  animation-delay: 0.34s;
+}
+
 .narration-panel__body {
   position: relative;
   flex: 1;
@@ -1816,6 +1910,30 @@ body::after {
   font-size: 11px;
   padding: 4px 0;
   align-items: flex-start;
+}
+
+.event-log__row--entered {
+  animation: eventLogEntryIn 620ms ease-out;
+}
+
+.event-log__row--command.event-log__row--entered {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--tag-command-text) 34%, transparent);
+}
+
+.event-log__row--sensor.event-log__row--entered {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--tag-sensor-text) 34%, transparent);
+}
+
+.event-log__row--risk.event-log__row--entered {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--tag-risk-text) 34%, transparent);
+}
+
+.event-log__row--trait.event-log__row--entered {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--tag-trait-text) 34%, transparent);
+}
+
+.event-log__row--system.event-log__row--entered {
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--tag-system-text) 34%, transparent);
 }
 
 .event-log__timestamp {
@@ -3509,6 +3627,21 @@ body::after {
   border-color: var(--border-warn);
 }
 
+.action-input__panel--drafting {
+  position: relative;
+  overflow: hidden;
+}
+
+.action-input__panel--drafting::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 0%, color-mix(in srgb, var(--text-info) 8%, transparent) 44%, transparent 60%);
+  transform: translateX(-100%);
+  animation: draftingSweep 2.4s ease-in-out infinite;
+}
+
 .action-input__hint {
   font-size: 11px;
   color: var(--text-muted);
@@ -3636,6 +3769,42 @@ body::after {
   color: var(--text-good-strong);
   font-size: 11px;
   line-height: 1.6;
+}
+
+.action-input__drafting {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: var(--text-info);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+}
+
+.action-input__drafting-label {
+  color: var(--text-dim);
+}
+
+.action-input__drafting-dots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.action-input__drafting-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text-info) 76%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--text-info) 18%, transparent);
+  animation: draftingDotPulse 1.05s ease-in-out infinite;
+}
+
+.action-input__drafting-dots span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.action-input__drafting-dots span:nth-child(3) {
+  animation-delay: 0.24s;
 }
 
 .action-input__suggestions {
@@ -5129,6 +5298,121 @@ body::after {
   50% {
     transform: translate3d(0, -26px, 0);
     opacity: 0.14;
+  }
+}
+
+@keyframes panelBootIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes headerTelemetryTick {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  10%,
+  88% {
+    opacity: 0.42;
+  }
+  100% {
+    transform: translate3d(calc(100vw - 180px), 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes statusChipPulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--text-info) 0%, transparent);
+    transform: translateY(0);
+  }
+  35% {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-info) 24%, transparent), 0 0 18px color-mix(in srgb, var(--text-info) 12%, transparent);
+    transform: translateY(-1px);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--text-info) 0%, transparent);
+    transform: translateY(0);
+  }
+}
+
+@keyframes crewCardSweep {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  22% {
+    opacity: 0;
+  }
+  44% {
+    transform: translate3d(240%, 0, 0);
+    opacity: 0.72;
+  }
+  58% {
+    opacity: 0;
+  }
+}
+
+@keyframes narrationListeningPulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes narrationSignalBounce {
+  0%,
+  100% {
+    transform: scaleY(0.72);
+    opacity: 0.44;
+  }
+  50% {
+    transform: scaleY(1.12);
+    opacity: 0.94;
+  }
+}
+
+@keyframes eventLogEntryIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(-8px, 0, 0);
+    filter: brightness(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes draftingSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes draftingDotPulse {
+  0%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.38;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
   }
 }
 

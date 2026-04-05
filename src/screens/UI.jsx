@@ -264,7 +264,7 @@ export default function ArtemisLost({
       <TelemetryBackdrop variant="app" />
       <div className="app-shell__glow app-shell__glow--left" aria-hidden="true" />
       <div className="app-shell__glow app-shell__glow--right" aria-hidden="true" />
-      <div className="app-header">
+      <div className="app-header panel-boot" style={{ "--boot-delay": "40ms" }}>
         <div>
           <div className="app-header__eyebrow">
             {ws.mission.id} // {ws.mission.name.toUpperCase()}
@@ -307,6 +307,7 @@ export default function ArtemisLost({
             eventLog={ws.eventLog}
             uiState={uiState}
             onTypewriterDone={setNarrationReady}
+            listening={waiting}
           />
         </div>
 
@@ -330,7 +331,7 @@ export default function ArtemisLost({
 
         <div className="sidebar-panel app-grid__bottom">
           <div className="bottom-deck">
-            <div className="bottom-deck__card">
+            <div className="bottom-deck__card panel-boot" style={{ "--boot-delay": "320ms" }}>
               <div>
                 <div className="section-title section-title--with-divider">CREW STATUS</div>
               </div>
@@ -346,7 +347,7 @@ export default function ArtemisLost({
               </div>
             </div>
 
-            <div className="bottom-deck__card">
+            <div className="bottom-deck__card panel-boot" style={{ "--boot-delay": "400ms" }}>
               <RoleView
                 activeCrew={activeCrew}
                 roleView={roleView}
@@ -356,7 +357,9 @@ export default function ArtemisLost({
               />
             </div>
           </div>
-          <RosterSummary crew={ws.crew} worldState={ws} />
+          <div className="panel-boot" style={{ "--boot-delay": "480ms" }}>
+            <RosterSummary crew={ws.crew} worldState={ws} />
+          </div>
         </div>
       </div>
     </div>

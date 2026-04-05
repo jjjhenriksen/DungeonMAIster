@@ -26,7 +26,7 @@ export default function MainMenu({
   return (
     <div className="menu-shell">
       <TelemetryBackdrop variant="menu" />
-      <div className="menu-panel">
+      <div className="menu-panel panel-boot" style={{ "--boot-delay": "40ms" }}>
         <div className="menu-panel__eyebrow">LUNAR INCIDENT COMMAND</div>
         <h1 className="menu-panel__title">Artemis Lost</h1>
         <p className="menu-panel__copy">
@@ -47,7 +47,7 @@ export default function MainMenu({
         </div>
 
         {continueSlot ? (
-          <div className="continue-card">
+          <div className="continue-card panel-boot" style={{ "--boot-delay": "140ms" }}>
             <div className="save-card__label">CURRENT OPERATION</div>
             <div className="save-card__title">
               {continueSlot.worldState.mission.id} // {continueSlot.worldState.mission.name}
@@ -58,7 +58,11 @@ export default function MainMenu({
 
         <div className="slot-grid">
           {slots.map((slot) => (
-            <div key={slot.id} className="save-card">
+            <div
+              key={slot.id}
+              className="save-card panel-boot"
+              style={{ "--boot-delay": `${200 + slots.indexOf(slot) * 80}ms` }}
+            >
               <div className="save-card__label">{slot.label.toUpperCase()}</div>
               {slot.session ? (
                 <>
