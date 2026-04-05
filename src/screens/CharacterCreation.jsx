@@ -38,7 +38,10 @@ export default function CharacterCreation({
     id: profile.id,
     role: profile.role,
   }));
-  const playerCallSignExamples = getCallSignExamplesForRole(playerRole);
+  const playerCallSignExamples = useMemo(
+    () => getCallSignExamplesForRole(playerRole),
+    [playerRole]
+  );
 
   function handleGenerateCrew() {
     const generatedProfiles = generateCrewAroundPlayer({

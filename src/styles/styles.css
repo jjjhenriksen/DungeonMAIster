@@ -982,14 +982,14 @@ body::after {
 
 .telemetry-backdrop__column {
   top: -8%;
-  width: 7.4%;
-  min-width: 54px;
+  width: 4.3%;
+  min-width: 28px;
   height: 132%;
   overflow: hidden;
   color: color-mix(in srgb, var(--text-info) 44%, transparent);
-  font-size: clamp(10px, 0.8vw, 13px);
-  line-height: 1.1;
-  letter-spacing: 2px;
+  font-size: clamp(8px, 0.55vw, 10px);
+  line-height: 0.88;
+  letter-spacing: 0.8px;
   text-shadow: 0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 36%, transparent);
   opacity: 0.18;
   animation: telemetryBinaryDrift 18s linear infinite;
@@ -1000,7 +1000,7 @@ body::after {
   writing-mode: vertical-rl;
   text-orientation: upright;
   white-space: pre;
-  margin: 0 auto 18px;
+  margin: 0 auto 6px;
 }
 
 .telemetry-backdrop__column--1 {
@@ -1054,7 +1054,7 @@ body::after {
 
 .telemetry-backdrop--menu .telemetry-backdrop__column {
   color: color-mix(in srgb, var(--text-info) 68%, transparent);
-  opacity: 0.3;
+  opacity: 0.4;
   text-shadow:
     0 0 18px color-mix(in srgb, var(--ambient-grid-glow) 52%, transparent),
     0 0 32px color-mix(in srgb, var(--text-info) 14%, transparent);
@@ -1069,11 +1069,11 @@ body::after {
 }
 
 .telemetry-backdrop--menu .telemetry-backdrop__column--3 {
-  opacity: 0.36;
+  opacity: 0.46;
 }
 
 .telemetry-backdrop--menu .telemetry-backdrop__column--4 {
-  opacity: 0.24;
+  opacity: 0.32;
 }
 
 .telemetry-backdrop--menu .telemetry-backdrop__scanline {
@@ -1091,7 +1091,7 @@ body::after {
 
 .telemetry-backdrop--creator .telemetry-backdrop__column {
   color: color-mix(in srgb, var(--text-info) 60%, transparent);
-  opacity: 0.24;
+  opacity: 0.3;
   text-shadow:
     0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 42%, transparent),
     0 0 24px color-mix(in srgb, var(--text-info) 10%, transparent);
@@ -1106,7 +1106,7 @@ body::after {
 }
 
 .telemetry-backdrop--creator .telemetry-backdrop__column--3 {
-  opacity: 0.28;
+  opacity: 0.36;
 }
 
 .telemetry-backdrop--creator .telemetry-backdrop__column--4 {

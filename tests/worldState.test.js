@@ -2,9 +2,11 @@ import { describe, expect, test } from "vitest";
 
 import {
   generateCrewAroundPlayer,
+  getCallSignExamplesForRole,
   getSpecialCrewOverride,
   nameMatchesPreferredRole,
 } from "../src/game/worldState.js";
+import { CHARACTER_BANKS } from "../src/game/characterBanks.js";
 
 describe("special crew overrides", () => {
   test("applies fixed call signs for named easter eggs", () => {
@@ -29,5 +31,13 @@ describe("special crew overrides", () => {
 
     expect(crew.find((profile) => profile.role === "Science Officer")?.controller).toBe("human");
     expect(crew.filter((profile) => profile.role !== "Science Officer").every((profile) => profile.controller === "bot")).toBe(true);
+  });
+
+  test("returns randomized role-appropriate call sign examples", () => {
+    const examples = getCallSignExamplesForRole("Flight Engineer");
+
+    expect(examples).toHaveLength(3);
+    expect(new Set(examples).size).toBe(3);
+    expect(examples.every((example) => CHARACTER_BANKS.flight_engineer.callSigns.includes(example))).toBe(true);
   });
 });

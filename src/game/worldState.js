@@ -156,6 +156,18 @@ function pickRandom(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+function pickRandomSubset(items = [], count = 3) {
+  const pool = [...items];
+  const selected = [];
+
+  while (pool.length > 0 && selected.length < count) {
+    const index = Math.floor(Math.random() * pool.length);
+    selected.push(pool.splice(index, 1)[0]);
+  }
+
+  return selected;
+}
+
 function pickPreferredName(candidateNames = [], featuredNames = []) {
   const featuredPool = candidateNames.filter((name) => featuredNames.includes(name));
   if (featuredPool.length > 0 && Math.random() < 0.68) {
@@ -323,7 +335,8 @@ export function generateCrewAroundPlayer({
 export function getCallSignExamplesForRole(role, count = 3) {
   const blueprint = CREW_BLUEPRINTS.find((entry) => entry.role === role) || CREW_BLUEPRINTS[0];
   const roleBank = CHARACTER_BANKS[blueprint.bankKey] || {};
-  return (roleBank.callSigns || [blueprint.defaultCallSign]).slice(0, count);
+  const callSigns = roleBank.callSigns || [blueprint.defaultCallSign];
+  return pickRandomSubset(callSigns, count);
 }
 
 export function rerollCharacterProfiles(
