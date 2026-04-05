@@ -116,16 +116,16 @@ export default function ActionInput({
 
         <div className={`action-input__hint${waiting ? " action-input__hint--waiting" : ""}`}>
           {missionResolved
-            ? "Mission state resolved. Turn input is now locked while final recovery and debrief screens are active."
+            ? "Mission state resolved. Turn input is now locked while recovery and debrief proceed."
             : waiting
-            ? "The DM is resolving the last move. Controls are temporarily locked."
+              ? "The last move is still resolving. Controls are temporarily locked."
             : isBotTurn
               ? botPreviewLoading
-                ? `${activeCrew.name} is in autonomous mode and drafting a response from mission context.`
+                ? `${activeCrew.name} is in autonomous mode and assembling a response.`
                 : narrationReady
                 ? `${activeCrew.name} is in autonomous mode. Advance when you're ready for the next turn.`
-                : `${activeCrew.name} is in autonomous mode and waiting for the DM channel to finish transmitting.`
-              : `Queue a concise action for ${activeCrew.name}. Short, decisive commands read best.`}
+                : `${activeCrew.name} is in autonomous mode and waiting for the channel to clear.`
+              : `Queue a concise action for ${activeCrew.name}. Clear, decisive commands read best.`}
         </div>
 
         {isBotTurn && botPreview && !missionResolved ? (
@@ -155,15 +155,15 @@ export default function ActionInput({
             className="al-input"
             placeholder={
               waiting
-                ? "Command link locked while the DM responds..."
+                ? "Command link locked while the channel answers..."
                 : missionResolved
                   ? "Mission resolved. Command channel archived."
                   : isBotTurn
                     ? botPreviewLoading
-                      ? "Autonomous planner is drafting the next action..."
+                      ? "Autonomous planner is drafting the next move..."
                       : narrationReady
                         ? `${activeCrew.name} is preparing an autonomous response...`
-                        : "Autonomous handoff is waiting on the current narration..."
+                        : "Autonomous handoff is waiting on the current transmission..."
                     : `What does ${activeCrew.name} do?`
             }
             value={input}
@@ -180,7 +180,7 @@ export default function ActionInput({
             {missionResolved
               ? "MISSION RESOLVED"
               : waiting
-              ? "AWAITING DM"
+              ? "AWAITING RESPONSE"
               : isBotTurn
                 ? botPreviewLoading
                   ? "DRAFTING TURN"

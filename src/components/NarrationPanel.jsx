@@ -20,7 +20,7 @@ function NarrationPanel({ text, eventLog, uiState, onTypewriterDone }) {
   return (
     <div className={`narration-panel narration-panel--${uiState?.dangerLevel || "guarded"}`}>
       <div className="section-title section-title--with-divider">
-        MISSION CONTROL // DM CHANNEL
+        MISSION CONTROL // INCIDENT FEED
       </div>
       {uiState?.latestAlert ? (
         <div className={`mission-alert mission-alert--${uiState.latestAlert.type}`}>

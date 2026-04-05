@@ -7,8 +7,6 @@ export default function MissionResolution({
   worldState,
   narration,
   slotId,
-  themeId,
-  themes,
   onReturnToMenu,
   onReviewMission,
 }) {
@@ -16,7 +14,6 @@ export default function MissionResolution({
   const mission = worldState?.mission || {};
   const crew = worldState?.crew || [];
   const outcome = mission?.outcome || { status: "active", title: "", summary: "" };
-  const activeTheme = themes?.find((theme) => theme.id === themeId) || themes?.[0] || null;
   const healthyCrewCount = crew.filter((member) => member.health > 25).length;
   const isVictory = outcome.status === "victory";
   const systemSummary = [
@@ -60,7 +57,7 @@ export default function MissionResolution({
         <div className="resolution-screen__meta">
           <span>{mission.id || "ARTEMIS-07"}</span>
           <span>{mission.name || "Artemis Lost"}</span>
-          <span>{slotId || "slot-1"}</span>
+          <span>{slotId || "berth-1"}</span>
         </div>
 
         <div className="resolution-screen__sequence" aria-hidden="true">
@@ -110,8 +107,7 @@ export default function MissionResolution({
               {mission.phase || "Final state logged"}
             </div>
             <div className="resolution-screen__card-copy">
-              Theme sync: {activeTheme?.label || "Artemis"} //{" "}
-              {outcome.status === "victory" ? "retrieval" : "casualty"} debrief
+              {outcome.status === "victory" ? "Recovery brief in progress." : "Loss brief in progress."}
             </div>
           </div>
         </div>
@@ -127,7 +123,7 @@ export default function MissionResolution({
             onClick={onReviewMission}
             disabled={!readyToContinue}
           >
-            Review Mission
+            Review Debrief
           </button>
           <button
             type="button"

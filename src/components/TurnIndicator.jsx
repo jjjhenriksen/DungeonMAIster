@@ -9,13 +9,13 @@ function TurnIndicator({ activeCrew, waiting, coordinationAlert }) {
             waiting ? " turn-indicator__eyebrow--waiting" : ""
           }`}
         >
-          {waiting ? "DM PROCESSING" : "ACTIVE TURN"}
+          {waiting ? "CHANNEL BUSY" : "ACTIVE WATCH"}
         </div>
         <div
           className={`turn-indicator__copy${waiting ? " turn-indicator__copy--waiting" : ""}`}
         >
           {waiting
-            ? `${activeCrew.name}'s command is being resolved. Stand by for new intel.`
+            ? `${activeCrew.name}'s order is moving through the stack. Stand by for fresh telemetry.`
             : `${activeCrew.name} on station as ${activeCrew.role}.`}
         </div>
         {coordinationAlert ? (
@@ -29,7 +29,7 @@ function TurnIndicator({ activeCrew, waiting, coordinationAlert }) {
       </div>
 
       <div className={`turn-indicator__badge${waiting ? " turn-indicator__badge--waiting" : ""}`}>
-        {waiting ? "LOCKED" : "READY"}
+        {waiting ? "HOLD" : "READY"}
       </div>
     </div>
   );

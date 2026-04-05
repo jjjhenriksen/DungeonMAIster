@@ -6,21 +6,20 @@ const REDUCED_MOTION_DURATION_MS = 1200;
 const COUNTDOWN_START = 10;
 
 const LAUNCH_STAGES = [
-  { time: "T-06", label: "Fuel lines pressurized" },
-  { time: "T-03", label: "Crew harnesses locked" },
-  { time: "T-00", label: "Main engines commit" },
-  { time: "T+04", label: "Tower clear" },
-  { time: "T+11", label: "Orbital burn alignment" },
+  { time: "T-06", label: "Propellant lines pressurized" },
+  { time: "T-03", label: "Crew restraints hard-locked" },
+  { time: "T-00", label: "Main engines committed" },
+  { time: "T+04", label: "Vehicle clear of the tower" },
+  { time: "T+11", label: "Insertion burn alignment" },
 ];
 
-export default function LaunchSequence({ session, slotId, themeId, themes, onComplete }) {
+export default function LaunchSequence({ session, slotId, onComplete }) {
   const [readyToContinue, setReadyToContinue] = useState(false);
   const [countdownValue, setCountdownValue] = useState(COUNTDOWN_START);
   const [elapsedMs, setElapsedMs] = useState(0);
   const mission = session?.worldState?.mission || {};
   const crew = session?.worldState?.crew || [];
   const slotLabel = session?.slotLabel || slotId?.replace(/^slot-/, "Slot ") || "Slot 1";
-  const activeTheme = themes?.find((theme) => theme.id === themeId) || themes?.[0] || null;
   const roster = crew.map((member) => ({
     id: member.id,
     role: member.role,
@@ -28,12 +27,11 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
     callSign: member.character?.callSign || "n/a",
   }));
   const telemetry = [
-    { label: "Flight theme", value: activeTheme?.label || "Artemis", tone: "info" },
-    { label: "Crew loaded", value: `${roster.length} specialists`, tone: "good" },
-    { label: "Mission phase", value: mission.phase || "Launch window", tone: "info" },
+    { label: "Crew aboard", value: `${roster.length} specialists`, tone: "good" },
+    { label: "Current posture", value: mission.phase || "Launch window", tone: "info" },
     {
-      label: "Risk pressure",
-      value: mission.decisionPressure || "Window tightening across all systems.",
+      label: "Command pressure",
+      value: mission.decisionPressure || "The launch window is tightening across every stack.",
       tone: "warn",
     },
   ];
@@ -54,16 +52,16 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
   const isRocketClearingFrame = readyToContinue || ascentProgress >= 0.965;
   const progressLabel =
     countdownValue > 0
-      ? "Final countdown holding ascent systems in commit posture"
+      ? "Final countdown holding the stack on commit"
       : ascentProgress < 0.16
-        ? "Main engines lit. Hold-down clamps released."
+        ? "Main engines lit. Hold-down clamps just released."
         : ascentProgress < 0.34
-          ? "Vehicle clearing tower and building vertical velocity"
+          ? "Vehicle clearing the tower and building climb speed."
           : ascentProgress < 0.58
-            ? "Guidance locked. Climbing through upper atmosphere corridor"
+            ? "Guidance locked. Climbing through the upper ascent corridor."
             : ascentProgress < 0.82
-              ? "Ascent profile stabilizing toward orbital insertion"
-              : "Vehicle off camera. Finalizing orbital burn alignment";
+              ? "Ascent profile stabilizing toward insertion."
+              : "Vehicle off camera. Final burn solution settling in.";
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -123,29 +121,15 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
         <div className="launch-screen__trail launch-screen__trail--right" />
       </div>
 
-      <div className="launch-screen__hud">
+        <div className="launch-screen__hud">
         <div className="launch-screen__eyebrow">LAUNCH COMMIT</div>
         <h1 className="launch-screen__title">{mission.name || "Artemis Lost"}</h1>
         <p className="launch-screen__copy">
-          {mission.briefing || "Crew locked. Mission vectors aligned. Light the engines."}
+          {mission.briefing || "Crew sealed in. Flight vectors aligned. Light the engines."}
         </p>
-        <div className="launch-screen__theme">
-          <span
-            className="launch-screen__theme-swatch"
-            style={{ "--launch-theme-accent": activeTheme?.accent || "#6fd3ff" }}
-          />
-          <div>
-            <div className="launch-screen__theme-label">
-              Interface theme: {activeTheme?.label || "Artemis"}
-            </div>
-            <div className="launch-screen__theme-copy">
-              {activeTheme?.description || "Mission control visuals calibrated for ascent."}
-            </div>
-          </div>
-        </div>
         <div className="launch-screen__meta">
           <span>{mission.id || "ARTEMIS-07"}</span>
-          <span>{mission.seedLabel || "Mission profile armed"}</span>
+          <span>{mission.seedLabel || "Incident profile armed"}</span>
           <span>{slotLabel}</span>
         </div>
         <div className="launch-screen__timeline">
@@ -161,7 +145,7 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
       <div className="launch-screen__viewport">
         <div className="launch-screen__viewport-header">
           <span>Launch feed // pad camera 02</span>
-          <span>Theme sync {activeTheme?.label || "Artemis"}</span>
+          <span>Range link nominal</span>
         </div>
         <div className="launch-screen__viewport-frame" aria-hidden="true">
           <span className="launch-screen__viewport-corner launch-screen__viewport-corner--tl" />
@@ -229,8 +213,8 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
         </div>
       </div>
 
-      <div className="launch-screen__manifest">
-        <div className="launch-screen__manifest-title">Crew aboard</div>
+        <div className="launch-screen__manifest">
+        <div className="launch-screen__manifest-title">Crew manifest</div>
         <div className="launch-screen__manifest-list">
           {roster.map((member) => (
             <div key={member.id} className="launch-screen__manifest-item">
@@ -265,7 +249,7 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
       <div className="launch-screen__actions">
         {!readyToContinue ? (
           <button type="button" className="launch-screen__skip" onClick={() => onComplete?.()}>
-            Skip Launch
+            Skip Ascent
           </button>
         ) : null}
         <button
@@ -274,7 +258,7 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
           onClick={() => onComplete?.()}
           disabled={!readyToContinue}
         >
-          {readyToContinue ? "Continue To Mission" : "Launch In Progress"}
+          {readyToContinue ? "Proceed To Incident" : "Ascent Underway"}
         </button>
       </div>
     </section>

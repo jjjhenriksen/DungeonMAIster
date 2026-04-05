@@ -34,11 +34,11 @@ function RosterSummary({ crew, worldState }) {
       <div className="roster-summary__state">
         <div className="section-title section-title--mb-10">LIVE COORDINATION</div>
         <div className="roster-summary__state-card">
-          <div className="roster-summary__state-label">Active handoff</div>
+          <div className="roster-summary__state-label">Open handoff</div>
           <div className="roster-summary__state-copy">
             {activeSupportWindow
               ? `${activeSupportWindow.sourceCrewName} -> ${activeSupportWindow.targetCrewName} (${activeSupportWindow.strength}${activeSupportWindow.priorityHandoff ? ", priority" : ""})`
-              : "No live follow-through window."}
+              : "No live follow-through window is open."}
           </div>
         </div>
         <div className="roster-summary__coordination-list">

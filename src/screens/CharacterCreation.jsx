@@ -96,12 +96,11 @@ export default function CharacterCreation({
     <div className="menu-shell">
       <form className="creator-panel" onSubmit={handleSubmit}>
         <div className="menu-panel__eyebrow">CREW ASSEMBLY</div>
-        <h1 className="menu-panel__title">Character Creation</h1>
+        <h1 className="menu-panel__title">Crew Assembly</h1>
         <p className="menu-panel__copy">
-          Tune the four rover specialists before the mission starts. These identities are
-          carried into the save file, vault context, and DM prompt.
+          Lock in who is riding this operation before the hatch seals. The crew you choose will carry the whole mission.
         </p>
-        <div className="creator-slot">Target save slot: {slotId}</div>
+        <div className="creator-slot">Assigned berth: {slotId}</div>
         <div className="creator-slot">
           Human-controlled roles: {humanCount} / {profiles.length || DEFAULT_CHARACTER_PROFILES.length}
         </div>
@@ -111,15 +110,14 @@ export default function CharacterCreation({
             <div className="creator-seed__header">
               <div>
                 <div className="section-title section-title--mb-6">PLAYER INSERT</div>
-                <div className="creator-seed__title">Claim one station before the roster rolls</div>
+                <div className="creator-seed__title">Claim your station before the roster fills</div>
               </div>
             </div>
             <div className="creator-seed__summary">
-              Choose the specialty you want to play, type your own name, and the rest of the crew
-              will be generated around you.
+              Choose the station you will hold, enter the name you want on the manifest, and command will fill the remaining seats around you.
             </div>
             <label className="creator-field">
-              <span>Your specialty</span>
+              <span>Your role</span>
               <select
                 className="creator-input"
                 value={playerRole}
@@ -153,7 +151,7 @@ export default function CharacterCreation({
             </label>
             <div className="creator-seed__summary">
               Call sign examples for {playerRole}: {playerCallSignExamples.join(", ")}.
-              Special roster names still use their custom easter-egg callsigns.
+              A few recognized names will still use their preset callsigns.
             </div>
             <div className="creator-actions">
               <button type="button" className="menu-button" onClick={onBack}>
@@ -182,7 +180,7 @@ export default function CharacterCreation({
         <div className="creator-seed">
           <div className="creator-seed__header">
             <div>
-              <div className="section-title section-title--mb-6">MISSION SEED</div>
+              <div className="section-title section-title--mb-6">INCIDENT PROFILE</div>
               <div className="creator-seed__title">{resolvedMissionSeed.label}</div>
             </div>
             <button

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 function formatSaveSummary(session) {
-  if (!session?.worldState) return "Empty slot.";
+  if (!session?.worldState) return "No mission record on file.";
 
   const crewNames = session.worldState.crew.map((member) => member.name).join(", ");
   return `${session.worldState.mission.phase} | Turn ${session.turn} | Crew: ${crewNames}`;
@@ -28,7 +28,7 @@ export default function MainMenu({
         <div className="menu-panel__eyebrow">LUNAR INCIDENT COMMAND</div>
         <h1 className="menu-panel__title">Artemis Lost</h1>
         <p className="menu-panel__copy">
-          Build a crew, manage multiple scenarios, and take command. Your choices will determine the fate of your crew and the success of your mission.
+          Assemble a field crew, review the latest incident records, and take command before the next window closes.
         </p>
 
         <div className="menu-actions">
@@ -46,7 +46,7 @@ export default function MainMenu({
 
         {continueSlot ? (
           <div className="continue-card">
-            <div className="save-card__label">ACTIVE SLOT</div>
+            <div className="save-card__label">CURRENT OPERATION</div>
             <div className="save-card__title">
               {continueSlot.worldState.mission.id} // {continueSlot.worldState.mission.name}
             </div>
@@ -65,7 +65,7 @@ export default function MainMenu({
                   </div>
                   <div className="save-card__body">{formatSaveSummary(slot.session)}</div>
                   <div className="save-card__meta">
-                    Last updated: {slot.session.lastUpdatedIso || "Unknown"}
+                    Last contact: {slot.session.lastUpdatedIso || "Unlogged"}
                   </div>
                   <div className="slot-actions">
                     <button
@@ -87,7 +87,7 @@ export default function MainMenu({
                 </>
               ) : (
                 <>
-                  <div className="save-card__body">No saved mission in this slot yet.</div>
+                  <div className="save-card__body">No mission record in this berth yet.</div>
                   <div className="slot-actions">
                     <button
                       className="menu-button menu-button--primary"
@@ -108,7 +108,7 @@ export default function MainMenu({
               <div className="menu-panel__eyebrow">CONFIRM DELETE</div>
               <div className="modal-panel__title">Delete {pendingDeleteSlot.label}?</div>
               <div className="modal-panel__copy">
-                This will permanently remove the saved mission in this slot.
+                This will permanently erase the operation record assigned to this berth.
               </div>
               <div className="creator-actions">
                 <button className="menu-button" onClick={() => setPendingDeleteSlot(null)}>
@@ -121,7 +121,7 @@ export default function MainMenu({
                     setPendingDeleteSlot(null);
                   }}
                 >
-                  Delete Slot
+                  Delete Record
                 </button>
               </div>
             </div>

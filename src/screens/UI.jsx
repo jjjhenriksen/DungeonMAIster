@@ -272,7 +272,7 @@ export default function ArtemisLost({
             {uiState.headerSubtitle}
           </div>
           <div className="app-header__slot">
-            Active save slot: {initialSession?.slotLabel || slotId}
+            Assigned berth: {initialSession?.slotLabel || slotId}
           </div>
         </div>
 
