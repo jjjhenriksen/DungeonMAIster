@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ThemePicker from "../components/ThemePicker.jsx";
 
 function formatSaveSummary(session) {
   if (!session?.worldState) return "Empty slot.";
@@ -12,9 +11,6 @@ export default function MainMenu({
   activeSession,
   activeSlotId,
   slots,
-  themeId,
-  themes,
-  onThemeChange,
   onContinue,
   onDeleteSlot,
   onLoadSlot,
@@ -34,13 +30,6 @@ export default function MainMenu({
         <p className="menu-panel__copy">
           Build a crew, manage multiple scenarios, and take command. Your choices will determine the fate of your crew and the success of your mission.
         </p>
-
-        <ThemePicker
-          themeId={themeId}
-          themes={themes}
-          onThemeChange={onThemeChange}
-          title="INTERFACE THEME"
-        />
 
         <div className="menu-actions">
           {hasContinueSlot ? (

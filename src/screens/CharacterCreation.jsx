@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import ThemePicker from "../components/ThemePicker.jsx";
 import {
   DEFAULT_CHARACTER_PROFILES,
   deriveCrewDynamics,
@@ -19,9 +18,6 @@ export default function CharacterCreation({
   onBack,
   onStartMission,
   slotId,
-  themeId,
-  themes,
-  onThemeChange,
 }) {
   const [profiles, setProfiles] = useState(() => []);
   const [lockedProfileIds, setLockedProfileIds] = useState(() => new Set());
@@ -109,13 +105,6 @@ export default function CharacterCreation({
         <div className="creator-slot">
           Human-controlled roles: {humanCount} / {profiles.length || DEFAULT_CHARACTER_PROFILES.length}
         </div>
-
-        <ThemePicker
-          themeId={themeId}
-          themes={themes}
-          onThemeChange={onThemeChange}
-          title="INTERFACE THEME"
-        />
 
         {!hasGeneratedCrew ? (
           <div className="creator-seed">

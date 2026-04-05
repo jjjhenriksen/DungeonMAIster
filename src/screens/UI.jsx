@@ -6,7 +6,6 @@ import CrewStatusBar from "../components/CrewStatusBar.jsx";
 import NarrationPanel from "../components/NarrationPanel.jsx";
 import RosterSummary from "../components/RosterSummary.jsx";
 import RoleView from "../components/RoleView.jsx";
-import ThemePicker from "../components/ThemePicker.jsx";
 import { requestAutonomousAction, requestDmTurn } from "../services/dmApi.js";
 import { appendConversationEntry } from "../game/gameLoop.js";
 import { getMissionOutcome } from "../game/missionOutcome.js";
@@ -39,7 +38,6 @@ export default function ArtemisLost({
   slotId,
   themeId,
   themes,
-  onThemeChange,
   onExitToMenu,
   onSessionPersisted,
 }) {
@@ -280,13 +278,6 @@ export default function ArtemisLost({
 
         <div className="app-header__controls">
           <CrewStatusBar mission={ws.mission} systems={ws.systems} uiState={uiState} />
-          <ThemePicker
-            compact
-            themeId={themeId}
-            themes={themes}
-            onThemeChange={onThemeChange}
-            title="THEME"
-          />
           <div className="header-actions">
             <div className={`save-indicator save-indicator--${saveState}`}>
               {saveState === "saving"

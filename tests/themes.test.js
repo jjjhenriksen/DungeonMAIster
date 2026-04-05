@@ -1,33 +1,27 @@
 import {
-  buildThemeId,
   DEFAULT_THEME_ID,
   getStoredTheme,
   getThemeById,
   getThemeFamilyId,
   getThemeMode,
+  isValidTheme,
 } from "../src/game/themes.js";
 
 describe("themes", () => {
-  test("builds and resolves family/mode ids", () => {
-    const themeId = buildThemeId("nocturne", "light");
-    expect(themeId).toBe("nocturne-light");
-    expect(getThemeFamilyId(themeId)).toBe("nocturne");
-    expect(getThemeMode(themeId)).toBe("light");
+  test("locks the app to canopy dark", () => {
+    expect(DEFAULT_THEME_ID).toBe("canopy-dark");
+    expect(getThemeFamilyId("anything")).toBe("canopy");
+    expect(getThemeMode("anything")).toBe("dark");
+    expect(isValidTheme("canopy-dark")).toBe(true);
+    expect(isValidTheme("artemis-dark")).toBe(false);
   });
 
-  test("normalizes legacy theme ids", () => {
-    expect(getThemeFamilyId("sh2025")).toBe("canopy");
-    expect(getThemeMode("sh2025")).toBe("dark");
-  });
-
-  test("falls back to the default theme when storage is invalid", () => {
+  test("always returns the locked theme", () => {
     window.localStorage.setItem("dungeonmaister-theme", "bogus-theme");
-    expect(getStoredTheme()).toBe(DEFAULT_THEME_ID);
-  });
+    expect(getStoredTheme()).toBe("canopy-dark");
 
-  test("returns a concrete theme object for valid ids", () => {
     const theme = getThemeById("artemis-dark");
-    expect(theme.label).toBe("Artemis");
+    expect(theme.label).toBe("Canopy");
     expect(theme.mode).toBe("dark");
   });
 });
