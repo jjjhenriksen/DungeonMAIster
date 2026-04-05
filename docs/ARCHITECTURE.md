@@ -1,26 +1,29 @@
 # Architecture
 
-Artemis Lost is a small full-stack app with a React frontend, a local Express DM server, and a vault-backed session layer.
+Artemis Lost is a small full-stack app with a React frontend, a Node/Express server, and a session layer that can persist to local files or Postgres while still producing dynamic vault mirrors for prompt context.
 
 ## High-Level Modules
 
 ### App Shell And Navigation
 
-- [src/app/App.jsx](../src/app/App.jsx): app entry, screen routing, theme persistence, and save-slot hydration
+- [src/app/App.jsx](../src/app/App.jsx): app entry, screen routing, preview-mode bootstrapping, and session hydration
 - [src/screens/MainMenu.jsx](../src/screens/MainMenu.jsx): front-door flow for new mission, continue, load, and delete
-- [src/screens/CharacterCreation.jsx](../src/screens/CharacterCreation.jsx): crew editing, lock/reroll controls, human-vs-autonomous role assignment, and mission-seed preview
+- [src/screens/CharacterCreation.jsx](../src/screens/CharacterCreation.jsx): player-first crew assembly, lock/reroll controls, human-vs-autonomous role assignment, and mission-seed preview
 - [src/screens/LaunchSequence.jsx](../src/screens/LaunchSequence.jsx): cinematic transition between setup and live mission
+- [src/screens/MissionResolution.jsx](../src/screens/MissionResolution.jsx): victory and defeat resolution screens
 - [src/screens/UI.jsx](../src/screens/UI.jsx): in-mission turn orchestration, autosave, autonomous-turn auto-play, and DM integration
 
 ### World-State And Scenario Layer
 
-- [src/game/worldState.js](../src/game/worldState.js): crew blueprints, mission-session creation, seed resolution, opening narration, and world-state creation
+- [src/game/worldState.js](../src/game/worldState.js): crew blueprints, player-insert generation, mission-session creation, seed resolution, opening narration, and world-state creation
 - [src/game/missionSeeds.js](../src/game/missionSeeds.js): scenario-seed definitions and mission-seed helpers
 - [src/game/missionMechanics.js](../src/game/missionMechanics.js): seed-specific leverage windows and local mission effects
 - [src/game/characterBanks.js](../src/game/characterBanks.js): names, call signs, traits, flaws, specialties, stakes, and tension patterns
 - [src/game/botTurns.js](../src/game/botTurns.js): autonomous-action generation for underfilled crews
 - [src/game/gameLoop.js](../src/game/gameLoop.js): turn helpers, MET advancement, conversation helpers, and log-entry creation
+- [src/game/missionOutcome.js](../src/game/missionOutcome.js): forgiving win/loss rules and mission-resolution summaries
 - [src/game/stateUtils.js](../src/game/stateUtils.js): shared state selectors and numeric clamping helpers
+- [src/game/turnRuntime.js](../src/game/turnRuntime.js): deterministic turn pipeline after DM narration returns
 
 ### Presentation Layer
 
@@ -31,11 +34,10 @@ Artemis Lost is a small full-stack app with a React frontend, a local Express DM
 - [src/components/RosterSummary.jsx](../src/components/RosterSummary.jsx): crew dossier with trait, flaw, and controller mode
 - [src/components/RoleView.jsx](../src/components/RoleView.jsx): active-role console and operational context
 - [src/components/CrewStatusBar.jsx](../src/components/CrewStatusBar.jsx): mission/system header strip
-- [src/components/ThemePicker.jsx](../src/components/ThemePicker.jsx): shared theme-switching control
+- [src/components/TelemetryBackdrop.jsx](../src/components/TelemetryBackdrop.jsx): animated ambient telemetry layer used across major screens
 - [src/game/roleFilters.js](../src/game/roleFilters.js): role-specific view selection and console brief generation
 - [src/game/uiState.js](../src/game/uiState.js): derived UI-facing state for headers, alerts, and action-panel previews
-- [src/styles/styles.css](../src/styles/styles.css): shared tokens, themes, component styles, and ambient background treatment
-- [src/game/themes.js](../src/game/themes.js): theme registry and storage helpers
+- [src/styles/styles.css](../src/styles/styles.css): shared tokens, component styles, launch/resolution animation, and ambient background treatment
 
 ### Role And Coordination Systems
 
@@ -55,7 +57,7 @@ Artemis Lost is a small full-stack app with a React frontend, a local Express DM
 
 ### Session And Vault Layer
 
-- [src/services/sessionApi.js](../src/services/sessionApi.js): load/save/delete/list session helpers
+- [src/services/sessionApi.js](../src/services/sessionApi.js): load/save/delete/list session helpers plus browser-scoped player identity
 - [server/sessionStore.js](../server/sessionStore.js): public slot persistence orchestration and payload normalization
 - [server/sessionStorageAdapter.js](../server/sessionStorageAdapter.js): storage backend adapter for filesystem vs database session persistence
 - [server/sessionMirrors.js](../server/sessionMirrors.js): active-session markdown and JSON mirrors for prompt context
@@ -67,7 +69,6 @@ Artemis Lost is a small full-stack app with a React frontend, a local Express DM
 
 The frontend owns:
 - menu and character-creation flow
-- selected theme
 - current `worldState`
 - active `turn`
 - current narration
@@ -75,6 +76,8 @@ The frontend owns:
 - autosave coordination
 - autonomous-turn auto-play
 - event-log and role-view rendering
+- mission-resolution presentation
+- browser-local player identity used for save isolation
 
 ### Backend
 
@@ -166,6 +169,15 @@ Mission seeds are data-first scenario packets. Each seed includes:
 
 Before launch, a seed is resolved against the selected crew so placeholder text like `{engineerShort}` becomes the actual launched roster name.
 
+## Player Insert Model
+
+Character creation is now two-step:
+
+- the player first claims one role by entering a name and optional callsign
+- the game generates the rest of the crew around that selected role
+- the chosen role starts locked and human-controlled by default
+- special named overrides can still replace the callsign or bias role assignment when appropriate
+
 ## Turn And Control Model
 
 - base turn order is round-robin across the four crew seats
@@ -182,6 +194,7 @@ The frontend no longer relies only on the DM for progression. It also applies lo
 - role mechanics: aligned actions create role-specific numeric benefits
 - mission mechanics: certain seeds expose bespoke leverage windows with custom local bonuses
 - crew coordination: handoff windows, delegation strength, and trust/friction evolve over time
+- mission outcomes: deterministic win/loss evaluation runs after resolved turns
 - derived UI state: action recommendations and warnings are computed from the live world state before submission
 
 ## Event Log Model
@@ -201,6 +214,7 @@ Persistent state now has separate concerns:
 
 - the session store orchestrates slot-level save/load/delete behavior
 - the storage adapter decides whether canonical saves live in local JSON files or the configured database backend
+- session ownership is scoped by a browser-local player id so deployed users do not share saves
 - the mirror layer writes active prompt-context artifacts into `vault/dynamic/`
 - `vault/dynamic/session-state.md` keeps a handoff-friendly state snapshot
 - `vault/dynamic/log.md` keeps recent conversation history

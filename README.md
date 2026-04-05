@@ -1,25 +1,26 @@
 # Artemis Lost
 
-Artemis Lost is a full-stack prototype for a turn-based sci-fi mission simulator where an OpenAI model acts as the mission director for a stranded lunar crew.
+Artemis Lost is a full-stack sci-fi command game where an OpenAI-powered mission director reacts to a stranded lunar crew in crisis. Players assemble a crew, launch into the incident, and steer the story through role-based decisions, autonomous crew roles, evolving handoffs, and end-of-mission resolution.
 
 The app now includes:
 - a main menu with save-slot support
-- full character creation for a four-role crew
+- player-first character creation for a four-role crew
 - a launch sequence between setup and mission start
 - human or autonomous control per crew role
 - mission seed variation
-- light/dark theme switching plus theme families
 - role-aware tactical suggestions and follow-through previews
 - evolving crew coordination and handoff state
+- win/loss resolution with distinct end screens
+- durable save support through Postgres
 - vault-backed prompt context
 - structured state-delta updates from the DM
 
 ## Stack
 
 - Frontend: React + Vite
-- Backend: Express dev server
+- Backend: Express / Node server
 - Model provider: OpenAI Responses API
-- Persistence: slot saves plus vault-backed session mirrors
+- Persistence: browser-scoped slot saves plus vault-backed session mirrors
 
 ## Run
 
@@ -121,6 +122,7 @@ Deployment note:
 
 - Static lore continues to load from the repository under `vault/static/`.
 - With `DATABASE_URL` set, save slots are stored durably in Postgres.
+- Save slots are scoped per browser/user via a local player id, so deployed users do not share the same three slots.
 - Dynamic session mirrors for prompt context still write to a configurable data root.
 - If neither `DATABASE_URL` nor `DATA_DIR` is set, the app falls back to local `vault/dynamic/` behavior.
 - Cheapest durable path: Neon Postgres via `DATABASE_URL`.
@@ -129,27 +131,29 @@ Deployment note:
 
 1. Choose a save slot from the main menu.
 2. Create or load a mission.
-3. Configure the crew, including `Human` or `Autonomous` per role.
-4. Pick or reroll a mission seed.
-5. Launch through the cinematic intro sequence.
-6. Submit actions on human turns while autonomous roles auto-play theirs.
-7. Use live tactical guidance, role-fit previews, and follow-through indicators to shape the next move.
-8. The DM returns narration plus a partial `STATE_DELTA`.
-9. The UI merges the update, applies local role and mission mechanics, resolves handoff-driven turn priority, updates the instrumented log, and autosaves.
+3. Claim one crew role by entering the player name and callsign.
+4. Generate the remaining crew around that player profile.
+5. Review or reroll the mission seed and crew details.
+6. Launch through the cinematic intro sequence.
+7. Submit actions on human turns while autonomous roles auto-play theirs.
+8. Use live tactical guidance, role-fit previews, and follow-through indicators to shape the next move.
+9. The DM returns narration plus a partial `STATE_DELTA`.
+10. The UI merges the update, applies local role and mission mechanics, resolves handoff-driven turn priority, updates the instrumented log, autosaves, and checks for mission resolution.
 
 ## Major Systems
 
-- Character creation with reroll, lock, and crew-dynamic inference
-- Bank-driven crew generation with authored defaults
+- Character creation with player insert, reroll, lock, and crew-dynamic inference
+- Bank-driven crew generation with featured faculty easter eggs and authored overrides
 - Mission seeds with scenario-specific mission, environment, systems, and opening event logs
 - Mission-specific mechanics with per-seed leverage windows
 - Autonomous crew roles for underfilled games
 - Role-specific tactical guidance and clickable action suggestions
 - Role mechanics, handoff windows, delegation strength, and evolving crew coordination
+- Initiative overrides driven by handoffs and crew fit
 - Instrumented event log with `command`, `system`, `sensor`, `trait`, and `risk` tags
 - OpenAI-backed DM turn resolution
-- Save slots and vault-backed session mirrors
-- Theme system with persistent selection, light/dark variants, and themed launch treatment
+- Mission outcome rules with victory and defeat resolution screens
+- Save slots, per-user persistence isolation, and vault-backed session mirrors
 
 ## Project Structure
 
@@ -159,8 +163,7 @@ Deployment note:
 │   ├── ARCHITECTURE.md
 │   ├── FEATURES.md
 │   ├── GAMEPLAY_LOOP.md
-│   ├── INDEX.md
-│   └── PROJECT_JOURNAL.md
+│   └── INDEX.md
 ├── server/
 │   ├── api.js
 │   ├── dmServer.mjs
@@ -181,13 +184,14 @@ Deployment note:
 │   │   ├── NarrationPanel.jsx
 │   │   ├── RoleView.jsx
 │   │   ├── RosterSummary.jsx
-│   │   ├── ThemePicker.jsx
+│   │   ├── TelemetryBackdrop.jsx
 │   │   └── TurnIndicator.jsx
 │   ├── game/
 │   │   ├── crewCoordination.js
+│   │   ├── missionOutcome.js
 │   │   ├── missionMechanics.js
 │   │   ├── roleMechanics.js
-│   │   ├── themes.js
+│   │   ├── turnRuntime.js
 │   │   └── worldState.js
 │   ├── hooks/
 │   │   └── useTypewriter.js
@@ -195,6 +199,7 @@ Deployment note:
 │   │   ├── CharacterCreation.jsx
 │   │   ├── LaunchSequence.jsx
 │   │   ├── MainMenu.jsx
+│   │   ├── MissionResolution.jsx
 │   │   └── UI.jsx
 │   ├── services/
 │   │   ├── dmApi.js
@@ -215,4 +220,3 @@ Deployment note:
 - Features: [docs/FEATURES.md](docs/FEATURES.md)
 - Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Gameplay loop: [docs/GAMEPLAY_LOOP.md](docs/GAMEPLAY_LOOP.md)
-- Project journal: [docs/PROJECT_JOURNAL.md](docs/PROJECT_JOURNAL.md)

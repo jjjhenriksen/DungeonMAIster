@@ -6,13 +6,14 @@ This document describes the current end-to-end runtime flow for a mission turn.
 
 1. The app opens to the main menu.
 2. The player creates or loads a mission from a save slot.
-3. Character creation produces one selected profile per crew role.
-4. Each profile can be assigned `Human` or `Autonomous`.
-5. A mission seed is selected or rerolled.
-6. The selected crew and mission seed are combined into a mission session.
-7. The session is saved.
-8. The launch sequence runs.
-9. The in-mission UI boots from that state.
+3. Character creation starts with a player insert: one chosen role, one typed name, and an optional callsign.
+4. The remaining crew are generated around that player profile.
+5. Each profile can then be assigned `Human` or `Autonomous`.
+6. A mission seed is selected or rerolled.
+7. The selected crew and mission seed are combined into a mission session.
+8. The session is saved.
+9. The launch sequence runs.
+10. The in-mission UI boots from that state.
 
 ## Turn Flow
 
@@ -41,6 +42,7 @@ This document describes the current end-to-end runtime flow for a mission turn.
    - merges the returned delta
    - applies local role mechanics
    - applies local mission mechanics
+   - evaluates mission outcome state
    - updates narration
    - appends the assistant response to conversation history
    - resolves initiative using follow-through and priority handoff rules
@@ -53,7 +55,8 @@ After DM resolution, the client applies several deterministic layers locally:
 1. role mechanics
 2. support-window and relationship updates
 3. mission-specific mechanics
-4. follow-through turn targeting
+4. mission outcome evaluation
+5. follow-through turn targeting
 
 This means some of the game feel now comes from local rules, not only from model narration.
 
@@ -138,8 +141,8 @@ This keeps the prototype playable even when the DM service is temporarily unavai
 ## Persistence Flow
 
 After each resolved turn, the session is written to:
-- the active slot save file
+- the active browser-scoped slot record
 - `vault/dynamic/session-state.md`
 - `vault/dynamic/log.md`
 
-This supports reload recovery and gives the backend a dynamic session summary for future prompts.
+If `DATABASE_URL` is configured, the canonical slot record is stored in Postgres. Otherwise it falls back to local storage. In both cases, the vault mirrors still support reload recovery and future prompt context.

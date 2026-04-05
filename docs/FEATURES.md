@@ -14,6 +14,8 @@ This document summarizes the major player-facing and system-facing features curr
 Character creation now acts as the front door to a mission run.
 
 Players can:
+- claim one crew role first by entering their own name
+- optionally enter a personal callsign before crew generation
 - edit all four crew profiles
 - change name, call sign, trait, specialty, flaw, and personal stake
 - reroll the whole crew
@@ -26,6 +28,11 @@ The character creation screen also shows:
 - a mission-seed preview
 - mission tone, pressure, and suggested opening move
 - the current human-controlled role count
+
+Named overrides are also supported:
+- certain featured names bias toward specific roles
+- certain names use fixed or curated callsign pools
+- generated faculty easter eggs can surface more often for demo-friendly runs
 
 ## Autonomous Crew Roles
 
@@ -81,10 +88,12 @@ Mission seeds are resolved against the selected crew before launch, so seeded te
 
 Mission start now includes a dedicated launch transition between setup and play.
 
-- theme-aware cinematic launch treatment
 - stronger full-screen transition between character creation and gameplay
+- countdown-driven launch timing before ascent begins
+- dynamic altitude and velocity telemetry during ascent
 - explicit continue control at the end of the sequence
 - reduced-motion and skip support
+- animated telemetry behind the launch panels
 
 ## Role Guidance And Action Suggestions
 
@@ -123,6 +132,15 @@ Mission seeds now have bespoke local payoff rules, not just flavor.
 - mission leverage is previewed in the action panel
 - aligned actions can trigger seed-specific boosts to systems, health, or role meters
 
+## Mission Resolution
+
+The game now has deterministic end states instead of running forever.
+
+- forgiving victory rules reward securing the mission without demanding perfect play
+- losses require sustained collapse or truly catastrophic failure rather than one bad turn
+- victory and defeat each have distinct full-screen resolution sequences
+- direct preview routes exist for resolution-screen iteration during development
+
 ## Event Log Instrumentation
 
 The event log is now a lightweight system trace rather than plain narrative text.
@@ -154,25 +172,24 @@ The app supports:
 - in-game save
 - autosave after resolved turns
 
+Saves are now isolated per browser/user:
+- deployed players do not overwrite each other’s three visible slots
+- durable cloud storage is supported through `DATABASE_URL`
+- the server can still fall back to local data storage when needed
+
 Session state is written into:
 - slot JSON save files
 - `vault/dynamic/session-state.md`
 - `vault/dynamic/log.md`
 
-## Theme System
+## Visual Atmosphere
 
-The interface supports multiple color themes:
-- `Artemis`
-- `Canopy`
-- `Nocturne`
+The interface now uses one locked visual treatment instead of player-selectable themes.
 
-The theme system includes:
-- light and dark variants for each family
-- persistent theme selection
-- themed status colors
-- theme-aware UI surfaces
-- theme-aware launch visuals
-- restrained animated background atmosphere
+- shared panel styling across menu, launch, gameplay, and resolution
+- animated telemetry backdrops behind major screens
+- cinematic launch and ending sequences
+- restrained ambient motion designed to stay readable
 
 ## Live Console And Role Views
 
