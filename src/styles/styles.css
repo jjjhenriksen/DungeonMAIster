@@ -954,6 +954,7 @@ body::after {
   pointer-events: none;
   z-index: 0;
   opacity: 0.62;
+  contain: paint;
 }
 
 .telemetry-backdrop__noise,
@@ -990,9 +991,11 @@ body::after {
   font-size: clamp(9px, 0.68vw, 12px);
   line-height: 0.88;
   letter-spacing: 0.8px;
-  text-shadow: 0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 36%, transparent);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--ambient-grid-glow) 26%, transparent);
   opacity: 0.18;
   animation: telemetryBinaryDrift 18s linear infinite;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
 }
 
 .telemetry-backdrop__column span {
@@ -1028,8 +1031,10 @@ body::after {
   width: 116%;
   height: 1px;
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-info) 66%, transparent), transparent);
-  box-shadow: 0 0 18px color-mix(in srgb, var(--text-info) 14%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--text-info) 10%, transparent);
   opacity: 0.16;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
 }
 
 .telemetry-backdrop__scanline--top {
@@ -1060,9 +1065,7 @@ body::after {
   font-size: clamp(11px, 0.92vw, 16px);
   line-height: 0.82;
   letter-spacing: 1px;
-  text-shadow:
-    0 0 18px color-mix(in srgb, var(--ambient-grid-glow) 52%, transparent),
-    0 0 32px color-mix(in srgb, var(--text-info) 14%, transparent);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--ambient-grid-glow) 36%, transparent);
 }
 
 .telemetry-backdrop--menu .telemetry-backdrop__column--1 {
@@ -1083,7 +1086,7 @@ body::after {
 
 .telemetry-backdrop--menu .telemetry-backdrop__scanline {
   opacity: 0.22;
-  box-shadow: 0 0 24px color-mix(in srgb, var(--text-info) 22%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--text-info) 14%, transparent);
 }
 
 .telemetry-backdrop--menu .telemetry-backdrop__noise {
@@ -1102,9 +1105,7 @@ body::after {
   font-size: clamp(10px, 0.82vw, 14px);
   line-height: 0.84;
   letter-spacing: 0.95px;
-  text-shadow:
-    0 0 14px color-mix(in srgb, var(--ambient-grid-glow) 42%, transparent),
-    0 0 24px color-mix(in srgb, var(--text-info) 10%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--ambient-grid-glow) 30%, transparent);
 }
 
 .telemetry-backdrop--creator .telemetry-backdrop__column--1 {
@@ -1142,9 +1143,7 @@ body::after {
   line-height: 0.84;
   letter-spacing: 0.95px;
   color: color-mix(in srgb, var(--text-info) 64%, transparent);
-  text-shadow:
-    0 0 16px color-mix(in srgb, var(--ambient-grid-glow) 42%, transparent),
-    0 0 28px color-mix(in srgb, var(--text-info) 12%, transparent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--ambient-grid-glow) 30%, transparent);
 }
 
 .telemetry-backdrop--app .telemetry-backdrop__columns {
@@ -1213,6 +1212,8 @@ body::after {
 .app-header {
   position: relative;
   z-index: 1;
+  overflow: hidden;
+  contain: paint;
   background:
     linear-gradient(180deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
   border-bottom: 1px solid var(--border-main);
@@ -1423,6 +1424,7 @@ body::after {
   transform: translate3d(0, 12px, 0);
   animation: panelBootIn 620ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   animation-delay: var(--boot-delay, 0ms);
+  will-change: transform, opacity;
 }
 
 .status-strip {
@@ -1451,6 +1453,7 @@ body::after {
 
 .status-strip__item--pulse {
   animation: statusChipPulse 720ms ease-out;
+  will-change: transform, background-color, border-color;
 }
 
 .status-strip__value--good {
@@ -1558,8 +1561,9 @@ body::after {
   pointer-events: none;
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--text-info) 16%, transparent), transparent);
   opacity: 0;
-  filter: blur(1px);
   animation: crewCardSweep 3.8s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
 }
 
 .crew-card--active {
@@ -1778,6 +1782,7 @@ body::after {
   height: 100%;
   position: relative;
   overflow: hidden;
+  contain: paint;
 }
 
 .narration-panel--elevated,
@@ -1821,8 +1826,9 @@ body::after {
   width: 3px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--text-info) 68%, transparent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--text-info) 16%, transparent);
   animation: narrationSignalBounce 1.6s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform-origin: center bottom;
 }
 
 .narration-panel__signal span:nth-child(1) {
@@ -1914,6 +1920,7 @@ body::after {
 
 .event-log__row--entered {
   animation: eventLogEntryIn 620ms ease-out;
+  will-change: transform, opacity;
 }
 
 .event-log__row--command.event-log__row--entered {
@@ -3516,6 +3523,8 @@ body::after {
 }
 
 .turn-indicator {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3620,6 +3629,7 @@ body::after {
   flex: 1;
   display: flex;
   flex-direction: column;
+  contain: paint;
 }
 
 .action-input__panel--waiting {
@@ -3640,6 +3650,7 @@ body::after {
   background: linear-gradient(110deg, transparent 0%, color-mix(in srgb, var(--text-info) 8%, transparent) 44%, transparent 60%);
   transform: translateX(-100%);
   animation: draftingSweep 2.4s ease-in-out infinite;
+  will-change: transform;
 }
 
 .action-input__hint {
@@ -3795,8 +3806,8 @@ body::after {
   height: 4px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--text-info) 76%, transparent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--text-info) 18%, transparent);
   animation: draftingDotPulse 1.05s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 .action-input__drafting-dots span:nth-child(2) {
@@ -5322,22 +5333,25 @@ body::after {
     opacity: 0.42;
   }
   100% {
-    transform: translate3d(calc(100vw - 180px), 0, 0);
+    transform: translate3d(calc(100% - 52px), 0, 0);
     opacity: 0;
   }
 }
 
 @keyframes statusChipPulse {
   0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--text-info) 0%, transparent);
+    background: var(--status-chip-bg);
+    border-color: var(--status-chip-border);
     transform: translateY(0);
   }
   35% {
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--text-info) 24%, transparent), 0 0 18px color-mix(in srgb, var(--text-info) 12%, transparent);
+    background: color-mix(in srgb, var(--status-chip-bg) 76%, var(--text-info) 24%);
+    border-color: color-mix(in srgb, var(--status-chip-border) 52%, var(--text-info));
     transform: translateY(-1px);
   }
   100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--text-info) 0%, transparent);
+    background: var(--status-chip-bg);
+    border-color: var(--status-chip-border);
     transform: translateY(0);
   }
 }
@@ -5386,12 +5400,10 @@ body::after {
   0% {
     opacity: 0;
     transform: translate3d(-8px, 0, 0);
-    filter: brightness(1.2);
   }
   100% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-    filter: brightness(1);
   }
 }
 
