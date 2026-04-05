@@ -1671,6 +1671,8 @@ body::after {
 
 .launch-screen {
   --launch-start-delay: 0ms;
+  --launch-ascent-duration: 7200ms;
+  --launch-sequence-duration: 17200ms;
   min-height: 100vh;
   position: relative;
   overflow: hidden;
@@ -2183,7 +2185,7 @@ body::after {
   background: linear-gradient(90deg, rgba(112, 129, 155, 0.95), rgba(62, 76, 99, 0.94));
   background: linear-gradient(90deg, color-mix(in srgb, var(--text-body) 68%, var(--surface-elevated)), color-mix(in srgb, var(--text-dim) 74%, var(--surface-elevated)));
   transform-origin: right center;
-  animation: launchArmRetract 7.2s ease-in forwards;
+  animation: launchArmRetract var(--launch-ascent-duration) ease-in forwards;
   animation-delay: calc(var(--launch-start-delay) - 520ms);
   animation-fill-mode: backwards;
 }
@@ -2202,7 +2204,7 @@ body::after {
   width: 180px;
   height: 120px;
   left: calc(50% - 160px);
-  animation: launchSmokeLeft 7s ease-out infinite;
+  animation: launchSmokeLeft calc(var(--launch-ascent-duration) - 200ms) ease-out infinite;
   animation-delay: var(--launch-start-delay);
 }
 
@@ -2210,7 +2212,7 @@ body::after {
   width: 240px;
   height: 140px;
   left: calc(50% - 110px);
-  animation: launchSmokeRise 5.4s ease-out infinite;
+  animation: launchSmokeRise calc(var(--launch-ascent-duration) - 1800ms) ease-out infinite;
   animation-delay: calc(var(--launch-start-delay) + 0.4s);
 }
 
@@ -2218,7 +2220,7 @@ body::after {
   width: 220px;
   height: 130px;
   left: calc(50% - 20px);
-  animation: launchSmokeRight 6.3s ease-out infinite;
+  animation: launchSmokeRight calc(var(--launch-ascent-duration) - 900ms) ease-out infinite;
   animation-delay: calc(var(--launch-start-delay) + 0.7s);
 }
 
@@ -2229,7 +2231,7 @@ body::after {
   width: 118px;
   height: 520px;
   transform: translate3d(-50%, 0, 0);
-  animation: rocketLaunch 7.2s cubic-bezier(0.25, 0.58, 0.12, 1) forwards;
+  animation: rocketLaunch var(--launch-ascent-duration) cubic-bezier(0.25, 0.58, 0.12, 1) forwards;
   animation-delay: var(--launch-start-delay);
   animation-fill-mode: backwards;
   will-change: transform;
@@ -2247,7 +2249,7 @@ body::after {
     linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, color-mix(in srgb, var(--launch-exhaust-core) 24%, transparent) 26%, color-mix(in srgb, var(--text-primary) 52%, transparent) 70%, rgba(255, 255, 255, 0) 100%);
   filter: blur(10px);
   opacity: 0;
-  animation: rocketContrail 7.2s ease-out forwards;
+  animation: rocketContrail var(--launch-ascent-duration) ease-out forwards;
   animation-delay: var(--launch-start-delay);
   animation-fill-mode: backwards;
   will-change: transform, opacity;
@@ -2398,6 +2400,13 @@ body::after {
   animation-fill-mode: backwards;
 }
 
+.launch-pad--complete .rocket,
+.launch-pad--complete .rocket__contrail,
+.launch-pad--complete .rocket__flame {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .launch-screen__manifest {
   align-self: stretch;
   justify-self: stretch;
@@ -2507,7 +2516,7 @@ body::after {
       color-mix(in srgb, var(--text-info) 94%, white) 42%,
       color-mix(in srgb, var(--text-good) 82%, white) 100%
     );
-  animation: launchProgress 9.6s linear forwards;
+  animation: launchProgress var(--launch-sequence-duration) linear forwards;
 }
 
 .launch-screen__actions {

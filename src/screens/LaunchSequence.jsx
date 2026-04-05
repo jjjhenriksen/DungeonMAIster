@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 const DEFAULT_COUNTDOWN_STEP_MS = 1000;
-const DEFAULT_POST_COUNTDOWN_MS = 3200;
+const DEFAULT_ASCENT_DURATION_MS = 7200;
 const REDUCED_MOTION_DURATION_MS = 1200;
 const COUNTDOWN_START = 10;
 
@@ -16,6 +16,7 @@ const LAUNCH_STAGES = [
 export default function LaunchSequence({ session, slotId, themeId, themes, onComplete }) {
   const [readyToContinue, setReadyToContinue] = useState(false);
   const [countdownValue, setCountdownValue] = useState(COUNTDOWN_START);
+  const [elapsedMs, setElapsedMs] = useState(0);
   const mission = session?.worldState?.mission || {};
   const crew = session?.worldState?.crew || [];
   const slotLabel = session?.slotLabel || slotId?.replace(/^slot-/, "Slot ") || "Slot 1";
@@ -41,21 +42,35 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
     []
   );
   const totalDurationMs = useMemo(
-    () => countdownDurationMs + DEFAULT_POST_COUNTDOWN_MS,
+    () => countdownDurationMs + DEFAULT_ASCENT_DURATION_MS,
     [countdownDurationMs]
   );
+  const ascentElapsedMs = Math.max(0, elapsedMs - countdownDurationMs);
+  const ascentProgress = Math.min(1, ascentElapsedMs / DEFAULT_ASCENT_DURATION_MS);
+  const easedAscentProgress = 1 - (1 - ascentProgress) ** 3;
+  const altitudeKm = ascentProgress <= 0 ? 0 : 184 * easedAscentProgress;
+  const velocityKmPerSecond =
+    ascentProgress <= 0 ? 0 : 7.6 * Math.min(1, 0.12 + ascentProgress * 0.98);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const duration = prefersReducedMotion ? REDUCED_MOTION_DURATION_MS : totalDurationMs;
+    const startedAt = window.performance.now();
     const timer = window.setTimeout(() => {
       setReadyToContinue(true);
+      setElapsedMs(totalDurationMs);
     }, duration);
 
     if (prefersReducedMotion) {
       setCountdownValue(0);
+      setElapsedMs(totalDurationMs);
       return () => window.clearTimeout(timer);
     }
+
+    const elapsedTimer = window.setInterval(() => {
+      const nextElapsed = Math.min(totalDurationMs, window.performance.now() - startedAt);
+      setElapsedMs(nextElapsed);
+    }, 120);
 
     const countdownTimer = window.setInterval(() => {
       setCountdownValue((current) => {
@@ -69,6 +84,7 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
 
     return () => {
       window.clearTimeout(timer);
+      window.clearInterval(elapsedTimer);
       window.clearInterval(countdownTimer);
     };
   }, []);
@@ -80,6 +96,8 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
       style={
         {
           "--launch-start-delay": `${countdownDurationMs}ms`,
+          "--launch-ascent-duration": `${DEFAULT_ASCENT_DURATION_MS}ms`,
+          "--launch-sequence-duration": `${totalDurationMs}ms`,
         }
       }
     >
@@ -157,7 +175,10 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
             </span>
           </div>
         ) : null}
-        <div className="launch-pad" aria-hidden="true">
+        <div
+          className={`launch-pad${readyToContinue ? " launch-pad--complete" : ""}`}
+          aria-hidden="true"
+        >
           <div className="launch-pad__halo" />
           <div className="launch-pad__shockwave" />
           <div className="launch-pad__tower launch-pad__tower--left" />
@@ -186,11 +207,11 @@ export default function LaunchSequence({ session, slotId, themeId, themes, onCom
           <div className="launch-pad__ground" />
           <div className="launch-pad__readout launch-pad__readout--left">
             <span>Altitude</span>
-            <strong>19.4 km</strong>
+            <strong>{altitudeKm.toFixed(1)} km</strong>
           </div>
           <div className="launch-pad__readout launch-pad__readout--right">
             <span>Velocity</span>
-            <strong>2.3 km/s</strong>
+            <strong>{velocityKmPerSecond.toFixed(1)} km/s</strong>
           </div>
         </div>
       </div>
