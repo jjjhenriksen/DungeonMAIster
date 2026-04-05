@@ -311,7 +311,10 @@ export function generateCrewAroundPlayer({
           callSign: resolvedCallSign || profile.callSign,
           controller: "human",
         }
-      : profile
+      : {
+          ...profile,
+          controller: "bot",
+        }
   );
 
   return rerollCharacterProfiles(seededProfiles, [selectedBlueprint.id]);
