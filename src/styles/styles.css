@@ -1048,12 +1048,80 @@ body::after {
   opacity: 0.56;
 }
 
+.telemetry-backdrop--menu {
+  opacity: 0.84;
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__column {
+  color: color-mix(in srgb, var(--text-info) 68%, transparent);
+  opacity: 0.3;
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--ambient-grid-glow) 52%, transparent),
+    0 0 32px color-mix(in srgb, var(--text-info) 14%, transparent);
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__column--1 {
+  opacity: 0.2;
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__column--2 {
+  opacity: 0.28;
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__column--3 {
+  opacity: 0.36;
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__column--4 {
+  opacity: 0.24;
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__scanline {
+  opacity: 0.22;
+  box-shadow: 0 0 24px color-mix(in srgb, var(--text-info) 22%, transparent);
+}
+
+.telemetry-backdrop--menu .telemetry-backdrop__noise {
+  opacity: 0.32;
+}
+
 .telemetry-backdrop--app {
   opacity: 0.66;
 }
 
 .telemetry-backdrop--app .telemetry-backdrop__column {
   color: color-mix(in srgb, var(--text-info) 52%, transparent);
+}
+
+.telemetry-backdrop--app .telemetry-backdrop__columns {
+  mask-image:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.96) 0%,
+      rgba(0, 0, 0, 0.96) 14%,
+      rgba(0, 0, 0, 0.18) 24%,
+      rgba(0, 0, 0, 0.04) 38%,
+      rgba(0, 0, 0, 0.04) 62%,
+      rgba(0, 0, 0, 0.18) 76%,
+      rgba(0, 0, 0, 0.96) 86%,
+      rgba(0, 0, 0, 0.96) 100%
+    ),
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.95) 12%, rgba(0, 0, 0, 0.95) 88%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.telemetry-backdrop--app .telemetry-backdrop__column--1,
+.telemetry-backdrop--app .telemetry-backdrop__column--4 {
+  opacity: 0.24;
+}
+
+.telemetry-backdrop--app .telemetry-backdrop__column--2,
+.telemetry-backdrop--app .telemetry-backdrop__column--3 {
+  opacity: 0.18;
+}
+
+.telemetry-backdrop--app .telemetry-backdrop__scanline {
+  opacity: 0.14;
 }
 
 .telemetry-backdrop--launch {
