@@ -6,7 +6,7 @@ Artemis Lost is a small full-stack app with a React frontend, a Node/Express ser
 
 ### App Shell And Navigation
 
-- [src/app/App.jsx](../src/app/App.jsx): app entry, screen routing, preview-mode bootstrapping, and session hydration
+- [src/app/App.jsx](../src/app/App.jsx): app entry, screen routing, locked-theme dataset wiring, session hydration, and resolution-preview bootstrapping
 - [src/screens/MainMenu.jsx](../src/screens/MainMenu.jsx): front-door flow for new mission, continue, load, and delete
 - [src/screens/CharacterCreation.jsx](../src/screens/CharacterCreation.jsx): player-first crew assembly, lock/reroll controls, human-vs-autonomous role assignment, and mission-seed preview
 - [src/screens/LaunchSequence.jsx](../src/screens/LaunchSequence.jsx): cinematic transition between setup and live mission
@@ -37,7 +37,12 @@ Artemis Lost is a small full-stack app with a React frontend, a Node/Express ser
 - [src/components/TelemetryBackdrop.jsx](../src/components/TelemetryBackdrop.jsx): animated ambient telemetry layer used across major screens
 - [src/game/roleFilters.js](../src/game/roleFilters.js): role-specific view selection and console brief generation
 - [src/game/uiState.js](../src/game/uiState.js): derived UI-facing state for headers, alerts, and action-panel previews
-- [src/styles/styles.css](../src/styles/styles.css): shared tokens, component styles, launch/resolution animation, and ambient background treatment
+- [src/game/themes.js](../src/game/themes.js): locked theme metadata and DOM dataset helpers used by the app shell
+- [src/styles/styles.css](../src/styles/styles.css): stylesheet entrypoint that imports the split style layers
+- [src/styles/tokens.css](../src/styles/tokens.css): visual tokens, root variables, and shared palette values
+- [src/styles/interface.css](../src/styles/interface.css): screen, layout, panel, and component styling
+- [src/styles/motion.css](../src/styles/motion.css): keyframes and animation definitions
+- [src/styles/responsive.css](../src/styles/responsive.css): reduced-motion and viewport-specific overrides
 
 ### Role And Coordination Systems
 

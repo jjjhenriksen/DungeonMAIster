@@ -32,7 +32,7 @@ The character creation screen also shows:
 Named overrides are also supported:
 - certain featured names bias toward specific roles
 - certain names use fixed or curated callsign pools
-- generated faculty easter eggs can surface more often for demo-friendly runs
+- featured faculty easter eggs can surface within the general reroll pool
 
 ## Autonomous Crew Roles
 
@@ -139,7 +139,7 @@ The game now has deterministic end states instead of running forever.
 - forgiving victory rules reward securing the mission without demanding perfect play
 - losses require sustained collapse or truly catastrophic failure rather than one bad turn
 - victory and defeat each have distinct full-screen resolution sequences
-- direct preview routes exist for resolution-screen iteration during development
+- internal preview routes still exist for resolution-screen iteration during development
 
 ## Event Log Instrumentation
 
@@ -184,7 +184,7 @@ Session state is written into:
 
 ## Visual Atmosphere
 
-The interface now uses one locked visual treatment instead of player-selectable themes.
+The interface now presents one locked visual treatment instead of exposing player-selectable themes.
 
 - shared panel styling across menu, launch, gameplay, and resolution
 - animated telemetry backdrops behind major screens
